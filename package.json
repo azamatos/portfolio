@@ -1,19 +1,42 @@
 {
-  "name": "Azamat's Portfolio",
+  "name": "azamatos-portfolio",
   "version": "1.0.0",
-  "main": "index.js",
+  "private": true,
+  "description": "Personal developer portfolio of Azamat Jorayev",
+  "author": "Azamat Jorayev",
+  "license": "MIT",
+
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/azamatos/portfolio.git"
+  },
+
+  "engines": {
+    "node": ">=18"
+  },
+
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+
+    "lint": "eslint .",
+    "format": "prettier --write ."
   },
-  "keywords": [],
-  "author": "Azamat",
-  "license": "ISC",
-  "description": "Azamat's Portfolio",
+
+  "keywords": [
+    "portfolio",
+    "lit",
+    "web-components",
+    "typescript",
+    "vite",
+    "developer-portfolio"
+  ],
+
   "dependencies": {
     "lit": "^3.3.2"
   },
+
   "devDependencies": {
     "@types/node": "^25.3.0",
     "eslint": "^10.0.1",
