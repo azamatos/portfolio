@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+      "target": "ESNext",
+      "module": "ESNext",
+      "moduleResolution": "Bundler",
+      "strict": true,
+      "lib": ["ESNext", "DOM"],
+      "experimentalDecorators": true,
+      "useDefineForClassFields": false,
+      "baseUrl": ".",
+      "paths": {
+        "@/*": ["src/*"],
+        "@components/*": ["src/components/*"]
+      }
+    },
+    "include": ["src"]
+  }

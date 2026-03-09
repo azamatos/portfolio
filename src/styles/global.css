@@ -1,0 +1,62 @@
+:root {
+
+    --color-bg: #010101;
+    --color-text-primary: #fff;
+    --color-text-secondary: #a6a6a6;
+}
+
+body {
+    padding: 0;
+    margin: 0;
+    background: var(--color-bg);
+    color: var(--color-text-primary);
+    font-family: "Geist", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+
+}
+
+* {
+    margin: 0;
+    box-sizing: border-box;
+    -webkit-font-smoothing: inherit;
+}
+
+ol,
+ul {
+    list-style: none;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+img,
+picture,
+video,
+canvas,
+svg {
+    display: block;
+    max-width: 100%;
+}
+
+input,
+button,
+textarea,
+select {
+    font: inherit;
+}
+
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    overflow-wrap: break-word;
+}
