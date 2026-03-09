@@ -1,6 +1,7 @@
 import { LitElement, html, css } from "lit";
 import "@/components/header";
 import "@/components/hero";
+import "@/components/footer";
 
 export class AppRoot extends LitElement {
   static styles = css`
@@ -24,6 +25,7 @@ export class AppRoot extends LitElement {
       <main>
         <site-header></site-header>
         <hero-section></hero-section>
+        <site-footer></site-footer>
       </main>
     `;
   }
