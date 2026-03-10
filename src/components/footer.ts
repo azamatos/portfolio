@@ -60,7 +60,7 @@ export class SiteFooter extends LitElement {
   render() {
     return html`
       <footer>
-        <span class="copy">© ${new Date().getFullYear()} Azamat Jorayev</span>
+        <span class="copy">© ${new Date().getFullYear()} Azamat Jorayew</span>
         <nav class="links" aria-label="Social links">
           <a href="https://github.com/azamatos" target="_blank" rel="noopener" aria-label="GitHub">
             <svg viewBox="0 0 98 96" fill="none" xmlns="http://www.w3.org/2000/svg">

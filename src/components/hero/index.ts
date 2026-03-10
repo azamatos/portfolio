@@ -97,7 +97,7 @@ export class HeroSection extends LitElement {
       <section>
         <div class="content">
           <h1>
-            Hi, I'm <span class="name">Azamat Jorayev.</span>
+            Hi, I'm <span class="name">Azamat Jorayew.</span>
           </h1>
           <hero-title></hero-title>
           <div class="subtitle-container">
