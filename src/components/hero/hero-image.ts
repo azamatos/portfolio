@@ -43,7 +43,7 @@ export class HeroImage extends LitElement {
       .image-wrapper {
         width: 144%;
         height: 44%;
-        top: 280px;
+        top: 120px;
         right: -80px;
       }
     }

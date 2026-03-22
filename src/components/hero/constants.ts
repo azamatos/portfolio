@@ -1,7 +1,7 @@
 const TITLES = [
-    "fullstack developer.",
+    "fullstack dev.",
     "web developer.",
-    "backend developer.",
+    "backend specialist.",
     "software engineer.",
     "mobile developer."
 ];

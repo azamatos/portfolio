@@ -79,7 +79,7 @@ export class HeroSection extends LitElement {
       section {
         padding-left: 24px;
         padding-right: 24px;
-        padding-top: 100px;
+        padding-top: 40px;
       }
 
       .content {
@@ -87,7 +87,11 @@ export class HeroSection extends LitElement {
       }
 
       h1 {
-        font-size: 40px;
+        font-size: 32px;
+      }
+
+      .description {
+        font-size: 16px;
       }
     }
   `;
@@ -97,7 +101,7 @@ export class HeroSection extends LitElement {
       <section>
         <div class="content">
           <h1>
-            Hi, I'm <span class="name">Azamat Jorayew.</span>
+            Hi, I'm <span class="name">Azamat Jorayev.</span>
           </h1>
           <hero-title></hero-title>
           <div class="subtitle-container">

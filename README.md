@@ -24,7 +24,7 @@ The project focuses on **performance**, **simplicity**, and **clean architecture
 
 ## Author
 
-**Azamat Jorayew**
+**Azamat Jorayev**
 
 - Website: [`azamatos.com`](https://azamatos.com)  
 - GitHub: [`azamatos`](https://github.com/azamatos)

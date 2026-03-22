@@ -320,7 +320,7 @@ export class SiteHeader extends LitElement {
 
   private link(name: string, url: string) {
     return html`
-      <a href=${url} download="Azamat Jorayew - ${name}.pdf">
+      <a href=${url} download="Azamat Jorayev - ${name}.pdf">
         <span class="label">
           <span class="title">${name}</span>
           <span class="hint">PDF document</span>

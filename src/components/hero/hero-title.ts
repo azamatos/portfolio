@@ -54,7 +54,7 @@ export class HeroTitle extends LitElement {
     }
 
     @media (max-width: 800px) {
-      p { font-size: 40px; }
+      p { font-size: 32px; }
       .word { margin-left: 4px; }
     }
   `;
