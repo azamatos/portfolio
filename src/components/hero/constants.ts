@@ -6,12 +6,8 @@ const TITLES = [
     "mobile developer."
 ];
 
-
-
 const TYPE_SPEED = 90;
 const DELETE_SPEED = 50;
-const PAUSE_TIME = 1600;
-
-
+const PAUSE_TIME = 400;
 
 export { TITLES, TYPE_SPEED, DELETE_SPEED, PAUSE_TIME };
