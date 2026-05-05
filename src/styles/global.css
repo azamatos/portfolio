@@ -1,5 +1,6 @@
-:root {
+@import "./fonts.css";
 
+:root {
     --color-bg: #010101;
     --color-text-primary: #fff;
     --color-text-secondary: #a6a6a6;
@@ -16,7 +17,6 @@ body {
     font-style: normal;
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
-
 }
 
 * {
