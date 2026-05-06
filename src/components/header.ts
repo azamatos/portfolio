@@ -309,7 +309,6 @@ export class SiteHeader extends LitElement {
 
           <div class=${popoverClass}>
             ${this.link("Fullstack", "/fullstack.pdf")}
-            ${this.link("Mobile", "/mobile.pdf")}
             ${this.link("Frontend", "/frontend.pdf")}
             ${this.link("Backend", "/backend.pdf")}
           </div>

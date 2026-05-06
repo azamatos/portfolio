@@ -6,6 +6,8 @@ export class SiteLogo extends LitElement {
     static styles = css`
         :host {
             display: block;
+            cursor: pointer;
+            user-select: none;
         }
 
         .logo {
