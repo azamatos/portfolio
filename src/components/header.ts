@@ -1,5 +1,6 @@
 import { LitElement, html, css } from "lit";
 import { classMap } from "lit/directives/class-map.js";
+import "@/components/logo";
 
 export class SiteHeader extends LitElement {
   static properties = {
@@ -35,7 +36,7 @@ export class SiteHeader extends LitElement {
 
     header {
       display: flex;
-      justify-content: flex-end;
+      justify-content: space-between;
       align-items: center;
       padding: 24px 40px;
       position: relative;
@@ -295,8 +296,8 @@ export class SiteHeader extends LitElement {
 
     return html`
       <header>
+        <site-logo></site-logo>
         <div class="resume">
-
           <button class=${btnClass} @click=${this.toggleMenu}>
             <span class="text">Resume</span>
             <span class="chevron">
