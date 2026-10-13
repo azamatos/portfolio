@@ -8,6 +8,11 @@ export default defineConfig({
 
   integrations: [sitemap()],
 
+  // The CSS is a few KB, so inline it on every page instead of a render-blocking file.
+  build: {
+    inlineStylesheets: "always",
+  },
+
   server: {
     port: 4000,
     open: true,

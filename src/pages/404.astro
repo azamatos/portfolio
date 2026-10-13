@@ -1,0 +1,78 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import ResumeActions from "@/components/ResumeActions.astro";
+import { SITE } from "@/site";
+---
+
+<BaseLayout title={`Page not found — ${SITE.name}`} noindex>
+  <section aria-labelledby="not-found-title">
+    <p class="code">404</p>
+    <h1 id="not-found-title">This page doesn't exist.</h1>
+    <p class="text">
+      The link may be old or mistyped. Here's the current resume, or go back to
+      the <a href="/">home page</a>.
+    </p>
+    <ResumeActions />
+  </section>
+</BaseLayout>
+
+<style>
+  section {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 24px;
+    width: 100%;
+    padding: 80px var(--gutter);
+  }
+
+  .code {
+    font-family: var(--font-space-mono);
+    font-size: 16px;
+    color: var(--color-accent);
+  }
+
+  h1 {
+    font-size: 72px;
+    font-weight: 500;
+    letter-spacing: -0.06em;
+    line-height: 1.05;
+  }
+
+  .text {
+    max-width: 580px;
+    font-size: 18px;
+    line-height: 1.5;
+    letter-spacing: -0.02em;
+    color: var(--color-text-secondary);
+  }
+
+  .text a {
+    color: var(--color-text-primary);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  @media (max-width: 1200px) {
+    h1 {
+      font-size: 56px;
+    }
+  }
+
+  @media (max-width: 800px) {
+    section {
+      justify-content: flex-start;
+      gap: 20px;
+      padding-top: 32px;
+      padding-bottom: 64px;
+    }
+
+    h1 {
+      font-size: 32px;
+    }
+
+    .text {
+      font-size: 16px;
+    }
+  }
+</style>

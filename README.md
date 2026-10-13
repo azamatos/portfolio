@@ -21,7 +21,7 @@ Lighthouse, mobile emulation, production build:
 
 What changed: every word is in the HTML instead of being rendered by JavaScript, the only JavaScript is the typing title and the copy-email button (inlined, about 2 KB together, no framework), the hero wave is a cached SVG file instead of 42 KB of markup inside the JS bundle, and fonts are preloaded with size-matched fallbacks.
 
-CI fails if accessibility, best practices or SEO drop below 100 (`lighthouserc.json`).
+CI fails if accessibility, best practices or SEO drop below 100 (`lighthouserc.json`). The 404 page skips the SEO check, since it is kept out of search on purpose.
 
 ---
 
@@ -50,6 +50,7 @@ pnpm lint
 
 - **Text and links:** `src/site.ts`. The page, meta tags, structured data and `/llms.txt` all read from it.
 - **Resume:** replace `public/Azamat_Jorayev_Resume.pdf` with the new full-stack PDF (same file name).
+- **Share image:** replace `src/assets/og-image.png` (1200×630). Its URL changes with the file, so LinkedIn and Telegram fetch the new one when you refresh the link preview.
 
 ## Structure
 
@@ -59,9 +60,11 @@ src/
   layouts/BaseLayout.astro   <head> (SEO, Open Graph, JSON-LD, fonts), header and footer
   components/                Header, Logo, EmailButton, Hero, ResumeActions, Footer
   pages/index.astro          home page
+  pages/404.astro            not-found page
   pages/llms.txt.ts          plain-text profile for AI assistants (/llms.txt)
   styles/global.css          tokens and reset
-public/                      resume PDF, icons, share image, hero.svg
+  assets/                    fonts, share image
+public/                      resume PDF, icons, hero.svg, _redirects (old resume links)
 ```
 
 New pages go in `src/pages/` and get the header, footer and meta tags from `BaseLayout`. The sitemap updates itself.

@@ -1,0 +1,5 @@
+# Cloudflare Pages redirects. The site used to link three resumes; old links open the current one.
+/fullstack.pdf /Azamat_Jorayev_Resume.pdf 301
+/frontend.pdf /Azamat_Jorayev_Resume.pdf 301
+/backend.pdf /Azamat_Jorayev_Resume.pdf 301
+/sitemap.xml /sitemap-index.xml 301
