@@ -1,0 +1,21 @@
+---
+import Logo from "@/components/Logo.astro";
+import EmailButton from "@/components/EmailButton.astro";
+---
+
+<header>
+  <Logo />
+  <EmailButton />
+</header>
+
+<style>
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    padding: 24px var(--gutter);
+    position: relative;
+    z-index: 10;
+  }
+</style>

@@ -1,0 +1,388 @@
+---
+import ResumeActions from "@/components/ResumeActions.astro";
+import { SITE } from "@/site";
+
+const firstRole = SITE.roles[0].split(" ");
+---
+
+<section aria-labelledby="hero-title">
+  <div class="content">
+    <p class="availability">
+      <span class="dot" aria-hidden="true"></span>
+      <span>{SITE.availability}</span>
+    </p>
+
+    <h1 id="hero-title">
+      <span class="line">
+        <span class="muted">Hi, I'm</span> {SITE.name}.
+      </span>{" "}
+      <span class="line">
+        <span class="muted">I'm a</span>{" "}
+        <span class="role" data-roles={JSON.stringify(SITE.roles)}>
+          {firstRole.map((word, i) => (
+            <Fragment>
+              {i > 0 && " "}
+              <span class="word">{word}</span>
+            </Fragment>
+          ))}
+        </span>
+        <span class="cursor" aria-hidden="true"></span>
+      </span>
+    </h1>
+
+    <p class="summary">{SITE.summary}</p>
+
+    <ResumeActions />
+  </div>
+
+  <div class="wave" aria-hidden="true">
+    <img src="/hero.svg" alt="" width="3501" height="2149" decoding="async" />
+  </div>
+
+  <!-- Shown by the script below once the typing starts (WCAG 2.2.2: moving text needs a pause). -->
+  <button class="typing-toggle" type="button" data-typing-toggle hidden>
+    <svg class="icon-pause" viewBox="0 0 10 10" aria-hidden="true">
+      <rect x="1.5" y="1" width="2.5" height="8" rx="0.5"></rect>
+      <rect x="6" y="1" width="2.5" height="8" rx="0.5"></rect>
+    </svg>
+    <svg class="icon-play" viewBox="0 0 10 10" aria-hidden="true">
+      <path d="M2.5 1.2v7.6a.5.5 0 0 0 .76.43l6.1-3.8a.5.5 0 0 0 0-.86L3.26.77a.5.5 0 0 0-.76.43z"></path>
+    </svg>
+    <span class="toggle-label">Pause animation</span>
+  </button>
+</section>
+
+<script>
+  const TYPE_SPEED = 90;
+  const DELETE_SPEED = 50;
+  const PAUSE_TIME = 400;
+  // The first role is already on screen when the page loads, so give people time to read it.
+  const FIRST_PAUSE = 2000;
+
+  const role = document.querySelector<HTMLElement>("[data-roles]");
+  const cursor = role?.parentElement?.querySelector<HTMLElement>(".cursor");
+  const toggle = document.querySelector<HTMLButtonElement>(
+    "[data-typing-toggle]",
+  );
+  const reducedMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)",
+  ).matches;
+
+  if (role && cursor && toggle && !reducedMotion) {
+    const roles: string[] = JSON.parse(role.dataset.roles ?? "[]");
+    const line = role.parentElement as HTMLElement;
+    const label = toggle.querySelector(".toggle-label") as HTMLElement;
+
+    // Screen readers read this static copy; the typing itself is visual only.
+    const spoken = document.createElement("span");
+    spoken.className = "sr-only";
+    spoken.textContent = roles[0];
+    role.before(spoken);
+    role.setAttribute("aria-hidden", "true");
+    line.closest("h1")?.classList.add("typing");
+
+    // Non-breaking hyphens keep "full-stack" on one line while it types.
+    const show = (text: string) => {
+      role.textContent = text.replaceAll("-", "‑");
+    };
+
+    // Reserve the height of the tallest role, so the text below never jumps.
+    const reserveHeight = () => {
+      const current = role.textContent ?? "";
+      line.style.minHeight = "";
+      let tallest = 0;
+      for (const text of roles) {
+        show(text);
+        tallest = Math.max(tallest, line.getBoundingClientRect().height);
+      }
+      role.textContent = current;
+      line.style.minHeight = `${tallest}px`;
+    };
+    reserveHeight();
+    document.fonts.ready.then(reserveHeight);
+    let resizeFrame = 0;
+    window.addEventListener("resize", () => {
+      cancelAnimationFrame(resizeFrame);
+      resizeFrame = requestAnimationFrame(reserveHeight);
+    });
+
+    let index = 0;
+    let chars = roles[0].length;
+    let deleting = true;
+    let paused = false;
+    let timer: number | undefined;
+
+    const schedule = (delay: number) => {
+      timer = window.setTimeout(step, delay);
+    };
+
+    const step = () => {
+      const word = roles[index];
+      cursor.classList.remove("blink");
+      chars += deleting ? -1 : 1;
+      show(word.slice(0, chars));
+
+      if (!deleting && chars === word.length) {
+        deleting = true;
+        cursor.classList.add("blink");
+        schedule(PAUSE_TIME);
+        return;
+      }
+
+      if (deleting && chars === 0) {
+        deleting = false;
+        index = (index + 1) % roles.length;
+      }
+
+      schedule(deleting ? DELETE_SPEED : TYPE_SPEED);
+    };
+
+    toggle.addEventListener("click", () => {
+      paused = !paused;
+      toggle.classList.toggle("paused", paused);
+      label.textContent = paused ? "Play animation" : "Pause animation";
+
+      if (paused) {
+        // Stop on a whole word rather than half of one.
+        clearTimeout(timer);
+        chars = roles[index].length;
+        deleting = true;
+        show(roles[index]);
+        cursor.classList.remove("blink");
+      } else {
+        schedule(PAUSE_TIME);
+      }
+    });
+
+    toggle.hidden = false;
+    cursor.classList.add("blink");
+    schedule(FIRST_PAUSE);
+  }
+</script>
+
+<style>
+  section {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 100%;
+    padding: 80px var(--gutter);
+    overflow: hidden;
+  }
+
+  .content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .availability {
+    align-self: flex-start;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 16px 7px 14px;
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    background: var(--color-surface);
+    backdrop-filter: blur(10px);
+    font-size: 16px;
+    letter-spacing: -0.01em;
+    color: var(--color-text-secondary);
+  }
+
+  .dot {
+    width: 8px;
+    height: 8px;
+    flex: none;
+    border-radius: 50%;
+    background: var(--color-accent);
+    box-shadow: 0 0 0 4px rgba(104, 237, 192, 0.16);
+  }
+
+  h1 {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2em;
+    font-size: 120px;
+    font-weight: 500;
+    letter-spacing: -0.06em;
+    line-height: 1.05;
+  }
+
+  .muted {
+    color: var(--color-text-secondary);
+  }
+
+  .word {
+    white-space: nowrap;
+  }
+
+  .cursor {
+    display: none;
+  }
+
+  .typing .cursor {
+    display: inline-block;
+    width: 2px;
+    height: 0.9em;
+    margin-left: 0.08em;
+    vertical-align: -0.12em;
+    background: var(--color-text-primary);
+  }
+
+  .cursor.blink {
+    animation: blink 1s steps(1) infinite;
+  }
+
+  @keyframes blink {
+    50% {
+      opacity: 0;
+    }
+  }
+
+  .typing-toggle {
+    position: absolute;
+    right: var(--gutter);
+    bottom: 24px;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    background: var(--color-surface);
+    backdrop-filter: blur(10px);
+    color: var(--color-text-secondary);
+    font-family: var(--font-space-mono);
+    font-size: 12px;
+    cursor: pointer;
+    transition:
+      color 0.18s ease,
+      border-color 0.18s ease;
+  }
+
+  .typing-toggle:hover {
+    color: var(--color-text-primary);
+    border-color: var(--color-border-hover);
+  }
+
+  .typing-toggle[hidden] {
+    display: none;
+  }
+
+  .typing-toggle svg {
+    width: 10px;
+    height: 10px;
+    fill: currentColor;
+  }
+
+  .icon-play,
+  .paused .icon-pause {
+    display: none;
+  }
+
+  .paused .icon-play {
+    display: block;
+  }
+
+  .summary {
+    max-width: 640px;
+    font-size: 20px;
+    line-height: 1.5;
+    letter-spacing: -0.02em;
+    color: var(--color-text-secondary);
+  }
+
+  .wave {
+    position: absolute;
+    top: 0;
+    right: -10%;
+    z-index: 0;
+    width: 120%;
+    height: 100%;
+    filter: brightness(0.6) contrast(2) invert(0.2);
+    mix-blend-mode: luminosity;
+    pointer-events: none;
+  }
+
+  .wave img {
+    width: 100%;
+    height: 100%;
+    max-width: none;
+  }
+
+  @media (max-width: 1920px) {
+    h1 {
+      font-size: 72px;
+    }
+
+    .availability {
+      font-size: 14px;
+    }
+
+    .summary {
+      max-width: 580px;
+      font-size: 18px;
+    }
+  }
+
+  @media (max-width: 1200px) {
+    h1 {
+      font-size: 56px;
+    }
+
+    .wave {
+      width: 144%;
+      height: 68%;
+      top: 120px;
+      right: -144px;
+    }
+  }
+
+  @media (max-width: 800px) {
+    section {
+      justify-content: flex-start;
+      padding-top: 32px;
+      padding-bottom: 64px;
+    }
+
+    .content {
+      gap: 20px;
+    }
+
+    .availability {
+      align-items: flex-start;
+      padding: 8px 14px 8px 12px;
+      border-radius: 14px;
+      font-size: 13px;
+    }
+
+    .dot {
+      margin-top: calc((1.5em - 8px) / 2);
+    }
+
+    h1 {
+      font-size: 32px;
+    }
+
+    .summary {
+      font-size: 16px;
+    }
+
+    .typing-toggle {
+      bottom: 20px;
+    }
+
+    .wave {
+      width: 144%;
+      height: 44%;
+      top: 120px;
+      right: -80px;
+    }
+  }
+</style>

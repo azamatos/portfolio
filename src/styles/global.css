@@ -1,9 +1,30 @@
-@import "./fonts.css";
-
 :root {
     --color-bg: #010101;
     --color-text-primary: #fff;
     --color-text-secondary: #a6a6a6;
+    --color-text-muted: rgba(255, 255, 255, 0.5);
+    --color-accent: #68edc0;
+    --color-border: rgba(255, 255, 255, 0.18);
+    --color-border-hover: rgba(255, 255, 255, 0.35);
+    --color-surface: rgba(255, 255, 255, 0.02);
+    --color-surface-hover: rgba(255, 255, 255, 0.06);
+
+    /* One horizontal gutter for header, hero and footer, so their edges line up. */
+    --gutter: 120px;
+
+    color-scheme: dark;
+}
+
+@media (max-width: 1200px) {
+    :root {
+        --gutter: 80px;
+    }
+}
+
+@media (max-width: 800px) {
+    :root {
+        --gutter: 24px;
+    }
 }
 
 body {
@@ -11,7 +32,7 @@ body {
     margin: 0;
     background: var(--color-bg);
     color: var(--color-text-primary);
-    font-family: "Geist", sans-serif;
+    font-family: var(--font-geist);
     font-optical-sizing: auto;
     font-weight: 400;
     font-style: normal;
@@ -59,4 +80,18 @@ h4,
 h5,
 h6 {
     overflow-wrap: break-word;
+}
+
+:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
 }

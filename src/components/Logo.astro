@@ -1,0 +1,65 @@
+<a class="logo" href="/">
+  <span class="arrow" aria-hidden="true">
+    ➜
+  </span>
+  <span class="tilde" aria-hidden="true">
+    ~
+  </span>
+  <span class="name">azamatos</span>
+  <span class="cursor" aria-hidden="true">
+    ▊
+  </span>
+</a>
+
+<style>
+  .logo {
+    font-family: var(--font-space-mono);
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.25em;
+    user-select: none;
+    white-space: nowrap;
+  }
+
+  .arrow {
+    color: #68edc0;
+  }
+
+  .tilde {
+    color: #5bc8c0;
+  }
+
+  .name,
+  .cursor {
+    color: #f0f4f3;
+  }
+
+  /* Blinks for ~4 s on load, then stays solid (WCAG 2.2.2: no endless blinking). */
+  .cursor {
+    animation: blink 1.1s step-end 4;
+  }
+
+  @keyframes blink {
+    0%,
+    100% {
+      opacity: 1;
+    }
+
+    50% {
+      opacity: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cursor {
+      animation: none;
+    }
+  }
+
+  @media (max-width: 800px) {
+    .logo {
+      font-size: 1.25rem;
+    }
+  }
+</style>

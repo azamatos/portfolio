@@ -1,0 +1,158 @@
+---
+import { SITE } from "@/site";
+---
+
+<div class="resume">
+  <div class="actions">
+    <a class="download" href={SITE.resume.url} download>
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <g class="arrow">
+          <path d="M12 4v11"></path>
+          <path d="M7 10.5l5 5 5-5"></path>
+        </g>
+        <path d="M5 20h14"></path>
+      </svg>
+      Download resume
+    </a>
+    <a class="view" href={SITE.resume.url} target="_blank" rel="noopener">
+      View online
+      <span class="sr-only">(opens in a new tab)</span>
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M7 17L17 7"></path>
+        <path d="M8 7h9v9"></path>
+      </svg>
+    </a>
+  </div>
+  <p class="meta">PDF · {SITE.resume.pages} pages</p>
+</div>
+
+<style>
+  .resume {
+    margin-top: 12px;
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+  }
+
+  a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    height: 56px;
+    padding: 0 26px;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    font-size: 18px;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    white-space: nowrap;
+    transition:
+      background 0.18s ease,
+      border-color 0.18s ease,
+      transform 0.12s ease;
+  }
+
+  a:active {
+    transform: scale(0.98);
+  }
+
+  .download {
+    background: var(--color-text-primary);
+    color: var(--color-bg);
+  }
+
+  .download:hover {
+    background: #d9d9d9;
+  }
+
+  .view {
+    border-color: var(--color-border);
+    background: var(--color-surface);
+    color: var(--color-text-primary);
+    backdrop-filter: blur(10px);
+  }
+
+  .view:hover {
+    background: var(--color-surface-hover);
+    border-color: var(--color-border-hover);
+  }
+
+  svg {
+    width: 18px;
+    height: 18px;
+    flex: none;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: transform 0.18s ease;
+  }
+
+  .download:hover .arrow {
+    transform: translateY(2px);
+  }
+
+  .view:hover svg {
+    transform: translate(2px, -2px);
+  }
+
+  .meta {
+    margin-top: 14px;
+    font-family: var(--font-space-mono);
+    font-size: 13px;
+    color: var(--color-text-secondary);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    a,
+    svg {
+      transition: none;
+    }
+
+    a:active,
+    .download:hover .arrow,
+    .view:hover svg {
+      transform: none;
+    }
+  }
+
+  @media (max-width: 1920px) {
+    a {
+      height: 48px;
+      padding: 0 20px;
+      font-size: 16px;
+    }
+  }
+
+  @media (max-width: 800px) {
+    .resume {
+      margin-top: 4px;
+    }
+
+    .actions {
+      gap: 10px;
+    }
+
+    a {
+      flex: 1 1 auto;
+      height: 44px;
+      padding: 0 18px;
+      font-size: 15px;
+    }
+
+    svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .meta {
+      font-size: 12px;
+    }
+  }
+</style>

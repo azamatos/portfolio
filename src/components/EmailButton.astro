@@ -1,0 +1,164 @@
+---
+import { SITE } from "@/site";
+---
+
+<div class="email">
+  <a class="send" href={`mailto:${SITE.email}`}>
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <rect x="3" y="5" width="18" height="14" rx="2"></rect>
+      <path d="M3.5 7l8.5 6 8.5-6"></path>
+    </svg>
+    <span class="address">{SITE.email}</span>
+    <span class="label">Email me</span>
+  </a>
+  <!-- Shown by the script below only where the Clipboard API exists. -->
+  <button
+    class="copy"
+    type="button"
+    data-copy={SITE.email}
+    aria-label="Copy email address"
+    title="Copy email address"
+    hidden
+  >
+    <svg class="icon-copy" viewBox="0 0 24 24" aria-hidden="true">
+      <rect x="9" y="9" width="11" height="11" rx="2"></rect>
+      <path d="M5 15V6a2 2 0 0 1 2-2h9"></path>
+    </svg>
+    <svg class="icon-done" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M5 12.5l4.5 4.5L19 7.5"></path>
+    </svg>
+  </button>
+  <span class="sr-only" role="status"></span>
+</div>
+
+<script>
+  for (const button of document.querySelectorAll<HTMLButtonElement>(
+    "button[data-copy]",
+  )) {
+    const status = button.parentElement?.querySelector('[role="status"]');
+    let timer: number | undefined;
+
+    if (navigator.clipboard) {
+      button.hidden = false;
+    }
+
+    button.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(button.dataset.copy ?? "");
+      } catch {
+        if (status) status.textContent = "Couldn't copy the email address";
+        return;
+      }
+
+      button.classList.add("copied");
+      if (status) status.textContent = "Email address copied";
+
+      clearTimeout(timer);
+      timer = window.setTimeout(() => {
+        button.classList.remove("copied");
+        if (status) status.textContent = "";
+      }, 2000);
+    });
+  }
+</script>
+
+<style>
+  .email {
+    display: flex;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    background: var(--color-surface);
+    backdrop-filter: blur(10px);
+    overflow: hidden;
+    transition: border-color 0.18s ease;
+  }
+
+  .email:hover {
+    border-color: var(--color-border-hover);
+  }
+
+  .send,
+  .copy {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-text-primary);
+    transition: background 0.18s ease;
+  }
+
+  .send:hover,
+  .copy:hover {
+    background: var(--color-surface-hover);
+  }
+
+  /* The wrapper clips its children, so draw the focus ring inside them. */
+  .send:focus-visible,
+  .copy:focus-visible {
+    outline-offset: -2px;
+  }
+
+  .send {
+    gap: 10px;
+    padding: 10px 16px;
+    font-size: 16px;
+    letter-spacing: -0.02em;
+    white-space: nowrap;
+  }
+
+  .copy {
+    width: 44px;
+    padding: 0;
+    border: 0;
+    border-left: 1px solid var(--color-border);
+    background: transparent;
+    cursor: pointer;
+  }
+
+  .copy[hidden] {
+    display: none;
+  }
+
+  svg {
+    width: 16px;
+    height: 16px;
+    flex: none;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.75;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .icon-done {
+    display: none;
+    color: var(--color-accent);
+  }
+
+  .copied .icon-copy {
+    display: none;
+  }
+
+  .copied .icon-done {
+    display: block;
+  }
+
+  .label {
+    display: none;
+  }
+
+  @media (max-width: 1920px) {
+    .send {
+      font-size: 14px;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .address {
+      display: none;
+    }
+
+    .label {
+      display: inline;
+    }
+  }
+</style>

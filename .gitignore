@@ -9,3 +9,5 @@ node_modules/
 .env.test
 .env.production
 .DS_Store
+.astro/
+.lighthouseci/
