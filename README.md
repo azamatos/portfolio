@@ -1,24 +1,70 @@
 # azamatos — Personal Portfolio
 
-Minimalist developer portfolio built with modern web technologies.
+[![CI](https://github.com/azamatos/portfolio/actions/workflows/ci.yml/badge.svg)](https://github.com/azamatos/portfolio/actions/workflows/ci.yml)
+
+Personal site of Azamat Jorayev, senior full-stack engineer. Static HTML, readable without JavaScript, 100 in every Lighthouse category.
 
 🌐 Live: [`azamatos.com`](https://azamatos.com)
 
+![azamatos.com](docs/screenshot.png)
+
 ---
 
-## About
+## Performance
 
-This repository contains the source code for my personal portfolio website.
+Lighthouse, mobile emulation, production build:
 
-The project focuses on **performance**, **simplicity**, and **clean architecture** while showcasing my experience building modern web applications.
+| | Performance | Accessibility | Best practices | SEO | FCP | LCP | Blocking time | Page weight |
+| --- | :-: | :-: | :-: | :-: | :-: | :-: | :-: | :-: |
+| Before (Lit + Vite) | 98 | 100 | 100 | 100 | 1.1 s | 2.0 s | 150 ms | 361 KiB |
+| Now (Astro) | **100** | **100** | **100** | **100** | **0.8 s** | **1.7 s** | **0 ms** | **132 KiB** |
+
+What changed: every word is in the HTML instead of being rendered by JavaScript, the only JavaScript is the typing title and the copy-email button (inlined, about 2 KB together, no framework), the hero wave is a cached SVG file instead of 42 KB of markup inside the JS bundle, and fonts are preloaded with size-matched fallbacks.
+
+CI fails if accessibility, best practices or SEO drop below 100 (`lighthouserc.json`).
 
 ---
 
 ## Tech
 
-- TypeScript
-- Lit (Web Components)
-- Vite
+- [Astro](https://astro.build) 7, static output, no client framework
+- TypeScript (strict), ESLint, Prettier
+- Self-hosted Geist and Space Mono through the Astro Fonts API
+- GitHub Actions: type check, lint, build, Lighthouse CI
+
+---
+
+## Run locally
+
+```sh
+pnpm install
+pnpm dev       # http://localhost:4000
+pnpm build     # static site in dist/
+pnpm preview   # serve dist/
+
+pnpm check     # type check (astro check)
+pnpm lint
+```
+
+## Update content
+
+- **Text and links:** `src/site.ts`. The page, meta tags, structured data and `/llms.txt` all read from it.
+- **Resume:** replace `public/Azamat_Jorayev_Resume.pdf` with the new full-stack PDF (same file name).
+
+## Structure
+
+```text
+src/
+  site.ts                    copy, links, resume path
+  layouts/BaseLayout.astro   <head> (SEO, Open Graph, JSON-LD, fonts), header and footer
+  components/                Header, Logo, EmailButton, Hero, ResumeActions, Footer
+  pages/index.astro          home page
+  pages/llms.txt.ts          plain-text profile for AI assistants (/llms.txt)
+  styles/global.css          tokens and reset
+public/                      resume PDF, icons, share image, hero.svg
+```
+
+New pages go in `src/pages/` and get the header, footer and meta tags from `BaseLayout`. The sitemap updates itself.
 
 ---
 
@@ -26,10 +72,10 @@ The project focuses on **performance**, **simplicity**, and **clean architecture
 
 **Azamat Jorayev**
 
-- Website: [`azamatos.com`](https://azamatos.com)  
+- Website: [`azamatos.com`](https://azamatos.com)
 - GitHub: [`azamatos`](https://github.com/azamatos)
-- Telegram: [`azamatos`](https://t.me/eldzhernone)  
-- LinkedIn: [`azamatos`](https://linkedin.com/in/igwt)
+- Telegram: [`eldzhernone`](https://t.me/eldzhernone)
+- LinkedIn: [`igwt`](https://linkedin.com/in/igwt)
 
 ---
 
