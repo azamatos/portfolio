@@ -140,6 +140,7 @@ const firstRole = SITE.roles[0].split(" ");
     toggle.addEventListener("click", () => {
       paused = !paused;
       toggle.classList.toggle("paused", paused);
+      document.documentElement.dataset.motion = paused ? "paused" : "on";
       label.textContent = paused ? "Play animation" : "Pause animation";
 
       if (paused) {
@@ -155,6 +156,8 @@ const firstRole = SITE.roles[0].split(" ");
     });
 
     toggle.hidden = false;
+    // The button pauses the logo cursor too (see Logo.astro).
+    document.documentElement.dataset.motion = "on";
     cursor.classList.add("blink");
     schedule(FIRST_PAUSE);
   }

@@ -18,8 +18,10 @@ import { SITE } from "@/site";
       View online
       <span class="sr-only">(opens in a new tab)</span>
       <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M7 17L17 7"></path>
-        <path d="M8 7h9v9"></path>
+        <g class="arrow">
+          <path d="M7 17L17 7"></path>
+          <path d="M8 7h9v9"></path>
+        </g>
       </svg>
     </a>
   </div>
@@ -91,15 +93,19 @@ import { SITE } from "@/site";
     stroke-width: 2;
     stroke-linecap: round;
     stroke-linejoin: round;
-    transition: transform 0.18s ease;
   }
 
-  .download:hover .arrow {
-    transform: translateY(2px);
+  /* The arrow glides in its direction on hover and keyboard focus, then eases back. */
+  .arrow {
+    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
   }
 
-  .view:hover svg {
-    transform: translate(2px, -2px);
+  .download:is(:hover, :focus-visible) .arrow {
+    transform: translateY(3px);
+  }
+
+  .view:is(:hover, :focus-visible) .arrow {
+    transform: translate(3px, -3px);
   }
 
   .meta {
@@ -111,13 +117,13 @@ import { SITE } from "@/site";
 
   @media (prefers-reduced-motion: reduce) {
     a,
-    svg {
+    .arrow {
       transition: none;
     }
 
     a:active,
-    .download:hover .arrow,
-    .view:hover svg {
+    .download:is(:hover, :focus-visible) .arrow,
+    .view:is(:hover, :focus-visible) .arrow {
       transform: none;
     }
   }

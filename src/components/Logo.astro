@@ -35,9 +35,18 @@
     color: #f0f4f3;
   }
 
-  /* Blinks for ~4 s on load, then stays solid (WCAG 2.2.2: no endless blinking). */
+  /* WCAG 2.2.2: blinking that lasts over 5 s needs a way to pause it. By default the cursor blinks
+     ~4 s and stays solid; on the home page the hero's pause button controls it (html[data-motion]). */
   .cursor {
     animation: blink 1.1s step-end 4;
+  }
+
+  :global(html[data-motion="on"]) .cursor {
+    animation-iteration-count: infinite;
+  }
+
+  :global(html[data-motion="paused"]) .cursor {
+    animation: none;
   }
 
   @keyframes blink {
