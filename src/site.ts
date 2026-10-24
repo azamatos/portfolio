@@ -22,7 +22,7 @@ export const SITE = {
     "Open to senior frontend and full-stack roles · relocating to the EU",
   summary:
     "8+ years with React, TypeScript, and Node.js, owning features end to end, from the PostgreSQL data model and API to a polished UI. I led the frontend of Belet Video (100k+ active users) and was the sole developer of RocketPrep (10k+ users).",
-  email: "15457akdepe@gmail.com",
+  email: "hi@azamatos.com",
   resume: {
     // The full-stack, with-photo variant. Replace the file in public/ when the resume changes.
     url: "/Azamat_Jorayev_Resume.pdf",
