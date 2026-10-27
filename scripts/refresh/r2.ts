@@ -1,5 +1,6 @@
 // Uploads to Cloudflare R2 (bucket azamatos-media, served at media.azamatos.com) through its S3 API. Names carry a
-// content hash, so a file that's already there is the same file and is skipped.
+// content hash, so a file that's already there is the same file and is skipped. Also lists and deletes, for the
+// cleanup of files nothing uses any more (cleanup.ts).
 
 import { AwsClient } from "aws4fetch";
 import { mkdir, writeFile } from "node:fs/promises";
@@ -33,8 +34,9 @@ function r2() {
   return client;
 }
 
-const endpoint = (key: string) =>
-  `https://${process.env.R2_ACCOUNT_ID!.trim()}.r2.cloudflarestorage.com/${BUCKET}/${key}`;
+const bucketUrl = () =>
+  `https://${process.env.R2_ACCOUNT_ID!.trim()}.r2.cloudflarestorage.com/${BUCKET}`;
+const endpoint = (key: string) => `${bucketUrl()}/${key}`;
 
 async function withRetry<T>(what: string, run: () => Promise<T>): Promise<T> {
   for (let attempt = 1; ; attempt++) {
@@ -80,6 +82,60 @@ export async function upload(
     sent++;
   }
   return sent;
+}
+
+export type StoredObject = { key: string; lastModified: Date };
+
+const unescapeXml = (s: string) =>
+  s
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&apos;/g, "'")
+    .replace(/&amp;/g, "&");
+
+/** Every object under `prefix` (ListObjectsV2, a thousand a page). */
+export async function listObjects(prefix: string): Promise<StoredObject[]> {
+  const found: StoredObject[] = [];
+  let token: string | undefined;
+  do {
+    const query = new URLSearchParams({ "list-type": "2", prefix });
+    if (token) query.set("continuation-token", token);
+    const xml = await withRetry(`LIST ${prefix}`, async () => {
+      const res = await r2().fetch(`${bucketUrl()}?${query}`, {
+        signal: AbortSignal.timeout(30_000),
+      });
+      const body = await res.text();
+      if (!res.ok)
+        throw new Error(`R2 answered ${res.status}: ${body.slice(0, 200)}`);
+      return body;
+    });
+    for (const [, item] of xml.matchAll(/<Contents>([\s\S]*?)<\/Contents>/g)) {
+      const key = /<Key>([\s\S]*?)<\/Key>/.exec(item)?.[1];
+      const modified = /<LastModified>([^<]+)<\/LastModified>/.exec(item)?.[1];
+      if (key && modified)
+        found.push({ key: unescapeXml(key), lastModified: new Date(modified) });
+    }
+    token = /<IsTruncated>true<\/IsTruncated>/.test(xml)
+      ? /<NextContinuationToken>([^<]+)<\/NextContinuationToken>/.exec(xml)?.[1]
+      : undefined;
+    if (token) token = unescapeXml(token);
+  } while (token);
+  return found;
+}
+
+/** Deletes one object; one that's gone already is fine. */
+export async function deleteObject(key: string): Promise<void> {
+  await withRetry(`DELETE ${key}`, async () => {
+    const res = await r2().fetch(endpoint(key), {
+      method: "DELETE",
+      signal: AbortSignal.timeout(30_000),
+    });
+    if (!res.ok && res.status !== 404)
+      throw new Error(
+        `R2 answered ${res.status}: ${(await res.text()).slice(0, 200)}`,
+      );
+  });
 }
 
 /** Without credentials (or with --dry-run): the files go to .cache/refresh/<prefix>/ instead. */

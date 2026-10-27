@@ -1,5 +1,6 @@
 // Takes a shot in Chromium: a still (PNG at twice the pixels) or a loop (frames from Chrome's screencast, with
-// their times). Steps run first; then the page settles: network quiet, fonts and images loaded, carets hidden.
+// their times). Steps run first; then the page settles: network quiet, fonts and images loaded, carets hidden. A
+// capture that runs past its time limit has its browser context closed, which stops whatever it was waiting for.
 
 import type { BrowserContext, Page } from "playwright";
 import type { ShotConfig } from "../../../src/lib/projects/schema.ts";
@@ -60,30 +61,43 @@ async function open(
   return context;
 }
 
+/** Opens a context for the shot and runs `use` in it; past `limit` ms, closes the context and fails. */
+async function withContext<T>(
+  shot: ShotConfig,
+  motion: boolean,
+  limit: number,
+  use: (context: BrowserContext) => Promise<T>,
+): Promise<T> {
+  const context = await open(shot, motion);
+  let timer: NodeJS.Timeout | undefined;
+  const timeout = new Promise<never>((_, reject) => {
+    timer = setTimeout(() => {
+      reject(new Error(`the capture took longer than ${limit / 1000} s`));
+      context.close().catch(() => {});
+    }, limit);
+  });
+  try {
+    return await Promise.race([use(context), timeout]);
+  } finally {
+    clearTimeout(timer);
+    await context.close().catch(() => {});
+  }
+}
+
 async function runStep(page: Page, step: Step) {
   const timeout = 20_000;
   // Waiting for something can take longer: a loop may wait for a moment in a running video.
   const waitTimeout = 90_000;
-  if ("goto" in step) await page.goto(step.goto, { waitUntil: "load" });
-  else if ("click" in step)
+  if ("click" in step)
     await page.locator(step.click).first().click({ timeout });
   else if ("fill" in step)
     await page.locator(step.fill).first().fill(step.value, { timeout });
-  else if ("press" in step) await page.keyboard.press(step.press);
-  else if ("wait" in step) await page.waitForTimeout(step.wait);
   else if ("waitFor" in step)
     await page
       .locator(step.waitFor)
       .first()
       .waitFor({ state: "visible", timeout: waitTimeout });
-  else if ("scroll" in step) {
-    if (typeof step.scroll === "number") await page.mouse.wheel(0, step.scroll);
-    else
-      await page
-        .locator(step.scroll)
-        .first()
-        .scrollIntoViewIfNeeded({ timeout });
-  } else if ("copy" in step) {
+  else if ("copy" in step) {
     const text = (
       await page.locator(step.copy).first().innerText({ timeout })
     ).trim();
@@ -159,10 +173,9 @@ async function prepare(
   return page;
 }
 
-/** A still PNG, at twice the CSS pixels. */
-export async function captureStill(shot: ShotConfig): Promise<Buffer> {
-  const context = await open(shot, false);
-  try {
+/** A still PNG, at twice the CSS pixels, or an error after `limit` ms. */
+export function captureStill(shot: ShotConfig, limit: number): Promise<Buffer> {
+  return withContext(shot, false, limit, async (context) => {
     const page = await prepare(context, shot, true);
     if (shot.full) {
       await wakeWholePage(page);
@@ -183,19 +196,20 @@ export async function captureStill(shot: ShotConfig): Promise<Buffer> {
         ? { x: 0, y: 0, width, height: Math.floor(MAX_SIDE / scale) }
         : undefined,
     });
-  } finally {
-    await context.close();
-  }
+  });
 }
 
-/** A loop: Chrome's screencast frames for `video.seconds`, from the moment the page (and its steps) are ready. */
-export async function captureLoop(
+/**
+ * A loop: Chrome's screencast frames for `video.seconds`, from the moment the page (and its steps) are ready, or an
+ * error after `limit` ms.
+ */
+export function captureLoop(
   shot: ShotConfig,
+  limit: number,
 ): Promise<{ frames: Frame[]; width: number; height: number }> {
   const seconds = shot.video!.seconds;
   const { width, height } = DEVICES[shot.device].viewport;
-  const context = await open(shot, true);
-  try {
+  return withContext(shot, true, limit, async (context) => {
     const page = await prepare(context, shot, false);
     const cdp = await context.newCDPSession(page);
     const raw: { jpeg: Buffer; t: number }[] = [];
@@ -228,7 +242,5 @@ export async function captureLoop(
       ),
     }));
     return { frames: frames.filter((f) => f.seconds > 0), width, height };
-  } finally {
-    await context.close();
-  }
+  });
 }

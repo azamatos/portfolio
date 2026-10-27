@@ -30,7 +30,8 @@ export type ShotResult = {
   savedTo?: string;
 };
 
-const TIMEOUT = 4 * 60_000;
+/** The time a capture gets, steps and loop included; encoding and uploading come after and aren't counted. */
+const CAPTURE_LIMIT = 4 * 60_000;
 
 /** The raw capture, for looking at: .cache/refresh/raw/<project>/<shot>.<ext>. */
 async function keepRaw(project: string, file: string, body: Buffer) {
@@ -57,7 +58,8 @@ function imageEntry(
   };
 }
 
-async function take(
+/** A shot from config to collected entry. Only the capture has a time limit. */
+export async function takeShot(
   project: string,
   name: string,
   shot: ShotConfig,
@@ -68,7 +70,7 @@ async function take(
   const asOf = new Date().toISOString();
 
   if (!shot.video) {
-    const png = await captureStill(shot);
+    const png = await captureStill(shot, CAPTURE_LIMIT);
     await keepRaw(project, `${name}.png`, png);
     const key = `${name}.${contentHash([png])}`;
     const base = `${MEDIA_URL}/${prefix}/${key}`;
@@ -92,7 +94,7 @@ async function take(
     };
   }
 
-  const { frames } = await captureLoop(shot);
+  const { frames } = await captureLoop(shot, CAPTURE_LIMIT);
   const key = `${name}.${contentHash(frames.flatMap((f) => [f.jpeg, f.seconds.toFixed(4)]))}`;
   const base = `${MEDIA_URL}/${prefix}/${key}`;
   if (old?.kind === "video" && old.poster.base === base)
@@ -132,31 +134,6 @@ async function take(
     files: files.length,
     sent: await upload(prefix, files),
   };
-}
-
-/** A shot, or an error after four minutes. */
-export async function takeShot(
-  project: string,
-  name: string,
-  shot: ShotConfig,
-  old: ShotEntry | undefined,
-  publish: boolean,
-): Promise<ShotResult> {
-  let timer: NodeJS.Timeout | undefined;
-  try {
-    return await Promise.race([
-      take(project, name, shot, old, publish),
-      new Promise<never>((_, reject) => {
-        timer = setTimeout(
-          () =>
-            reject(new Error(`took longer than ${TIMEOUT / 60_000} minutes`)),
-          TIMEOUT,
-        );
-      }),
-    ]);
-  } finally {
-    clearTimeout(timer);
-  }
 }
 
 export const rawDir = () => fileURLToPath(new URL("raw/", CACHE_DIR));
