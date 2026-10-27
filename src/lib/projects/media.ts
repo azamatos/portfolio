@@ -1,7 +1,6 @@
 // Media refs → something a page can render: a local image (`astro:assets`) or a collected screenshot or loop in R2.
 
 import type { ImageMetadata } from "astro";
-import { shotFallback } from "./fallback.ts";
 import type {
   Collected,
   CollectedImage,
@@ -11,7 +10,7 @@ import type {
 
 export type Media =
   /** A file in src/assets/projects/, for <Image>. `design`: a mockup, tagged "design" on the page. */
-  | { kind: "asset"; image: ImageMetadata; design: boolean; fallback?: true }
+  | { kind: "asset"; image: ImageMetadata; design: boolean }
   /** A screenshot in R2; build URLs with `imageUrl`/`imageSrcset`. */
   | CollectedImage
   /** A muted loop in R2, with a poster image. */
@@ -37,12 +36,14 @@ export function resolveMedia(
       throw new Error(`${where}: no file src/assets/projects/${ref.asset}`);
     return { kind: "asset", image, design: ref.design ?? false };
   }
-  const shot = collected?.shots[ref.shot] ?? shotFallback(project, ref.shot); // fallback: remove with fallback.ts
-  if (!shot)
-    throw new Error(
-      `${where}: shot "${ref.shot}" isn't collected yet. Run \`pnpm data:refresh ${project}\`.`,
-    );
-  return shot;
+  const shot = collected?.shots[ref.shot];
+  if (shot) return shot;
+  const skipped = collected?.skipped.find((s) => s.name === ref.shot);
+  throw new Error(
+    skipped
+      ? `${where}: shot "${ref.shot}" is skipped (${skipped.reason}), so there's nothing to show: use an \`asset\` until it's taken.`
+      : `${where}: shot "${ref.shot}" isn't collected yet. Run \`pnpm data:refresh ${project}\`.`,
+  );
 }
 
 /** One file of a collected screenshot: `${base}.${width}.${format}`. */

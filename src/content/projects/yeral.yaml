@@ -13,8 +13,8 @@ list:
 readme:
   kind: booking platform
   host: business.yeral.app
-  image: { shot: calendar }
-  phoneImage: { shot: calendar }
+  image: { asset: yeral-calendar.webp, design: true }
+  phoneImage: { asset: yeral-calendar.webp, design: true }
   alt: "Ýeral business calendar design: the team’s day with bookings and requests"
   panImage: false
   headline: Booking for any business that sells its time.
@@ -70,9 +70,9 @@ page:
           href: https://github.com/azamatos/yeral
   hero:
     host: business.yeral.app
-    image: { shot: calendar }
+    image: { asset: yeral-calendar.webp, design: true }
     alt: "Ýeral business calendar design: the day with each specialist’s bookings and requests"
-    phoneImage: { shot: phone-calendar }
+    phoneImage: { asset: yeral-phone-calendar.webp, design: true }
     phoneAlt: "Ýeral business calendar design for a phone: one specialist’s day with visits and requests"
   numbers:
     - value: "{productQuestions}"
@@ -321,7 +321,8 @@ shots:
     url: https://business.yeral.app/login
     device: desktop
     theme: light
-    # Skipped for now (27 Oct 2026): the page shows the design shots until the demo's way in is live. Then drop `skip`.
+    # Skipped for now (27 Oct 2026): the README and the page show the design mockups until the demo's way in is live.
+    # Then drop `skip` and point readme.image, readme.phoneImage, page.hero.image and page.hero.phoneImage here.
     skip: &blocked "the demo's 69 numbers can't sign in by code, and “Try the business app” (F-242) isn't in the live app yet"
     steps: &signIn
       - fill: 'input[type="tel"]'

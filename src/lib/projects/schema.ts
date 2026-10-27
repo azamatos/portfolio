@@ -810,7 +810,7 @@ export const collectedOgSchema = z.strictObject({
   height: size,
   /** The hero shot's name; none for an `asset` hero. */
   shot: z.string().regex(SHOT_NAME).optional(),
-  /** The shot's base URL, or the local file the page shows in its place (`heroSource` in share.ts). */
+  /** The shot's base URL, or the `asset` file (`heroSource` in share.ts). */
   from: z.union([
     url,
     z

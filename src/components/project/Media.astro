@@ -1,7 +1,7 @@
 ---
 // Any resolved media ref (see src/lib/projects/media.ts), optionally in the design's browser frame:
 //   - a collected screenshot: <picture> with AVIF and WebP srcsets from media.azamatos.com
-//   - a local asset (a design mockup, or a fallback while a shot isn't collected): astro:assets <Picture>
+//   - a file in src/assets/projects/ (a design mockup): astro:assets <Picture>
 //   - a collected loop: a muted, looping <video> over its poster image, at the rendition `videoWidth` picks. Nothing
 //     of it loads until it plays, and it plays only while on screen (a hidden tab panel or a closed <details> isn't),
 //     never with reduced motion or Save-Data, and not while the hero's pause button holds the page's motion

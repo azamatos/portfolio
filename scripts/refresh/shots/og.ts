@@ -6,7 +6,7 @@
 // A card's file name hashes its HTML (fonts, text and colours) and where its screenshot came from, so an unchanged card
 // keeps its file without rendering or fetching anything, and a new number or status makes a new one.
 
-import { access, readFile, writeFile } from "node:fs/promises";
+import { readFile, writeFile } from "node:fs/promises";
 import { format } from "prettier";
 import sharp from "sharp";
 import { z } from "astro/zod";
@@ -105,37 +105,35 @@ async function download(entry: ShotEntry): Promise<Buffer> {
 }
 
 /**
- * The hero the card shows, as the page does: the collected shot, or the local file the page shows in its place (an
- * `asset`, or the design export's image for a shot that isn't collected: Ýeral's, a mockup). None when there's neither.
+ * The hero the card shows, as the page does: the collected shot, or an `asset` in src/assets/projects/, tagged
+ * "design" when it's a mockup. None for a shot that isn't collected.
  */
 async function heroOf(
-  id: string,
   config: ProjectConfig,
   shots: Collected["shots"],
   stills: Map<string, Buffer>,
 ) {
   const ref = config.page.hero.image;
-  const from = heroSource(id, ref, shots);
-  const shot = "shot" in ref ? ref.shot : undefined;
-  const entry = shot ? shots[shot] : undefined;
-  if (entry)
+  const from = heroSource(ref, shots);
+  if (!from) return undefined;
+  if ("shot" in ref) {
+    const entry = shots[ref.shot];
     return {
       from,
-      shot,
+      shot: ref.shot,
       design: false,
       local: undefined,
       still: async () => stills.get(from) ?? (await download(entry)),
     };
-  const path = new URL(from, ROOT);
-  try {
-    await access(path);
-  } catch {
-    return undefined;
   }
-  const local = await readFile(path);
-  // A local file named by an `asset` says whether it's a mockup; a shot's fallback is the design export's.
-  const design = "asset" in ref ? (ref.design ?? false) : true;
-  return { from, shot, design, local, still: async () => local };
+  const local = await readFile(new URL(from, ROOT));
+  return {
+    from,
+    shot: undefined,
+    design: ref.design ?? false,
+    local,
+    still: async () => local,
+  };
 }
 
 /** The screenshot at the frame's screen size, from its top, as a data URL for the card. */
@@ -156,7 +154,7 @@ async function screen(still: Buffer): Promise<string> {
 /**
  * The share card of one project, from its config and this run's collected values and shots. `stills` holds this run's
  * captures by their entry's base; a hero that wasn't captured is downloaded, and only when the card has to be made.
- * Undefined when the hero has no screenshot at all.
+ * Undefined when the hero is a shot that isn't collected.
  */
 export async function shareImage(
   id: string,
@@ -166,7 +164,7 @@ export async function shareImage(
   stills: Map<string, Buffer>,
   publish: boolean,
 ): Promise<OgResult<CollectedOg> | undefined> {
-  const hero = await heroOf(id, config, collected.shots, stills);
+  const hero = await heroOf(config, collected.shots, stills);
   if (!hero) return undefined;
   const values = resolveValues(id, config, collected);
   const fill = (s: string, where: string) =>

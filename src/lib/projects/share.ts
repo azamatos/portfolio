@@ -26,17 +26,15 @@ export const imageType = (url: string) =>
 
 /**
  * Where a share card's screenshot comes from, which ties the card to the hero the page shows: the hero shot's base in
- * R2, or the local file the page shows in its place (an `asset`, or a shot's fallback while it isn't collected).
+ * R2, or the file in src/assets/projects/ for an `asset`. None for a shot that isn't collected.
  */
 export function heroSource(
-  id: string,
   hero: MediaRef,
   shots: Collected["shots"] | undefined,
-): string {
+): string | undefined {
   if ("asset" in hero) return `src/assets/projects/${hero.asset}`;
   const shot = shots?.[hero.shot];
-  if (shot) return shot.kind === "video" ? shot.poster.base : shot.base;
-  return `src/assets/projects/fallback/${id}-${hero.shot}.webp`; // fallback: goes with fallback.ts
+  return shot && (shot.kind === "video" ? shot.poster.base : shot.base);
 }
 
 /**

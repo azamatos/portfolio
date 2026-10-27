@@ -297,9 +297,9 @@ function resolveDeep(o: unknown, ctx: Ctx, path: string): unknown {
 }
 
 /** The collected share image, if it shows the hero the page shows now. */
-function ogOf(id: string, config: Config, collected: Collected | undefined) {
+function ogOf(config: Config, collected: Collected | undefined) {
   const og = collected?.og;
-  return og?.from === heroSource(id, config.page.hero.image, collected?.shots)
+  return og?.from === heroSource(config.page.hero.image, collected?.shots)
     ? og
     : undefined;
 }
@@ -346,7 +346,7 @@ function resolveProject(
     },
     values: Object.fromEntries(values),
     refreshedAt: collected?.refreshedAt,
-    og: ogOf(id, config, collected),
+    og: ogOf(config, collected),
   };
 }
 
