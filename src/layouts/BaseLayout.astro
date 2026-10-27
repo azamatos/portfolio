@@ -4,7 +4,6 @@ import Header from "@/components/Header.astro";
 import Footer from "@/components/Footer.astro";
 import CommandPalette from "@/components/CommandPalette.astro";
 import heroPhoto from "@/assets/hero-photo.webp";
-import ogImage from "@/assets/og-image.png";
 import { accentStyle, getProjects, type Project } from "@/lib/projects";
 import { collectedSiteSchema } from "@/lib/projects/schema";
 import { imageType, PERSON_ID, type ShareImage } from "@/lib/projects/share";
@@ -54,36 +53,28 @@ const canonical = new URL(
   Astro.site,
 ).href;
 
-// The site's card (the projects in a terminal), once the refresh command has made one: src/data/collected/_site.json.
-// Until then, the old image, imported so its file name carries a content hash.
+// The site's card (the projects in a terminal), which the refresh command makes: src/data/collected/_site.json.
 const siteFile = Object.values(
   import.meta.glob<unknown>("/src/data/collected/_site.json", {
     eager: true,
     import: "default",
   }),
 )[0];
-const siteOg =
-  siteFile === undefined ? undefined : collectedSiteSchema.parse(siteFile).og;
+if (siteFile === undefined)
+  throw new Error(
+    "src/data/collected/_site.json is missing: run `pnpm data:refresh` for the site's share card.",
+  );
+const siteOg = collectedSiteSchema.parse(siteFile).og;
 const names = new Intl.ListFormat("en").format(
   (await getProjects()).map((p) => p.name),
 );
-const share: ShareImage =
-  image ??
-  (siteOg
-    ? {
-        url: siteOg.url,
-        width: siteOg.width,
-        height: siteOg.height,
-        type: imageType(siteOg.url),
-        alt: `${SITE.name}, ${SITE.role}. A terminal lists his projects: ${names}.`,
-      }
-    : {
-        url: new URL(ogImage.src, Astro.site).href,
-        width: ogImage.width,
-        height: ogImage.height,
-        type: "image/png",
-        alt: `${SITE.name}, ${SITE.role}`,
-      });
+const share: ShareImage = image ?? {
+  url: siteOg.url,
+  width: siteOg.width,
+  height: siteOg.height,
+  type: imageType(siteOg.url),
+  alt: `${SITE.name}, ${SITE.role}. A terminal lists his projects: ${names}.`,
+};
 
 const person = {
   "@type": "Person",

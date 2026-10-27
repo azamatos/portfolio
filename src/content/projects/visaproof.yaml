@@ -78,8 +78,7 @@ page:
       label: new roles in the last 24 hours
   numbersNote: Live from the site’s own data, for the EU, EEA, UK and Switzerland; checked {checked}.
   sections:
-    - number: "01"
-      title: the problem
+    - title: the problem
       lead: A developer who needs a visa opens fifty postings and searches each one for “visa”. Most never say.
       text: "Only {mentionShare} of open roles mention visas, relocation, permits or the right to work at all. About {sponsorsPer100} in 100 clearly offer sponsorship, and {wontPer100} in 100 refuse it. So for most roles the answer can’t come from the posting: it has to come from the law and the sponsor registers."
       parts:
@@ -108,8 +107,7 @@ page:
               swatch: var(--waffle-empty)
               text: say nothing
               alt: say nothing
-    - number: "02"
-      title: how it works
+    - title: how it works
       lead: Read every company’s own job board, keep the engineering roles in Europe, and check each one against the law.
       parts:
         - kind: flow
@@ -142,8 +140,7 @@ page:
             - when: nightly
               title: Language model
               body: Reads postings that mention visas and returns facts with exact quotes.
-    - number: "03"
-      title: the answer
+    - title: the answer
       lead: Yes or no isn’t honest. The visa answer has five levels, and each shows where it came from.
       parts:
         - kind: states
@@ -196,8 +193,7 @@ page:
               border: color-mix(in srgb, var(--acc2) 45%, transparent)
               bs: solid
               r: 999px
-    - number: "04"
-      title: measured
+    - title: measured
       lead: Keyword rules were wrong on {rulesWrong} of the postings they marked “offers”. So they never show an answer; a language model does, checked against {labelled} postings labelled by hand.
       parts:
         - kind: bars
@@ -220,8 +216,7 @@ page:
                 - metric: recall
                   value: "{modelRecall}"
                   color: var(--acc)
-    - number: "05"
-      title: what the first sweep broke
+    - title: what the first sweep broke
       text: The first full sweep, on 22 October 2026, read every board Common Crawl knew.
       parts:
         - kind: cards

@@ -57,9 +57,9 @@ const preconnect = page.hero.image.kind === "asset" ? [] : [MEDIA_URL];
 >
   <PageHead project={project} />
   <Numbers numbers={page.numbers} note={page.numbersNote} />
-  {page.sections.map((s) => (
+  {page.sections.map((s, i) => (
     <Section
-      number={s.number}
+      number={sectionNumber(i + 1)}
       title={s.title}
       lead={s.lead}
       text={s.text}

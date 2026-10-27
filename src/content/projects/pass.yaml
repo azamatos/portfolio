@@ -72,8 +72,7 @@ page:
       label: passwords stored, ever
   numbersNote: Sizes from CI, which runs on every push and once a month; checked {checked}.
   sections:
-    - number: "01"
-      title: what it does
+    - title: what it does
       lead: Pick a site, and get a password its sign-up form accepts.
       text: The right length, the character types it requires, only the symbols it allows, no more repeats than it permits. Passphrases for things you type by hand, and a check of how long a password would take to guess and whether it has leaked.
       parts:
@@ -97,8 +96,7 @@ page:
             - Steam
             - Twitch
             - Any site
-    - number: "02"
-      title: how it works
+    - title: how it works
       lead: Everything runs in the browser. There is no backend and no account, and nothing is stored.
       parts:
         - kind: cards
@@ -114,8 +112,7 @@ page:
               body: Pages may connect only to the site, Have I Been Pwned and the analytics. The build fails on an inline script the policy would block.
             - title: No UI framework
               body: Astro renders static HTML and plain TypeScript makes it interactive. The rules logic is framework-free and unit-tested.
-    - number: "03"
-      title: the health check
+    - title: the health check
       lead: How long a password would take to guess, online and from a leaked database, and whether it has leaked.
       parts:
         - kind: figure
@@ -125,8 +122,7 @@ page:
           img: { shot: health }
           alt: "pass health page: a typed password rated Very strong, how long it would take to guess online and offline, and the leak check’s answer: not found in known leaks"
           caption: The strength estimate runs zxcvbn-ts in a Web Worker. With the leak check off, nothing is sent at all.
-    - number: "04"
-      title: measured
+    - title: measured
       lead: Small enough to feel instant on a phone.
       parts:
         - kind: table

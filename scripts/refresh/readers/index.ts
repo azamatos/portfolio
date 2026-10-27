@@ -1,12 +1,11 @@
 // Reads every fetched value of one project. The GitHub query runs first (it also gives the default branch the CI
-// reader needs); the rest run side by side, except Lighthouse runs, which go one at a time.
+// reader needs); the rest run side by side.
 
 import type { ProjectConfig } from "../../../src/lib/projects/schema.ts";
 import { readCi } from "./ci.ts";
 import { readGithub } from "./github.ts";
-import { readMeasure } from "./measure.ts";
 import type { Def, FetchedConfig, Reading } from "./types.ts";
-import { readJson, readPage } from "./web.ts";
+import { readJson } from "./web.ts";
 
 export type { Reading } from "./types.ts";
 
@@ -59,9 +58,6 @@ export async function readValues(
         readJson(def, def.url ?? config.sources![def.source!]),
       ),
     ),
-    ...of("page").map(([name, def]) => settle(name, () => readPage(def))),
   ]);
-  for (const [name, def] of of("measure"))
-    await settle(name, () => readMeasure(def));
   return results;
 }

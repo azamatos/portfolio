@@ -1,4 +1,4 @@
-// One Chromium for the whole run, started on first use: screenshots, loops and the `measure` reader share it.
+// One Chromium for the whole run, started on first use: the screenshots, the loops and the share cards share it.
 
 import { chromium, devices, type Browser } from "playwright";
 
@@ -13,8 +13,6 @@ export async function closeBrowser() {
   if (browserPromise) await (await browserPromise).close();
   browserPromise = undefined;
 }
-
-export const chromiumPath = () => chromium.executablePath();
 
 /** The two devices a shot can use. Both render at twice the pixels, like the screens they're shown on. */
 export const DEVICES = {

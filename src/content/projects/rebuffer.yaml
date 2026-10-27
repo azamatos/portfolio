@@ -73,8 +73,7 @@ page:
       label: of JavaScript on Home, against a {homeBudget} budget
   numbersNote: Measured locally and in CI. CI numbers checked {checked}; the repeatability job runs every week.
   sections:
-    - number: "01"
-      title: what it does
+    - title: what it does
       lead: Pick a stream and a network, press Run, and watch a real hls.js player fight it.
       text: The bandwidth it gets, what it thinks it gets, the quality it picks, the buffer draining, every stall. Then a report with the numbers viewers feel, and what to try next.
       parts:
@@ -100,8 +99,7 @@ page:
               body: The ladder by codec, each segment’s bitrate against what’s declared, and findings with the spec they break.
             - title: Tune the player
               body: hls.js defaults, a low-memory TV preset, quality first, fast start, or one setting changed.
-    - number: "02"
-      title: how it works
+    - title: how it works
       lead: The player is the real one. The network is simulated where the player can’t tell.
       parts:
         - kind: flow
@@ -133,8 +131,7 @@ page:
               body: Repeat runs take their bytes from a copy saved in the browser, so they don’t depend on the visitor’s connection.
             - title: A framework-free core
               body: The playlist parser, network simulator, metrics and report text import no React, and the link scheduler is tested with a fake clock.
-    - number: "03"
-      title: draw a network
+    - title: draw a network
       lead: A network is a curve of bandwidth over time plus a latency. Draw one with the keyboard or a pointer, or import it.
       parts:
         - kind: figure
@@ -144,8 +141,7 @@ page:
           img: { shot: networks }
           alt: "Rebuffer network editor: Train through a tunnel, a bandwidth curve with the qualities of Tears of Steel drawn as dashed lines"
           caption: Where the curve dips below a dashed line, that quality downloads slower than it plays. Import JSON, CSV or a HAR file.
-    - number: "04"
-      title: measured
+    - title: measured
       lead: "Every network runs {repeatRuns} times each week in CI. The largest score gap between runs of one network: {scoreSpread}."
       parts:
         - kind: table

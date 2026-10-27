@@ -85,8 +85,7 @@ page:
       label: architecture decisions, each written down
   numbersNote: "Counted from the repository, its CI and the live Storybook; checked {checked}. Launch market: Turkmenistan, Ashgabat first."
   sections:
-    - number: "01"
-      title: the idea
+    - title: the idea
       lead: A barber, a dentist or a café takes bookings by phone. Ýeral lets clients book a place without calling, and gives the business a free workspace to run its day.
       text: "Every booking is a place: a chair, a table, a mat, a court. The category decides how a business is found and booked: by appointment, by table or by class. It launches in Turkmenistan first, in Turkmen, Russian and English, with prices in manats."
       parts:
@@ -100,8 +99,7 @@ page:
               img: { asset: yeral-business-page.webp, design: true }
               alt: "Ýeral business page design for Glow Studio: photos, rating, services and the next free time"
               caption: "A business page: photos, services and the next free time."
-    - number: "02"
-      title: one monorepo, five sites
+    - title: one monorepo, five sites
       lead: Four apps and an API share one contract, so a change in the booking rules reaches every screen at once.
       parts:
         - kind: cards
@@ -122,8 +120,7 @@ page:
             - tag: storybook.yeral.app
               title: The design system
               body: Every component with its stories; the stories run as browser tests with axe.
-    - number: "03"
-      title: rules that never break
+    - title: rules that never break
       lead: "{productQuestions} product questions were answered in a product book before the code, so every screen follows the same rules."
       parts:
         - kind: cards
@@ -139,8 +136,7 @@ page:
               body: "Everything is relative to where you are: “near me”, not a city."
             - title: Pay at the place
               body: No online payment yet; a deposit row is already reserved in every summary.
-    - number: "04"
-      title: the business day
+    - title: the business day
       parts:
         - kind: figure
           host: business.yeral.app/bookings

@@ -78,14 +78,15 @@ const image = media.kind === "image" ? media : poster;
 /** The rendition: the widest up to `videoWidth` (or the narrowest there is), as WebM then MP4. */
 const videoSources = (() => {
   if (media.kind !== "video") return [];
-  const widthOf = (s: (typeof media.sources)[number]) => s.width ?? media.width;
-  const widths = [...new Set(media.sources.map(widthOf))].sort((a, b) => a - b);
+  const widths = [...new Set(media.sources.map((s) => s.width))].sort(
+    (a, b) => a - b,
+  );
   const chosen =
     videoWidth === undefined
       ? widths.at(-1)
       : (widths.filter((w) => w <= videoWidth).at(-1) ?? widths[0]);
   return media.sources
-    .filter((s) => widthOf(s) === chosen)
+    .filter((s) => s.width === chosen)
     .sort(
       (a, b) =>
         Number(b.type === "video/webm") - Number(a.type === "video/webm"),

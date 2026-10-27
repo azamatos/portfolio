@@ -9,7 +9,6 @@ export type PartOf<K extends ProjectPart["kind"]> = Extract<
 >;
 
 type Page = Project["page"];
-export type Section = Page["sections"][number];
 export type BuiltWithGroup = Page["builtWith"][number];
 export type LogList = Page["log"];
 export type AsideList = Page["aside"];

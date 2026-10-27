@@ -1,13 +1,11 @@
-// `github` values: one GraphQL query per project reads the commit count, the last commit, every file a version
-// comes from and every directory a file count needs.
+// `github` values: one GraphQL query per project reads the commit count, every file a version comes from and every
+// directory a file count needs.
 
 import { graphql } from "../github.ts";
 import { parseYaml } from "../config.ts";
 import type { Def, Reading } from "./types.ts";
 
 type Commit = {
-  oid: string;
-  committedDate: string;
   history: { totalCount: number };
 };
 type Repo = {
@@ -146,7 +144,7 @@ export async function readGithub(
 
   const query = `query(${declare.join(", ")}) {
   repository(owner: $owner, name: $name) {
-    defaultBranchRef { name target { ... on Commit { oid committedDate history { totalCount } } } }
+    defaultBranchRef { name target { ... on Commit { history { totalCount } } } }
     ${fields.join("\n    ")}
   }
 }`;
@@ -178,12 +176,6 @@ export async function readGithub(
         return {
           value: head!.target.history.totalCount,
           source: `${web}/commits/${branch}`,
-          asOf,
-        };
-      case "lastCommit":
-        return {
-          value: head!.target.committedDate.slice(0, 10),
-          source: `${web}/commit/${head!.target.oid}`,
           asOf,
         };
       case "version": {

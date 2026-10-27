@@ -111,15 +111,6 @@ const github = z.discriminatedUnion("get", [
     allowZero,
     format,
   }),
-  /** The date of the latest commit on the default branch. */
-  z.strictObject({
-    from: z.literal("github"),
-    get: z.literal("lastCommit"),
-    means,
-    maxAge,
-    allowZero,
-    format,
-  }),
   /**
    * A version from `file`, range characters dropped, cut to `parts` numbers (1 → "19", 2 → "3.5", 3 → "1.7.3"):
    * `package` in a package.json (the default) or a pnpm-workspace.yaml's catalog, the tag of the `package` image in a
@@ -220,28 +211,6 @@ const json = z
     "`distinct` and `where` go with `count`",
   );
 
-/** A number from a live page's HTML: the capture group of `pattern`. The last resort. */
-const page = z.strictObject({
-  from: z.literal("page"),
-  url,
-  pattern: regexWithOneGroup,
-  means,
-  maxAge,
-  allowZero,
-  format,
-});
-
-/** Measured on a live URL: the JavaScript it loads (bytes, compressed), or its Lighthouse performance score. */
-const measure = z.strictObject({
-  from: z.literal("measure"),
-  url,
-  metric: z.enum(["jsBytes", "lighthouse"]),
-  means,
-  maxAge,
-  allowZero,
-  format,
-});
-
 /**
  * Typed in by hand: where it was read (`sourceUrl`) and when (`checked`). Without `maxAge` it's a dated fact that
  * doesn't go stale (a first-sweep count); with it, the refresh command asks for a recheck after that many days.
@@ -273,8 +242,6 @@ export const valueSchema = z.discriminatedUnion("from", [
   github,
   ci,
   json,
-  page,
-  measure,
   manual,
   calc,
 ]);
@@ -547,8 +514,8 @@ export const partSchema = z.discriminatedUnion("kind", [
   parts.note,
 ]);
 
+/** A numbered section of the page, in order: "01" is the first; "built with" and the log come after the last. */
 const section = z.strictObject({
-  number: z.string().regex(/^\d{2}$/),
   title: text,
   lead: text.optional(),
   text: text.optional(),
@@ -782,7 +749,7 @@ export const collectedImageSchema = z.strictObject({
 
 /**
  * A loop in R2, with a still frame as its poster. Each source is one file of one rendition: the loop at its own
- * width, and a smaller one for the home README. A source without `width` (recorded before renditions) is the full one.
+ * width, and a smaller one for the home README.
  */
 export const collectedVideoSchema = z.strictObject({
   kind: z.literal("video"),
@@ -794,7 +761,7 @@ export const collectedVideoSchema = z.strictObject({
       z.strictObject({
         type: z.string().regex(/^video\//),
         url,
-        width: size.optional(),
+        width: size,
       }),
     )
     .min(1),
@@ -853,8 +820,8 @@ export const collectedSchema = z.strictObject({
 
 /**
  * The site's own collected file, src/data/collected/_site.json (the `collected` collection skips names that start
- * with "_"): the home and 404 pages' share image, a card the refresh renders from the project configs and src/site.ts.
- * Until it exists, those pages use src/assets/og-image.png.
+ * with "_"): the share image of every page without its own (the home and 404 pages), a card the refresh renders from
+ * the project configs and src/site.ts.
  */
 export const collectedSiteSchema = z.strictObject({
   og: z.strictObject({ url, width: size, height: size, asOf: isoTime }),

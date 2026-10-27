@@ -50,7 +50,7 @@ pnpm lint
 
 - **Text and links:** `src/site.ts`. The page, meta tags, structured data and `/llms.txt` all read from it.
 - **Resume:** replace `public/Azamat_Jorayev_Resume.pdf` with the new full-stack PDF (same file name).
-- **Share image:** the refresh command renders the site's (the projects in a terminal, the role and line from `src/site.ts`) and records it in `src/data/collected/_site.json`; see "Project data". Until that file exists, the home and 404 pages use `src/assets/og-image.png`.
+- **Share image:** the refresh command renders the site's (the projects in a terminal, the role and line from `src/site.ts`) and records it in `src/data/collected/_site.json`, which the home and 404 pages use; see "Project data".
 
 ## Project data
 

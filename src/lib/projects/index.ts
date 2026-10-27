@@ -26,8 +26,7 @@ import {
 
 export type { Media } from "./media.ts";
 export { imageSrcset, imageUrl } from "./media.ts";
-export type { Value } from "./values.ts";
-export { formatDay, formatNumber, numberWord, statusText } from "./values.ts";
+export { numberWord } from "./values.ts";
 
 /** Config types with every media ref resolved. Strings stay strings, now with their placeholders filled. */
 type Resolved<T> = T extends MediaRef

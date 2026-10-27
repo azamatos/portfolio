@@ -1,4 +1,4 @@
-// `json` and `page` values: a number from a live JSON document or HTML page.
+// `json` values: a number from a live JSON document.
 
 import { firstNumber, once, type Def, type Reading } from "./types.ts";
 
@@ -93,19 +93,6 @@ export async function readJson(
   return {
     value: readFrom(doc, def),
     source: url,
-    asOf: new Date().toISOString(),
-  };
-}
-
-export async function readPage(def: Def<"page">): Promise<Reading> {
-  const html = await once(`page ${def.url}`, async () =>
-    (await get(def.url, "text/html")).text(),
-  );
-  const m = new RegExp(def.pattern, "m").exec(html);
-  if (!m) throw new Error(`/${def.pattern}/ matches nothing on ${def.url}`);
-  return {
-    value: firstNumber(m[1], `the match "${m[0].trim().slice(0, 80)}"`),
-    source: def.url,
     asOf: new Date().toISOString(),
   };
 }
