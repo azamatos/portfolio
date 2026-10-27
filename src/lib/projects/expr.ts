@@ -1,5 +1,5 @@
 // `calc` values: arithmetic over other values' names, numbers, + - * / and parentheses. Nothing else is allowed, so
-// an expression can't run code. Plain TypeScript with no imports: the schema and phase 2's collector use it too.
+// an expression can't run code. Plain TypeScript with no imports: the schema and the refresh command use it too.
 
 type Node =
   | { type: "num"; value: number }

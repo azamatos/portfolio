@@ -85,17 +85,24 @@ The home page's terminal, the ⌘K palette, the project pages, the sitemap and t
 ```text
 src/
   site.ts                    copy, links, resume path
-  layouts/BaseLayout.astro   <head> (SEO, Open Graph, JSON-LD, fonts), header and footer
-  components/                Header, Logo, EmailButton, Hero, ResumeActions, Footer
+  layouts/BaseLayout.astro   <head> (SEO, Open Graph, JSON-LD, fonts, the theme before first paint), header, footer, palette
+  components/                Header, Logo, EmailButton, Hero, ResumeActions, Footer, ThemeSwitch,
+                             ProjectsTerminal (the home page's Projects), CommandPalette (⌘K)
+  components/project/        a project page: PageHead, Media and Frame, Numbers, Section and its parts/ (Waffle,
+                             Flow, Feeds, States, Bars, Cards, Figure, Gallery, Table, Chips, Note), BuiltWith, Log,
+                             Aside, Actions, NextProject, AllProjects; reveal.ts plays their entrances
   pages/index.astro          home page
   pages/404.astro            not-found page
   pages/projects/[id].astro  the project pages (/projects/<id>/)
   pages/llms.txt.ts          plain-text profile for AI assistants (/llms.txt)
-  styles/global.css          tokens and reset
-  assets/                    fonts, share image
+  styles/tokens.css          design tokens: colours for each theme, the project accents, gutters
+  styles/global.css          reset and base styles (imports tokens.css)
+  styles/project.css         what the project page components share
+  assets/                    fonts, the hero photo, Ýeral's design mockups (assets/projects/)
   content/projects/          one YAML file per project
-  data/collected/            what the refresh command collected, one JSON file per project
-  lib/projects/              schema, values and media for the project pages
+  data/collected/            what the refresh command collected: one JSON file per project, _site.json for the site
+  lib/projects/              schema, values, media and sharing for the project pages
+  lib/theme.ts, lib/palette.ts  the theme switch, the ⌘K palette's commands
 scripts/refresh/             pnpm data:refresh
 public/                      resume PDF, icons, hero.svg, _redirects (old resume links)
 ```

@@ -1,7 +1,8 @@
 /*
  * Design tokens, from docs/design/tokens.css (the Chosen design, 27 Oct 2026).
  *
- * Theme: system by default. The visitor picks system / dark / light (the footer switch, later ⌘K → theme …):
+ * Theme: system by default. The visitor picks system / dark / light (the footer switch, or `theme …` in the ⌘K
+ * palette):
  *   - "dark" or "light": data-theme on <html> (set before first paint by the inline script in BaseLayout).
  *   - "system": no data-theme; prefers-color-scheme decides.
  * .theme-dark pins a subtree to the dark tokens in every theme (the projects terminal and the command palette).

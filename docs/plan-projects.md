@@ -54,9 +54,10 @@ was decided on top of it and the order of the work.
 
 ## Refresh command: `pnpm data:refresh [project] [--no-shots]`
 
-- **Readers:** `github` (one GraphQL query: commits, versions, file counts, CI status), `ci` (latest successful run
-  log, colour codes stripped, pattern match, optional sum), `json` (URL + path or count), `page` (live HTML, last
-  resort), `measure` (Lighthouse and JS size on live URLs), `manual` (value, date checked, source link).
+- **Readers:** `github` (one GraphQL query: commits, versions, file counts), `ci` (latest successful run log, colour
+  codes stripped, pattern match, optional sum or table), `json` (URL + path or count), `manual` (value, date checked,
+  source link), and `calc` (arithmetic over other values) at build time. The planned `page` and `measure` readers
+  were dropped: every number had a better source.
 - **Screenshots:** Playwright at desktop 1440 and phone 390, in a given theme, with optional steps (Ýeral's sign-in,
   the Rebuffer run, Visaproof's full-page scroll). Images in several sizes as AVIF and WebP; loops as WebM and MP4
   with a still frame. Uploaded to R2 under content-hashed names, cached for a year.
@@ -69,7 +70,8 @@ was decided on top of it and the order of the work.
 ## Weekly run: `.github/workflows/refresh.yml`
 
 Mondays, plus a manual button that can target one project. It runs the refresh, the type check and the build, then
-commits `src/data/collected/` if anything changed; Cloudflare deploys on that push. Commits made by the job don't
+commits `src/data/collected/` if anything changed (building again if `main` moved on meanwhile); Cloudflare deploys
+on that push. Only this job, on `main`, deletes unused media from R2. Commits made by the job don't
 start the normal CI, which is why the job builds the site itself. GitHub pauses scheduled runs after 60 days without
 commits; it emails first, and one click turns them back on.
 
