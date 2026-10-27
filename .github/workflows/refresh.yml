@@ -1,9 +1,10 @@
 name: Refresh project data
 
 # Reads every project's numbers, takes its screenshots, uploads them to R2 and commits src/data/collected/ to main
-# when something changed; Cloudflare deploys that push. Pushes made with the job's token don't start ci.yml, so the
-# job checks and builds the site itself before it commits. When the refresh reports problems, the values it could
-# read are still committed and the job then fails, so GitHub sends an email.
+# (every run changes it: the files carry the day they were checked); Cloudflare deploys that push. Pushes made with
+# the job's token don't start ci.yml, so the job checks and builds the site itself before it commits. When the
+# refresh reports problems or runs out of time, what it wrote is still committed and the job then fails, so GitHub
+# sends an email. Loops are recorded again only when asked (the "loops" box).
 
 on:
   schedule:
@@ -14,6 +15,10 @@ on:
         description: "One project id (src/content/projects/<id>.yaml); empty for all"
         required: false
         default: ""
+      loops:
+        description: "Record the loops again too"
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -44,9 +49,11 @@ jobs:
       - name: Refresh
         id: refresh
         continue-on-error: true
-        run: pnpm data:refresh ${PROJECT:+"$PROJECT"}
+        timeout-minutes: 20
+        run: pnpm data:refresh ${PROJECT:+"$PROJECT"} ${LOOPS:+--loops}
         env:
           PROJECT: ${{ inputs.project }}
+          LOOPS: ${{ inputs.loops && '1' || '' }}
           # The four repositories are public. If the job's own token is ever refused for their CI logs, add a
           # read-only token as the GH_READ_TOKEN secret and it's used instead.
           GITHUB_TOKEN: ${{ secrets.GH_READ_TOKEN || github.token }}
@@ -73,5 +80,5 @@ jobs:
       - name: Fail on problems
         if: steps.refresh.outcome == 'failure'
         run: |
-          echo "::error::The refresh reported problems (see the Refresh step). What it could read was committed."
+          echo "::error::The refresh reported problems or ran out of time (see the Refresh step). What it wrote was committed."
           exit 1
