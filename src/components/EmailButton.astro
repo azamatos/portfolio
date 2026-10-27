@@ -198,10 +198,18 @@ const { variant = "header", class: className } = Astro.props;
     width: 44px;
   }
 
+  /* Beside the check, inside the line's own height: under the line it dropped into the hero's bottom padding, where
+     the typing pause button sits (and paints over it). The line is centred, so there's room on the right down to
+     a 320px screen; it's positioned, so the address doesn't shift. */
   .line .copied-label {
-    top: 40px;
-    right: 50%;
-    transform: translateX(50%);
+    top: 50%;
+    left: 34px;
+    right: auto;
+    padding: 0;
+    border: 0;
+    background: none;
+    font-size: 12px;
+    transform: translateY(-50%);
   }
 
   @media (prefers-reduced-motion: no-preference) {
@@ -209,12 +217,23 @@ const { variant = "header", class: className } = Astro.props;
     .copied .copied-label {
       animation: pop 0.24s cubic-bezier(0.2, 0.8, 0.2, 1) both;
     }
+
+    .line .copied .copied-label {
+      animation-name: pop-aside;
+    }
   }
 
   @keyframes pop {
     from {
       opacity: 0;
       translate: 0 3px;
+    }
+  }
+
+  @keyframes pop-aside {
+    from {
+      opacity: 0;
+      translate: -4px 0;
     }
   }
 </style>

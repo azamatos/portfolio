@@ -15,7 +15,10 @@ const groups = (["go", "do", "set", "open"] as const)
   .filter((group) => group.commands.length > 0);
 ---
 
-<dialog class="palette" aria-label="Command palette" data-palette>
+<!-- tabindex: a finger opens it with the focus on the dialog itself, so the keyboard doesn't cover the list. -->
+<dialog class="palette" aria-label="Command palette" tabindex="-1" data-palette>
+  <!-- Phone: the bottom sheet's grab handle; it and the prompt row drag the sheet down. -->
+  <div class="grip" aria-hidden="true"></div>
   <div class="prompt">
     <span class="arrow" aria-hidden="true">
       ➜
@@ -154,12 +157,17 @@ const groups = (["go", "do", "set", "open"] as const)
       "[data-palette-open]",
     );
     const desc = (option: HTMLElement) => option.querySelector(".desc")!;
+    const reduce = matchMedia("(prefers-reduced-motion: reduce)");
+    // Chrome keeps a closing dialog in the top layer while it animates out (a transition on `overlay`). Safari and
+    // Firefox take it out at once, so there the script keeps it open until the slide or fade has ended.
+    const leavesByItself = CSS.supports("overlay", "auto");
 
     let shown = options;
     let active = 0;
     let opener: Element | null = null;
     let downOnBackdrop = false;
     let timer: number | undefined;
+    let leaving: number | undefined;
 
     const select = (index: number) => {
       active = Math.max(0, Math.min(index, shown.length - 1));
@@ -201,20 +209,43 @@ const groups = (["go", "do", "set", "open"] as const)
         trigger.setAttribute("aria-expanded", String(open));
     };
 
-    // Safari doesn't focus a clicked button, so a trigger passes itself.
-    const open = (from = document.activeElement) => {
+    // Safari doesn't focus a clicked button, so a trigger passes itself. Opened with a finger, the focus goes to
+    // the dialog, not the input: the keyboard would cover half the sheet as it slides up, and most people tap a
+    // row. Tapping the input brings the keyboard; typing on a hardware one goes into the input (see keydown).
+    const open = (from = document.activeElement, touch = false) => {
       if (dialog.open) return;
       opener = from;
       input.value = "";
       filter();
       sync();
       status.textContent = "";
+      dialog.autofocus = touch;
       dialog.showModal();
-      input.focus();
+      // Safari and Firefox focus a dialog with autofocus; Chrome focuses its first field regardless.
+      if (!touch) input.focus();
+      else if (document.activeElement !== dialog)
+        dialog.focus({ preventScroll: true });
       expand(true);
     };
 
-    const close = () => dialog.close();
+    // It slides (phone) or fades (desktop) out, then closes: see leavesByItself. With reduced motion, at once.
+    const close = () => {
+      if (!dialog.open || dialog.dataset.closing !== undefined) return;
+      if (leavesByItself || reduce.matches) return dialog.close();
+      dialog.dataset.closing = "";
+      const done = () => {
+        delete dialog.dataset.closing;
+        if (!dialog.open) return;
+        // Gone at once: Safari would otherwise run the display transition outside the top layer.
+        dialog.style.transition = "none";
+        dialog.close();
+        dialog.getBoundingClientRect();
+        dialog.style.transition = "";
+      };
+      const wait = parseFloat(getComputedStyle(dialog).transitionDuration);
+      if (wait > 0) leaving = window.setTimeout(done, wait * 1000 + 40);
+      else done();
+    };
 
     const copy = async (option: HTMLElement) => {
       try {
@@ -236,8 +267,15 @@ const groups = (["go", "do", "set", "open"] as const)
     };
 
     for (const trigger of triggers) {
+      let pointer = "";
       trigger.hidden = false;
-      trigger.addEventListener("click", () => open(trigger));
+      trigger.addEventListener("pointerdown", (event) => {
+        pointer = event.pointerType;
+      });
+      trigger.addEventListener("click", (event) => {
+        open(trigger, event.detail > 0 && !!pointer && pointer !== "mouse");
+        pointer = "";
+      });
     }
 
     document.addEventListener("keydown", (event) => {
@@ -283,15 +321,30 @@ const groups = (["go", "do", "set", "open"] as const)
         : `command not found: ${query}`;
     });
 
-    input.addEventListener("keydown", (event) => {
-      if (event.isComposing) return;
+    // In the input, or on the dialog itself (opened with a finger, or after a click on a blank part): the arrows
+    // move, Enter runs, and typing goes into the input. The close button keeps its own keys.
+    dialog.addEventListener("keydown", (event) => {
+      const target = event.target;
+      if (event.isComposing || (target !== input && target !== dialog)) return;
       if (event.key === "ArrowDown" || event.key === "ArrowUp") {
         event.preventDefault();
+        input.focus();
         select(active + (event.key === "ArrowDown" ? 1 : -1));
       } else if (event.key === "Enter") {
         event.preventDefault();
         shown[active]?.click();
-      }
+      } else if (
+        event.key.length === 1 &&
+        !(event.metaKey || event.ctrlKey || event.altKey)
+      )
+        input.focus();
+    });
+
+    // Esc: Chrome closes it and the styles animate it out; elsewhere close() does both.
+    dialog.addEventListener("cancel", (event) => {
+      if (leavesByItself || reduce.matches) return;
+      event.preventDefault();
+      close();
     });
 
     dialog.addEventListener("pointerdown", (event) => {
@@ -336,21 +389,181 @@ const groups = (["go", "do", "set", "open"] as const)
     });
 
     dialog.addEventListener("close", () => {
+      clearTimeout(leaving);
+      delete dialog.dataset.closing;
       expand(false);
-      // Back to what opened it; opened with ⌘K from the page itself, let go of the input.
+      // Back to what opened it; opened with ⌘K from the page itself, let go of the input. It was in sight and the
+      // page couldn't scroll: no scrolling (Safari scrolled up to the sticky header's >_ under scroll-padding-top).
       if (
         opener instanceof HTMLElement &&
         opener !== document.body &&
         opener.isConnected
       )
-        opener.focus();
+        opener.focus({ preventScroll: true });
       else input.blur();
       opener = null;
     });
   }
 </script>
 
+<script>
+  // The phone's bottom sheet (see the styles): it sits on top of the on-screen keyboard, and a swipe down closes it.
+  // The script above does everything else; this one closes the sheet through the close button.
+  const dialog = document.querySelector<HTMLDialogElement>("[data-palette]");
+
+  if (dialog) {
+    const list = dialog.querySelector<HTMLElement>(".list")!;
+    const closer = dialog.querySelector<HTMLElement>("[data-palette-close]")!;
+    const sheet = matchMedia("(max-width: 800px)");
+    const style = dialog.style;
+
+    // The keyboard covers the bottom of the layout viewport, outside the visual one: --kb lifts the sheet above
+    // it and --vh fits the sheet into what's left, so the input and the rows stay in sight.
+    const fit = () => {
+      const view = visualViewport;
+      if (view && view.scale < 1.01) {
+        const covered = innerHeight - view.height - view.offsetTop;
+        style.setProperty("--kb", `${Math.max(0, covered)}px`);
+        style.setProperty("--vh", `${view.height}px`);
+      } else {
+        style.removeProperty("--kb");
+        style.removeProperty("--vh");
+      }
+    };
+    fit();
+    visualViewport?.addEventListener("resize", fit);
+    visualViewport?.addEventListener("scroll", fit);
+
+    // Swipe down from the handle or the prompt row, or from the list when it's scrolled to the top: the sheet
+    // follows the finger. Let go past 30% of its height, or flick it, and it closes; else it springs back.
+    type Drag = {
+      id: number;
+      startY: number;
+      y: number;
+      time: number;
+      speed: number;
+      moving: boolean;
+      fromList: boolean;
+    };
+    let drag: Drag | undefined;
+    let draggedAt = -Infinity;
+
+    const letGo = () => {
+      drag = undefined;
+      delete dialog.dataset.dragging;
+      style.removeProperty("--drag");
+      style.removeProperty("--drag-p");
+    };
+
+    dialog.addEventListener("pointerdown", (event) => {
+      const target = event.target as Element;
+      const fromList = !!target.closest(".list");
+      if (
+        sheet.matches &&
+        event.isPrimary &&
+        event.button === 0 &&
+        dialog.dataset.closing === undefined &&
+        (target.closest(".grip, .prompt") || (fromList && list.scrollTop <= 0))
+      )
+        drag = {
+          id: event.pointerId,
+          startY: event.clientY,
+          y: event.clientY,
+          time: event.timeStamp,
+          speed: 0,
+          moving: false,
+          fromList,
+        };
+    });
+
+    dialog.addEventListener("pointermove", (event) => {
+      if (drag?.id !== event.pointerId) return;
+      const dy = event.clientY - drag.startY;
+      if (!drag.moving) {
+        if (Math.abs(dy) < 6) return;
+        // Up from the list scrolls the list.
+        if (dy < 0 && drag.fromList) return letGo();
+        drag.moving = true;
+        dialog.dataset.dragging = "";
+        try {
+          dialog.setPointerCapture(event.pointerId);
+        } catch {
+          // Not an active pointer (a synthetic event): follow it without capture.
+        }
+      }
+      const dt = event.timeStamp - drag.time;
+      if (dt > 0)
+        drag.speed = 0.6 * ((event.clientY - drag.y) / dt) + 0.4 * drag.speed;
+      drag.y = event.clientY;
+      drag.time = event.timeStamp;
+      // Down only: there's nothing under the sheet.
+      const offset = Math.max(0, dy);
+      style.setProperty("--drag", `${offset}px`);
+      style.setProperty(
+        "--drag-p",
+        String(Math.min(1, offset / dialog.offsetHeight)),
+      );
+    });
+
+    const release = (event: PointerEvent) => {
+      if (drag?.id !== event.pointerId) return;
+      const { moving, speed, time } = drag;
+      if (!moving) return letGo();
+      draggedAt = event.timeStamp;
+      const offset = parseFloat(style.getPropertyValue("--drag")) || 0;
+      // A flick: still moving down fast (px/ms) when it let go.
+      const flick = speed > 0.5 && event.timeStamp - time < 100;
+      if (
+        event.type === "pointerup" &&
+        offset > 0 &&
+        (offset > dialog.offsetHeight * 0.3 || flick)
+      ) {
+        drag = undefined;
+        // It slides on from where the finger left it (the closing styles don't use --drag).
+        closer.click();
+      } else letGo();
+    };
+    dialog.addEventListener("pointerup", release);
+    dialog.addEventListener("pointercancel", release);
+    dialog.addEventListener("close", letGo);
+
+    // A touch that drags the sheet mustn't scroll the list; nor may one outside the list scroll the page.
+    dialog.addEventListener(
+      "touchmove",
+      (event) => {
+        const y = event.touches[0]?.clientY ?? 0;
+        if (
+          event.cancelable &&
+          (drag
+            ? drag.moving || y > drag.startY
+            : !(event.target as Element).closest(".list"))
+        )
+          event.preventDefault();
+      },
+      { passive: false },
+    );
+
+    // A drag isn't a click on whatever it started on.
+    dialog.addEventListener(
+      "click",
+      (event) => {
+        if (event.isTrusted && event.timeStamp - draggedAt < 400) {
+          event.preventDefault();
+          event.stopImmediatePropagation();
+        }
+      },
+      true,
+    );
+  }
+</script>
+
 <style>
+  /* The page behind stays put while the palette is open (iOS too); the gutter keeps a classic scrollbar's room. */
+  :global(html:has(dialog[data-palette][open])) {
+    overflow: hidden;
+    scrollbar-gutter: stable;
+  }
+
   /* Always dark: the dark tokens, set here so the palette looks the same in the light theme. */
   .palette {
     --fg: #ffffff;
@@ -360,9 +573,20 @@ const groups = (["go", "do", "set", "open"] as const)
     --mint: #68edc0;
     --teal: #5bc8c0;
     --logo: #f0f4f3;
+    /* Where it comes from and goes back to: a short drop and a fade on a desktop, below the screen on a phone. */
+    --from-y: -8px;
+    --from-scale: 0.985;
+    --from-opacity: 0;
+    /* Closing; the open state sets its own. */
+    --t: 0.15s;
+    --ease: cubic-bezier(0.4, 0, 1, 1);
 
+    /* Set here, not left to the UA's dialog:modal, so it stays put while it animates out of the top layer. */
+    position: fixed;
+    inset: 0;
     width: 640px;
     max-width: calc(100% - 32px);
+    height: fit-content;
     max-height: calc(100% - 140px);
     margin: 108px auto auto;
     padding: 0;
@@ -373,16 +597,85 @@ const groups = (["go", "do", "set", "open"] as const)
     color: var(--fg);
     color-scheme: dark;
     overflow: hidden;
+    /* Here, not only when [open]: Chrome keeps display: flex while it animates out, and a row would show. */
+    flex-direction: column;
+    opacity: var(--from-opacity);
+    translate: 0 var(--from-y);
+    scale: var(--from-scale);
+    /* Closed or closing: clicks go through to the page while it leaves. */
+    pointer-events: none;
   }
 
   .palette[open] {
     display: flex;
-    flex-direction: column;
+  }
+
+  .palette[open]:not([data-closing]) {
+    --t: 0.2s;
+    --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+
+    opacity: 1;
+    translate: 0 var(--drag, 0px);
+    scale: 1;
+    pointer-events: auto;
+  }
+
+  .palette:focus {
+    outline: none;
   }
 
   .palette::backdrop {
     background: rgba(0, 0, 0, 0.55);
     backdrop-filter: blur(3px);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .palette[open]:not([data-closing])::backdrop {
+    /* Lightens as the sheet is dragged down. */
+    opacity: calc(1 - var(--drag-p, 0));
+    pointer-events: auto;
+  }
+
+  @starting-style {
+    .palette[open]:not([data-closing]) {
+      opacity: var(--from-opacity);
+      translate: 0 var(--from-y);
+      scale: var(--from-scale);
+    }
+
+    .palette[open]:not([data-closing])::backdrop {
+      opacity: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .palette {
+      /* Without transition-behavior (older browsers) the second one is dropped: it still fades, opening at once. */
+      transition:
+        opacity var(--t) var(--ease),
+        translate var(--t) var(--ease),
+        scale var(--t) var(--ease);
+      transition:
+        opacity var(--t) var(--ease),
+        translate var(--t) var(--ease),
+        scale var(--t) var(--ease),
+        height 0.2s ease-out,
+        bottom 0.2s ease-out,
+        display var(--t) allow-discrete,
+        overlay var(--t) allow-discrete;
+    }
+
+    .palette::backdrop {
+      transition:
+        opacity 0.15s ease,
+        display 0.15s allow-discrete,
+        overlay 0.15s allow-discrete;
+    }
+
+    .palette[open]:not([data-closing])::backdrop {
+      transition-duration: 0.2s;
+    }
   }
 
   .palette :focus-visible {
@@ -392,6 +685,10 @@ const groups = (["go", "do", "set", "open"] as const)
 
   .palette [hidden] {
     display: none !important;
+  }
+
+  .grip {
+    display: none;
   }
 
   .prompt {
@@ -579,44 +876,57 @@ const groups = (["go", "do", "set", "open"] as const)
     font-size: 11px;
   }
 
-  @media (prefers-reduced-motion: no-preference) {
-    .palette[open] {
-      animation: palette-in 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
-    }
-
-    .palette[open]::backdrop {
-      animation: palette-dim 0.2s ease;
-    }
-  }
-
-  @keyframes palette-in {
-    from {
-      opacity: 0;
-      transform: translateY(-8px) scale(0.985);
-    }
-  }
-
-  @keyframes palette-dim {
-    from {
-      opacity: 0;
-    }
-  }
-
-  /* Phone: full screen, the description under the command. */
+  /* Phone: a bottom sheet. It slides up from below, sits on top of the on-screen keyboard (--kb, --vh: see fit()),
+     and a swipe down closes it. The description goes under the command. */
   @media (max-width: 800px) {
     .palette {
+      --from-y: 100%;
+      --from-scale: 1;
+      --from-opacity: 1;
+      --t: 0.24s;
+      --ease: cubic-bezier(0.32, 0.72, 0, 1);
+
+      inset: auto 0 var(--kb, 0px);
       width: 100%;
-      height: 100%;
       max-width: none;
+      height: min(90dvh, var(--vh, 100dvh) - 12px);
       max-height: none;
       margin: 0;
-      border: 0;
-      border-radius: 0;
+      border-width: 1px 0 0;
+      border-radius: 16px 16px 0 0;
+      box-shadow: 0 -16px 48px rgba(0, 0, 0, 0.5);
+    }
+
+    .palette[open]:not([data-closing]) {
+      --t: 0.28s;
+      --ease: cubic-bezier(0.32, 0.72, 0, 1);
+    }
+
+    .grip {
+      display: flex;
+      flex: none;
+      justify-content: center;
+      padding: 8px 0 2px;
+    }
+
+    .grip::before {
+      content: "";
+      width: 36px;
+      height: 5px;
+      border-radius: 3px;
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    /* The browser mustn't take these touches for scrolling: they drag the sheet. */
+    .grip,
+    .prompt {
+      touch-action: none;
     }
 
     .list {
       flex: 1 1 auto;
       max-height: none;
+      padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px));
     }
 
     .row {
@@ -628,5 +938,21 @@ const groups = (["go", "do", "set", "open"] as const)
     .keys {
       display: none;
     }
+  }
+
+  @media (prefers-reduced-motion: no-preference) and (max-width: 800px) {
+    .palette::backdrop {
+      transition-duration: 0.24s;
+    }
+
+    .palette[open]:not([data-closing])::backdrop {
+      transition-duration: 0.28s;
+    }
+  }
+
+  /* Following the finger. */
+  .palette[open][data-dragging]:not([data-closing]),
+  .palette[open][data-dragging]:not([data-closing])::backdrop {
+    transition: none;
   }
 </style>
