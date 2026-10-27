@@ -336,3 +336,29 @@ shots:
         value: Tuned-Lantern-Orbit-42
       - waitFor: text=Very strong
       - waitFor: text=Not found in known leaks
+  sites:
+    # The home README's loop: Change site, four times (GitHub → Apple → Google → Microsoft → GitHub), so the banner,
+    # the rule chips and the password change at each step, and it ends where it starts.
+    url: https://pass.azamatos.com/github/
+    device: desktop
+    theme: dark
+    video:
+      seconds: 13
+      steps:
+        - wait: 1.2
+        - click: role=link[name=/Change site/]
+        - wait: 0.6
+        - click: role=dialog >> role=link[name=/^Apple/]
+        - wait: 2.2
+        - click: role=link[name=/Change site/]
+        - wait: 0.6
+        - click: role=dialog >> role=link[name=/^Google/]
+        - wait: 2.2
+        - click: role=link[name=/Change site/]
+        - wait: 0.6
+        - click: role=dialog >> role=link[name=/^Microsoft/]
+        - wait: 2.2
+        - click: role=link[name=/Change site/]
+        - wait: 0.6
+        - restartRandom: true
+        - click: role=dialog >> role=link[name=/^GitHub/]

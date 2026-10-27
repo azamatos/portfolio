@@ -397,5 +397,8 @@ shots:
     theme: dark
     video: { seconds: 20 }
     steps:
+      # The notice about the recording machine's own latency to media.azamatos.com: it describes this computer's
+      # network, not the product.
+      - hide: p.text-warning-text
       - click: role=button[name="Got it"]
       - waitFor: '[aria-label="Run progress"][aria-valuenow="36"]'
