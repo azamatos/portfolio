@@ -46,7 +46,9 @@ export default defineConfig({
       provider: fontProviders.local(),
       name: "Geist",
       cssVariable: "--font-geist",
-      fallbacks: ["sans-serif"],
+      // Symbol fonts before the generic family: they draw the arrows, checks and theme icons the web fonts lack,
+      // so a phone doesn't pick a colour emoji font for them.
+      fallbacks: ["Segoe UI Symbol", "Noto Sans Symbols 2", "sans-serif"],
       options: {
         variants: [
           {
@@ -66,7 +68,14 @@ export default defineConfig({
       provider: fontProviders.local(),
       name: "Space Mono",
       cssVariable: "--font-space-mono",
-      fallbacks: ["monospace"],
+      fallbacks: [
+        "Menlo",
+        "Consolas",
+        "DejaVu Sans Mono",
+        "Segoe UI Symbol",
+        "Noto Sans Symbols 2",
+        "monospace",
+      ],
       options: {
         variants: [
           {
