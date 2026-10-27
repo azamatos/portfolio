@@ -79,6 +79,10 @@ const dayFormat = new Intl.DateTimeFormat("en-GB", {
 });
 
 /** A day as the pages print it: "2026-10-27T06:12:00Z" → "27 Oct". */
+/** A status in words, everywhere it's shown: "live" or "in development". */
+export const statusText = (status: ProjectConfig["status"]) =>
+  status === "live" ? "live" : "in development";
+
 export const formatDay = (iso: string) => dayFormat.format(new Date(iso));
 
 /** Numbers as words for copy, up to twelve: 3 → "three". */

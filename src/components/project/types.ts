@@ -1,4 +1,4 @@
-// Shapes the project page components take, cut from what `getProject()` returns.
+// Shapes the project page components take, cut from what `getProjects()` returns.
 
 import type { Project, ProjectPart } from "@/lib/projects";
 

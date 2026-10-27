@@ -6,11 +6,12 @@ import { AwsClient } from "aws4fetch";
 import { mkdir, writeFile } from "node:fs/promises";
 import { dirname } from "node:path";
 import { fileURLToPath } from "node:url";
+import { MEDIA_URL } from "../../src/lib/projects/schema.ts";
 import { CACHE_DIR } from "./config.ts";
 import type { OutFile } from "./shots/encode.ts";
 
 const BUCKET = "azamatos-media";
-export const MEDIA_URL = "https://media.azamatos.com";
+export { MEDIA_URL };
 const CACHE_CONTROL = "public, max-age=31536000, immutable";
 const NEEDED = [
   "R2_ACCOUNT_ID",

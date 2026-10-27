@@ -764,6 +764,9 @@ export type Part = z.infer<typeof partSchema>;
 
 const size = z.int().positive();
 
+/** Where the refresh command's uploads are served from: the R2 bucket azamatos-media. */
+export const MEDIA_URL = "https://media.azamatos.com";
+
 /** A screenshot in R2, in several widths and formats: `${base}.${width}.${format}`. */
 export const collectedImageSchema = z.strictObject({
   kind: z.literal("image"),

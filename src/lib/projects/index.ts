@@ -1,7 +1,6 @@
 // The projects, ready for pages: every `{placeholder}` filled, every media ref resolved, sorted by `order`.
 //
-//   const projects = await getProjects();          // the list, the READMEs, the palette
-//   const project = await getProject("visaproof"); // one page
+//   const projects = await getProjects(); // the list, the READMEs, the palette, the pages
 //
 // Config: src/content/projects/<id>.yaml (schema.ts). Values: values.ts. Media: media.ts.
 
@@ -21,13 +20,14 @@ import {
   numberWord,
   resolveValues,
   squaresOf,
+  statusText,
   type Value,
 } from "./values.ts";
 
 export type { Media } from "./media.ts";
 export { imageSrcset, imageUrl } from "./media.ts";
 export type { Value } from "./values.ts";
-export { formatDay, formatNumber, numberWord } from "./values.ts";
+export { formatDay, formatNumber, numberWord, statusText } from "./values.ts";
 
 /** Config types with every media ref resolved. Strings stay strings, now with their placeholders filled. */
 type Resolved<T> = T extends MediaRef
@@ -125,9 +125,6 @@ export type Project = {
   /** The share card the refresh made for the hero in use (see share.ts); none until it has. */
   og?: CollectedOg;
 };
-
-export const statusText = (status: Config["status"]) =>
-  status === "live" ? "live" : "in development";
 
 /**
  * A project's colours as an inline style, for an element with `data-project`: each one per theme (`--acc-dark`,
@@ -350,8 +347,18 @@ function resolveProject(
   };
 }
 
-/** Every project, resolved and sorted by `order`. Fails the build on anything that doesn't resolve. */
-export async function getProjects(): Promise<Project[]> {
+let resolved: Promise<Project[]> | undefined;
+
+/**
+ * Every project, resolved and sorted by `order`. Fails the build on anything that doesn't resolve. A build resolves
+ * them once for every page; the dev server, whose files change, every time.
+ */
+export function getProjects(): Promise<Project[]> {
+  if (import.meta.env.DEV) return loadProjects();
+  return (resolved ??= loadProjects());
+}
+
+async function loadProjects(): Promise<Project[]> {
   const [configs, collected] = await Promise.all([
     getCollection("projects"),
     getCollection("collected"),
@@ -377,13 +384,6 @@ export async function getProjects(): Promise<Project[]> {
     if (!ids.has(id))
       throw new Error(`src/data/collected/${id}.json belongs to no project`);
   return projects;
-}
-
-/** One project by id; unknown ids fail. */
-export async function getProject(id: string): Promise<Project> {
-  const project = (await getProjects()).find((p) => p.id === id);
-  if (!project) throw new Error(`no project "${id}"`);
-  return project;
 }
 
 /** The Projects section's heading, its subtitle counted from the statuses, and the desktop hint. */

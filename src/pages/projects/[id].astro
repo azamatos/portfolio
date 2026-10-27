@@ -13,6 +13,7 @@ import PageHead from "@/components/project/PageHead.astro";
 import Section from "@/components/project/Section.astro";
 import { sectionNumber } from "@/components/project/types";
 import { getProjects, type Project } from "@/lib/projects";
+import { MEDIA_URL } from "@/lib/projects/schema";
 import {
   projectDescription,
   projectJsonLd,
@@ -40,8 +41,7 @@ const last = page.sections.length;
 
 const image = shareImage(project);
 // The hero is the page's first image: connect to R2 early when it's there.
-const preconnect =
-  page.hero.image.kind === "asset" ? [] : ["https://media.azamatos.com"];
+const preconnect = page.hero.image.kind === "asset" ? [] : [MEDIA_URL];
 ---
 
 <BaseLayout

@@ -21,6 +21,7 @@ import { heroSource } from "../../../src/lib/projects/share.ts";
 import {
   interpolate,
   resolveValues,
+  statusText,
 } from "../../../src/lib/projects/values.ts";
 import { SITE } from "../../../src/site.ts";
 import { COLLECTED_DIR, loadProject, projectIds, ROOT } from "../config.ts";
@@ -174,7 +175,7 @@ export async function shareImage(
     name: config.name,
     headline: fill(config.readme.headline, "readme.headline"),
     live,
-    status: live ? "live" : "in development",
+    status: statusText(config.status),
     host: config.page.hero.host,
     accent: config.accent.dark,
     design: hero.design,
@@ -252,6 +253,7 @@ export async function siteShareImage(
       dir: c.list.dir,
       kind: c.readme.kind,
       live: c.status === "live",
+      status: statusText(c.status),
       accent: c.accent.dark,
     })),
   });

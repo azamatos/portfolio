@@ -24,7 +24,7 @@ const projects = await getProjects();
 const intro = await projectsIntro();
 
 /** A README loop loads the refresh's README rendition (README_WIDTH in scripts/refresh/shots/encode.ts). */
-const README_VIDEO = 960;
+const README_WIDTH = 960;
 
 /**
  * How wide the README screenshot shows. The terminal's body is the window less the gutters (120px, 80px up to
@@ -150,7 +150,7 @@ const LS = "ls -la projects";
                 ratio="16 / 10"
                 position="50% 0%"
                 pan={p.readme.panImage}
-                videoWidth={README_VIDEO}
+                videoWidth={README_WIDTH}
               />
             </div>
             <div class="text">
@@ -300,7 +300,7 @@ const LS = "ls -la projects";
                 frame="phone"
                 host={p.readme.host}
                 ratio="16 / 10"
-                videoWidth={README_VIDEO}
+                videoWidth={README_WIDTH}
               />
               <h3>{p.readme.headline}</h3>
               <p class="short">{p.readme.short}</p>

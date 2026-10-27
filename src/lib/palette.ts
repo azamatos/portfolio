@@ -1,6 +1,7 @@
 // The ⌘K command palette's commands. The `cd <project>` rows come from the projects; the rest are fixed here.
 
 import { numberWord, type Project } from "@/lib/projects";
+import type { Theme } from "@/lib/theme";
 import { SITE } from "@/site";
 
 export type PaletteAction =
@@ -9,7 +10,7 @@ export type PaletteAction =
   /** Copy the text instead of closing. */
   | { type: "copy"; text: string }
   /** Switch the theme in place. */
-  | { type: "theme"; theme: "light" | "dark" | "system" };
+  | { type: "theme"; theme: Theme };
 
 export type PaletteCommand = {
   group: "go" | "do" | "set" | "open";

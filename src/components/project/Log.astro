@@ -31,7 +31,7 @@ const said = { done: "done", current: "in progress", next: "next" } as const;
         </span>
         <span class="label">
           {item.label}
-          <span class="pj-sr-only">, {said[item.state]}:</span>
+          <span class="sr-only">, {said[item.state]}:</span>
         </span>
         <span class="note">{item.note}</span>
       </li>

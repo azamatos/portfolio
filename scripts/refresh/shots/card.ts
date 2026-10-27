@@ -21,7 +21,13 @@ export type SiteCard = {
   line: string;
   email: string;
   availability: string;
-  projects: { dir: string; kind: string; live: boolean; accent: string }[];
+  projects: {
+    dir: string;
+    kind: string;
+    live: boolean;
+    status: string;
+    accent: string;
+  }[];
 };
 
 export type ProjectCard = {
@@ -81,7 +87,7 @@ export async function siteCardHtml(c: SiteCard): Promise<string> {
   const rows = c.projects
     .map(
       (p) =>
-        `<div style="display:flex;align-items:center;gap:16px;height:70px;padding:0 6px;border-top:1px solid rgba(255,255,255,0.07)">${arrow(22, p.accent)}<span style="width:150px;font-family:${MONO};font-size:22px;color:#f0f4f3">${esc(p.dir)}</span><span style="flex:1;font-size:17px;color:#a6a6a6;white-space:nowrap">${esc(p.kind)}</span><span style="display:flex;align-items:center;gap:7px;font-family:${MONO};font-size:14px;white-space:nowrap;color:${p.live ? MINT : AMBER}">${dot(p.live ? MINT : AMBER)}${p.live ? "live" : "in development"}</span></div>`,
+        `<div style="display:flex;align-items:center;gap:16px;height:70px;padding:0 6px;border-top:1px solid rgba(255,255,255,0.07)">${arrow(22, p.accent)}<span style="width:150px;font-family:${MONO};font-size:22px;color:#f0f4f3">${esc(p.dir)}</span><span style="flex:1;font-size:17px;color:#a6a6a6;white-space:nowrap">${esc(p.kind)}</span><span style="display:flex;align-items:center;gap:7px;font-family:${MONO};font-size:14px;white-space:nowrap;color:${p.live ? MINT : AMBER}">${dot(p.live ? MINT : AMBER)}${esc(p.status)}</span></div>`,
     )
     .join("");
   const prompt = (rest: string) =>

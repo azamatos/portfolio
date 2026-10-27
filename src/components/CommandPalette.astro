@@ -16,7 +16,12 @@ const groups = (["go", "do", "set", "open"] as const)
 ---
 
 <!-- tabindex: a finger opens it with the focus on the dialog itself, so the keyboard doesn't cover the list. -->
-<dialog class="palette" aria-label="Command palette" tabindex="-1" data-palette>
+<dialog
+  class="palette theme-dark"
+  aria-label="Command palette"
+  tabindex="-1"
+  data-palette
+>
   <!-- Phone: the bottom sheet's grab handle; it and the prompt row drag the sheet down. -->
   <div class="grip" aria-hidden="true"></div>
   <div class="prompt">
@@ -140,7 +145,9 @@ const groups = (["go", "do", "set", "open"] as const)
 </dialog>
 
 <script>
-  type Theme = "light" | "dark" | "system";
+  // Only the type: importing the theme module here too would split it into a shared script file. The palette asks
+  // the footer switch (ThemeSwitch.astro) to switch, through the "theme:set" event.
+  import type { Theme } from "@/lib/theme";
 
   const dialog = document.querySelector<HTMLDialogElement>("[data-palette]");
 
@@ -564,15 +571,8 @@ const groups = (["go", "do", "set", "open"] as const)
     scrollbar-gutter: stable;
   }
 
-  /* Always dark: the dark tokens, set here so the palette looks the same in the light theme. */
+  /* Always dark (.theme-dark pins the dark tokens), so it looks the same in the light theme. */
   .palette {
-    --fg: #ffffff;
-    --fg2: #a6a6a6;
-    --muted: rgba(255, 255, 255, 0.5);
-    --line2: rgba(255, 255, 255, 0.08);
-    --mint: #68edc0;
-    --teal: #5bc8c0;
-    --logo: #f0f4f3;
     /* Where it comes from and goes back to: a short drop and a fade on a desktop, below the screen on a phone. */
     --from-y: -8px;
     --from-scale: 0.985;
@@ -595,7 +595,6 @@ const groups = (["go", "do", "set", "open"] as const)
     background: #0b0b0b;
     box-shadow: 0 40px 120px rgba(0, 0, 0, 0.6);
     color: var(--fg);
-    color-scheme: dark;
     overflow: hidden;
     /* Here, not only when [open]: Chrome keeps display: flex while it animates out, and a row would show. */
     flex-direction: column;
