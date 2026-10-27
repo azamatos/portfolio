@@ -1,6 +1,8 @@
-// Deletes media nothing uses any more: objects under portfolio/ in R2 that no collected file references and that
-// are older than 30 days. "Collected file" means the working tree's src/data/collected/*.json and the committed ones
-// (git HEAD), so a shot replaced in this run stays until the commit that drops it has been the live site for a week.
+// Deletes media nothing uses any more: objects under portfolio/ in R2 that are older than 30 days and that no
+// collected file references. "Collected file" means the working tree's src/data/collected/*.json, HEAD's and
+// origin/main's, and every version committed in the last 30 days: a deploy of any of them may still be live (a
+// preview, a rollback), and a run on another branch may have files main doesn't. It needs the whole history, so a
+// shallow clone or a missing origin/main stops it, and the refresh runs it only in the weekly job on main.
 
 import { execFile } from "node:child_process";
 import { readdir, readFile } from "node:fs/promises";
@@ -42,31 +44,61 @@ const git = async (...args: string[]) =>
     })
   ).stdout;
 
-/** The collected files' texts: the working tree's, then the committed ones (none outside a git checkout). */
+/**
+ * The texts of every collected file whose media must stay: the working tree's, then HEAD's, origin/main's and each
+ * version committed in the last 30 days.
+ */
 async function collectedTexts(): Promise<string[]> {
   const texts: string[] = [];
   for (const file of await readdir(COLLECTED_DIR))
     if (file.endsWith(".json"))
       texts.push(await readFile(new URL(file, COLLECTED_DIR), "utf8"));
+  if ((await git("rev-parse", "--is-shallow-repository")).trim() !== "false")
+    throw new Error(
+      "a shallow clone can't list the last 30 days' collected files (check out with fetch-depth: 0); nothing deleted",
+    );
   try {
-    const committed = (
-      await git("ls-tree", "--name-only", "HEAD", "src/data/collected/")
+    await git("rev-parse", "--verify", "--quiet", "origin/main");
+  } catch {
+    throw new Error(
+      "no origin/main to keep the live files of; nothing deleted",
+    );
+  }
+  const recent = await git(
+    "rev-list",
+    `--since=${MIN_AGE_DAYS}.days`,
+    "HEAD",
+    "origin/main",
+    "--",
+    "src/data/collected",
+  );
+  const commits = new Set(["HEAD", "origin/main", ...recent.split("\n")]);
+  commits.delete("");
+  for (const commit of commits) {
+    const files = (
+      await git("ls-tree", "--name-only", commit, "src/data/collected/")
     )
       .split("\n")
       .filter((f) => f.endsWith(".json"));
-    for (const file of committed) texts.push(await git("show", `HEAD:${file}`));
-  } catch {
-    // Not a git checkout: the working tree's files are all there is.
+    for (const file of files)
+      texts.push(await git("show", `${commit}:${file}`));
   }
   return texts;
 }
 
-export type Cleanup = { stored: number; used: number; deleted: string[] };
+export type Cleanup = {
+  stored: number;
+  used: number;
+  /** The collected file versions read: the working tree's and those of the commits kept. */
+  versions: number;
+  deleted: string[];
+};
 
 /** Deletes unused objects older than 30 days (with `dryRun`, only lists them). */
 export async function cleanUp(dryRun: boolean): Promise<Cleanup> {
   const used = new Set<string>();
-  for (const text of await collectedTexts()) keysIn(JSON.parse(text), used);
+  const texts = await collectedTexts();
+  for (const text of texts) keysIn(JSON.parse(text), used);
   const stored = await listObjects(PREFIX);
   // Files in R2 that nothing references means reading the collected files went wrong, not that all are unused.
   if (used.size === 0 && stored.length > 0)
@@ -80,6 +112,7 @@ export async function cleanUp(dryRun: boolean): Promise<Cleanup> {
   return {
     stored: stored.length,
     used: used.size,
+    versions: texts.length,
     deleted: unused.map((o) => o.key),
   };
 }

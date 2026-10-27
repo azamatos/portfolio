@@ -2,8 +2,9 @@
 //
 // Reads every project's values from their sources, takes its screenshots and loops, checks ages and links, and
 // writes src/data/collected/<id>.json. A value that can't be read keeps its last good entry and goes into
-// `problems`; the command then exits with an error, after writing what it could. After an upload run, media in R2
-// that nothing uses any more is deleted once it's 30 days old. See README.md, "Project data".
+// `problems`; the command then exits with an error, after writing what it could. In the weekly job on main, media in
+// R2 that no collected file of the last 30 days uses is then deleted once it's 30 days old (cleanup.ts). See
+// README.md, "Project data".
 
 import { parseArgs } from "node:util";
 import type {
@@ -49,6 +50,8 @@ const shotsWanted = !flags["no-shots"];
 const missing = missingCredentials();
 const publish = !dryRun && missing.length === 0;
 const inActions = process.env.GITHUB_ACTIONS === "true";
+/** Deleting from R2 is for the weekly job on main only: it has the whole history, and its files are the live ones. */
+const onMain = inActions && process.env.GITHUB_REF === "refs/heads/main";
 
 const all = await projectIds();
 const targets = positionals.length ? positionals : all;
@@ -348,12 +351,14 @@ if (shotsWanted) console.log(`Raw captures: ${rawDir()}`);
 
 let failed = totals.problems > 0;
 
-// Cleanup: only after a run that could upload, and only when every project got through.
-if (publish && shotsWanted && totals.crashed === 0) {
+// Cleanup: only in the weekly job on main, after a run that could upload, and only when every project got through.
+if (publish && shotsWanted && totals.crashed === 0 && !onMain)
+  console.log("R2 cleanup skipped: it runs only in the weekly job on main.");
+if (publish && shotsWanted && totals.crashed === 0 && onMain) {
   try {
     const c = await cleanUp(false);
     console.log(
-      `R2: ${c.stored} files under portfolio/, ${c.used} in use, ${c.deleted.length} unused for 30 days deleted.`,
+      `R2: ${c.stored} files under portfolio/; ${c.used} used by ${c.versions} collected files (the working tree's, main's and those committed in the last 30 days); ${c.deleted.length} others older than 30 days deleted.`,
     );
     for (const key of c.deleted) console.log(`  - ${key}`);
   } catch (e) {

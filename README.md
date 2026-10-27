@@ -64,7 +64,7 @@ pnpm data:refresh --loops       # record the loops again too (by default only a 
 pnpm data:refresh --dry-run     # read and capture, write and upload nothing
 ```
 
-It needs Node 22.18 or later, Playwright's Chromium (`pnpm exec playwright install chromium`) and ffmpeg. Uploads need `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID` and `R2_SECRET_ACCESS_KEY` in `.env`; without them the shots go to `.cache/refresh/` and the JSON keeps its old ones. After an upload run, files under `portfolio/` in R2 that no collected file (in the working tree or at `HEAD`) uses are deleted once they're 30 days old.
+It needs Node 22.18 or later, Playwright's Chromium (`pnpm exec playwright install chromium`) and ffmpeg. Uploads need `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID` and `R2_SECRET_ACCESS_KEY` in `.env`; without them the shots go to `.cache/refresh/` and the JSON keeps its old ones. The weekly job on `main` then deletes files under `portfolio/` in R2 that are over 30 days old and that no collected file uses: not the working tree's, nor `main`'s, nor any committed in the last 30 days. Runs anywhere else never delete.
 
 Share images (og:image) are 1200×630 cards that Chromium renders from HTML (`scripts/refresh/shots/card.ts`): a project's has its name, status, headline, the first two README numbers and its hero screenshot (a local design shot is tagged "design"), recorded as `og` in its JSON; the site's lists every project's dir, kind and status, recorded in `src/data/collected/_site.json`. A card's file name hashes everything on it, so the refresh uploads a new one only when something on it changes.
 
