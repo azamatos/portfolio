@@ -392,13 +392,14 @@ const groups = (["go", "do", "set", "open"] as const)
       clearTimeout(leaving);
       delete dialog.dataset.closing;
       expand(false);
-      // Back to what opened it; opened with ⌘K from the page itself, let go of the input.
+      // Back to what opened it; opened with ⌘K from the page itself, let go of the input. It was in sight and the
+      // page couldn't scroll: no scrolling (Safari scrolled up to the sticky header's >_ under scroll-padding-top).
       if (
         opener instanceof HTMLElement &&
         opener !== document.body &&
         opener.isConnected
       )
-        opener.focus();
+        opener.focus({ preventScroll: true });
       else input.blur();
       opener = null;
     });
