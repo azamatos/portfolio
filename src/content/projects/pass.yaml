@@ -337,7 +337,7 @@ shots:
     # and the password change at each step. It ends on GitHub, where it starts (that page's time is split between the
     # start and the end). The pages open as links, as "Change site" does, without its picker flashing up. The steps
     # before it arrive at GitHub the way the loop's end does (the site's theme switch loses its highlight after a
-    # page change), so the end meets the start.
+    # page change) and wait out the page's cross-fade, so the end meets the start.
     url: https://pass.azamatos.com/github/
     device: desktop
     theme: dark
@@ -345,6 +345,7 @@ shots:
       - follow: /apple/
       - restartRandom: true
       - follow: /github/
+      - wait: 1
     video:
       seconds: 10
       steps:
