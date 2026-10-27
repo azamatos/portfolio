@@ -1,49 +1,49 @@
 {
-  "refreshedAt": "2026-10-27T19:43:06.008Z",
+  "refreshedAt": "2026-10-27T20:34:57.326Z",
   "values": {
     "commits": {
       "value": 140,
-      "asOf": "2026-10-27T19:43:06.716Z",
+      "asOf": "2026-10-27T20:34:58.420Z",
       "source": "https://github.com/azamatos/rebuffer/commits/main"
     },
     "react": {
       "value": "19",
-      "asOf": "2026-10-27T19:43:06.716Z",
+      "asOf": "2026-10-27T20:34:58.420Z",
       "source": "https://github.com/azamatos/rebuffer/blob/main/package.json"
     },
     "zustand": {
       "value": "5",
-      "asOf": "2026-10-27T19:43:06.716Z",
+      "asOf": "2026-10-27T20:34:58.420Z",
       "source": "https://github.com/azamatos/rebuffer/blob/main/package.json"
     },
     "zod": {
       "value": "4",
-      "asOf": "2026-10-27T19:43:06.716Z",
+      "asOf": "2026-10-27T20:34:58.420Z",
       "source": "https://github.com/azamatos/rebuffer/blob/main/package.json"
     },
     "tailwind": {
       "value": "4",
-      "asOf": "2026-10-27T19:43:06.716Z",
+      "asOf": "2026-10-27T20:34:58.420Z",
       "source": "https://github.com/azamatos/rebuffer/blob/main/package.json"
     },
     "vite": {
       "value": "8",
-      "asOf": "2026-10-27T19:43:06.716Z",
+      "asOf": "2026-10-27T20:34:58.420Z",
       "source": "https://github.com/azamatos/rebuffer/blob/main/package.json"
     },
     "typescript": {
       "value": "6",
-      "asOf": "2026-10-27T19:43:06.716Z",
+      "asOf": "2026-10-27T20:34:58.420Z",
       "source": "https://github.com/azamatos/rebuffer/blob/main/package.json"
     },
     "hlsjs": {
       "value": "1.7.3",
-      "asOf": "2026-10-27T19:43:06.716Z",
+      "asOf": "2026-10-27T20:34:58.420Z",
       "source": "https://github.com/azamatos/rebuffer/blob/main/package.json"
     },
     "hlsMinor": {
       "value": "1.7",
-      "asOf": "2026-10-27T19:43:06.716Z",
+      "asOf": "2026-10-27T20:34:58.420Z",
       "source": "https://github.com/azamatos/rebuffer/blob/main/package.json"
     },
     "unitTests": {
@@ -139,23 +139,35 @@
         "kind": "image",
         "width": 1440,
         "height": 900,
-        "base": "https://media.azamatos.com/portfolio/rebuffer/run.61976fad3f",
+        "base": "https://media.azamatos.com/portfolio/rebuffer/run.998966302d",
         "widths": [480, 960, 1440],
         "formats": ["avif", "webp"],
-        "asOf": "2026-10-27T17:29:41.089Z",
+        "asOf": "2026-10-27T20:35:07.350Z",
         "source": "https://rebuffer.azamatos.com/run?start=now"
       },
       "sources": [
         {
           "type": "video/webm",
-          "url": "https://media.azamatos.com/portfolio/rebuffer/run.61976fad3f.webm"
+          "url": "https://media.azamatos.com/portfolio/rebuffer/run.998966302d.webm",
+          "width": 1440
         },
         {
           "type": "video/mp4",
-          "url": "https://media.azamatos.com/portfolio/rebuffer/run.61976fad3f.mp4"
+          "url": "https://media.azamatos.com/portfolio/rebuffer/run.998966302d.mp4",
+          "width": 1440
+        },
+        {
+          "type": "video/webm",
+          "url": "https://media.azamatos.com/portfolio/rebuffer/run.998966302d.960.webm",
+          "width": 960
+        },
+        {
+          "type": "video/mp4",
+          "url": "https://media.azamatos.com/portfolio/rebuffer/run.998966302d.960.mp4",
+          "width": 960
         }
       ],
-      "asOf": "2026-10-27T17:29:41.089Z",
+      "asOf": "2026-10-27T20:35:07.350Z",
       "source": "https://rebuffer.azamatos.com/run?start=now"
     }
   },

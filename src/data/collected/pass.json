@@ -1,19 +1,19 @@
 {
-  "refreshedAt": "2026-10-27T19:42:45.815Z",
+  "refreshedAt": "2026-10-27T20:36:43.999Z",
   "values": {
     "commits": {
       "value": 38,
-      "asOf": "2026-10-27T19:42:47.019Z",
+      "asOf": "2026-10-27T20:36:44.955Z",
       "source": "https://github.com/azamatos/password-generator/commits/main"
     },
     "astro": {
       "value": "7",
-      "asOf": "2026-10-27T19:42:47.019Z",
+      "asOf": "2026-10-27T20:36:44.955Z",
       "source": "https://github.com/azamatos/password-generator/blob/main/package.json"
     },
     "presets": {
       "value": 16,
-      "asOf": "2026-10-27T19:42:47.790Z",
+      "asOf": "2026-10-27T20:36:45.585Z",
       "source": "https://raw.githubusercontent.com/azamatos/password-generator/main/src/data/platforms.json"
     },
     "unitTests": {
@@ -77,6 +77,45 @@
       "formats": ["avif", "webp"],
       "asOf": "2026-10-27T17:28:50.293Z",
       "source": "https://pass.azamatos.com/health/"
+    },
+    "sites": {
+      "kind": "video",
+      "width": 1440,
+      "height": 900,
+      "poster": {
+        "kind": "image",
+        "width": 1440,
+        "height": 900,
+        "base": "https://media.azamatos.com/portfolio/pass/sites.b161955972",
+        "widths": [480, 960, 1440],
+        "formats": ["avif", "webp"],
+        "asOf": "2026-10-27T20:36:56.039Z",
+        "source": "https://pass.azamatos.com/github/"
+      },
+      "sources": [
+        {
+          "type": "video/webm",
+          "url": "https://media.azamatos.com/portfolio/pass/sites.b161955972.webm",
+          "width": 1440
+        },
+        {
+          "type": "video/mp4",
+          "url": "https://media.azamatos.com/portfolio/pass/sites.b161955972.mp4",
+          "width": 1440
+        },
+        {
+          "type": "video/webm",
+          "url": "https://media.azamatos.com/portfolio/pass/sites.b161955972.960.webm",
+          "width": 960
+        },
+        {
+          "type": "video/mp4",
+          "url": "https://media.azamatos.com/portfolio/pass/sites.b161955972.960.mp4",
+          "width": 960
+        }
+      ],
+      "asOf": "2026-10-27T20:36:56.039Z",
+      "source": "https://pass.azamatos.com/github/"
     }
   },
   "og": {
