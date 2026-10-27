@@ -14,8 +14,8 @@
 // loops (Media.astro: only the selected one loads and plays, and only on screen); the hero's pause button
 // (html[data-motion="paused"]) stops them all, like the logo's cursor.
 //
-// Coming back from a project page (it leaves its id in sessionStorage) selects that project's row, or opens its
-// item on a phone.
+// Coming back from a project page by its `cd ..` link (AllProjects.astro leaves the id in sessionStorage) selects that
+// project's row, or opens its item on a phone.
 
 import Media from "@/components/project/Media.astro";
 import { getProjects, projectsIntro } from "@/lib/projects";
@@ -346,8 +346,8 @@ const LS = "ls -la projects";
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   /**
-   * The project page the visitor came back from (AllProjects.astro leaves its id), once: a later reload shows the
-   * first project again.
+   * The project page the visitor came back from by its `cd ..` link (AllProjects.astro leaves its id), once: a later
+   * reload shows the first project again.
    */
   const cameBackFrom = () => {
     try {
@@ -566,11 +566,6 @@ const LS = "ls -la projects";
       io.observe(list);
     }
   }
-
-  // The browser's back button can bring this page back from its cache, where this script doesn't run again.
-  addEventListener("pageshow", (e) => {
-    if (e.persisted) showProject(cameBackFrom());
-  });
 </script>
 
 <style>

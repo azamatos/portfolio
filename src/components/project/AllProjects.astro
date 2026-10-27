@@ -4,9 +4,9 @@
 // round arrow that moves). The command stays the main line, `➜ ~/projects/<id> cd ..`, and a plain line under it
 // says what it does, for visitors who don't read shell. Its name reads "cd .., back to all projects".
 //
-// The page leaves its id in sessionStorage each time it's shown, so the home page selects this project's row (or
-// opens its item on a phone) when the visitor comes back, by this link, the browser's back button or any other way.
-// Without JavaScript the link still lands on #projects.
+// Following it leaves the project's id in sessionStorage, so the home page selects this project's row (or opens its
+// item on a phone). Only this link does: the header's `ls projects`, the logo and the palette go to the home page as
+// it is. Without JavaScript the link still lands on #projects.
 
 interface Props {
   /** The project whose page this is. */
@@ -17,7 +17,7 @@ interface Props {
 const { project, class: className } = Astro.props;
 ---
 
-<a href="/#projects" class:list={["all", className]}>
+<a href="/#projects" class:list={["all", className]} data-back={project}>
   <span class="go" aria-hidden="true">
     <svg viewBox="0 0 24 24" width="16" height="16">
       <path d="M19 12H5" />
@@ -40,14 +40,15 @@ const { project, class: className } = Astro.props;
 </a>
 
 <script>
-  // Read by ProjectsTerminal.astro on the home page. `pageshow` also runs when the browser's back or forward button
-  // brings this page back from its cache.
-  const id =
-    document.querySelector<HTMLElement>("main[data-project]")?.dataset.project;
-  if (id)
-    addEventListener("pageshow", () => {
+  // Read once by ProjectsTerminal.astro on the home page. A click with a modifier opens a new tab or window, which
+  // starts at the top of the list, so the id isn't left for a later visit in this one.
+  for (const link of document.querySelectorAll<HTMLAnchorElement>(
+    "a[data-back]",
+  ))
+    link.addEventListener("click", (e) => {
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
       try {
-        sessionStorage.setItem("projects:back", id);
+        sessionStorage.setItem("projects:back", link.dataset.back!);
       } catch {
         // Storage blocked: the home page shows its first project.
       }
