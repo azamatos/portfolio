@@ -1,0 +1,57 @@
+{
+  "refreshedAt": "2026-10-27T16:08:58.184Z",
+  "values": {
+    "commits": {
+      "value": 252,
+      "asOf": "2026-10-27T16:08:58.184Z",
+      "source": "https://github.com/azamatos/yeral/commits/main"
+    },
+    "react": {
+      "value": "19",
+      "asOf": "2026-10-27T16:08:58.184Z",
+      "source": "https://github.com/azamatos/yeral/blob/main/pnpm-workspace.yaml"
+    },
+    "vite": {
+      "value": "8",
+      "asOf": "2026-10-27T16:08:58.184Z",
+      "source": "https://github.com/azamatos/yeral/blob/main/pnpm-workspace.yaml"
+    },
+    "tailwind": {
+      "value": "4",
+      "asOf": "2026-10-27T16:08:58.184Z",
+      "source": "https://github.com/azamatos/yeral/blob/main/pnpm-workspace.yaml"
+    },
+    "hono": {
+      "value": "4",
+      "asOf": "2026-10-27T16:08:58.184Z",
+      "source": "https://github.com/azamatos/yeral/blob/main/pnpm-workspace.yaml"
+    },
+    "zod": {
+      "value": "4",
+      "asOf": "2026-10-27T16:08:58.184Z",
+      "source": "https://github.com/azamatos/yeral/blob/main/pnpm-workspace.yaml"
+    },
+    "storybook": {
+      "value": "10",
+      "asOf": "2026-10-27T16:08:58.184Z",
+      "source": "https://github.com/azamatos/yeral/blob/main/pnpm-workspace.yaml"
+    },
+    "components": {
+      "value": 107,
+      "asOf": "2026-10-27T16:08:58.184Z",
+      "source": "https://storybook.yeral.app/index.json"
+    },
+    "tests": {
+      "value": 1908,
+      "asOf": "2026-10-27T16:08:58.184Z",
+      "source": "https://github.com/azamatos/yeral/actions/runs/40513358887/job/122220603188"
+    },
+    "decisions": {
+      "value": 28,
+      "asOf": "2026-10-27T16:08:58.184Z",
+      "source": "https://github.com/azamatos/yeral/tree/main/docs/decisions"
+    }
+  },
+  "shots": {},
+  "problems": []
+}

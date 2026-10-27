@@ -1,0 +1,392 @@
+order: 3
+name: Rebuffer
+status: live
+site: https://rebuffer.azamatos.com
+repo: azamatos/rebuffer
+palette: a video player on a bad network
+accent: { dark: "#68edc0", light: "#0b7f5a" }
+list:
+  dir: rebuffer/
+  mode: drwxr-xr-x
+  commits: "{commits}"
+  stack: react · hls.js · service worker
+readme:
+  kind: hls network lab
+  host: rebuffer.azamatos.com
+  image: { shot: run }
+  phoneImage: { shot: run }
+  alt: "A recorded Rebuffer run through a tunnel: the network drops, the player switches down, the buffer drains"
+  panImage: false
+  headline: See how a video player survives a bad network.
+  description: A real hls.js player streams through a network simulated in a Service Worker. Live charts show every quality switch and stall, and a report scores the run.
+  short: A real hls.js player streams through a simulated network, with live charts and a scored report.
+  tech:
+    - React {react}
+    - hls.js {hlsMinor}
+    - Service Worker
+    - Canvas
+    - Zustand
+    - Vite {vite}
+  stats:
+    - value: "{unitTests}"
+      label: unit tests
+      short: unit tests
+    - value: "{e2eTests}"
+      label: Playwright checks in Chromium, Firefox and WebKit
+      short: Playwright checks
+    - value: "{homeJs}"
+      label: of JavaScript on Home, budget 100 KB
+      short: JavaScript on Home
+  secondaryLink:
+    label: Open rebuffer.azamatos.com
+    href: https://rebuffer.azamatos.com
+page:
+  statusLabel: live · rebuffer.azamatos.com
+  tagline:
+    strong: See how a video player survives a bad network,
+    rest: in your browser, with the numbers viewers feel.
+  meta:
+    - label: role
+      text: Idea, design and code, from years of building HLS players and Smart TV apps
+    - label: stack
+      text: React · hls.js · Service Worker · Canvas
+    - label: links
+      links:
+        - label: rebuffer.azamatos.com
+          href: https://rebuffer.azamatos.com
+        - label: Source on GitHub
+          href: https://github.com/azamatos/rebuffer
+  hero:
+    host: rebuffer.azamatos.com
+    image: { shot: home }
+    alt: "Rebuffer’s Run page: pick a stream, a network and a player setup, then run it"
+    phoneImage: { shot: phone }
+    phoneAlt: "Rebuffer on a phone: See how a video player survives a bad network, with Try the tunnel"
+  numbers:
+    - value: "{unitTests}"
+      label: unit tests for the framework-free core
+    - value: "{e2eTests}"
+      label: Playwright checks in Chromium, Firefox and WebKit, axe on every screen
+    - text: "{lateRange}"
+      label: how far downloads land behind the network curve, never ahead
+    - text: "{homeJs}"
+      label: of JavaScript on Home, against a 100 KB budget
+  numbersNote: Measured locally and in CI; the repeatability job runs every week.
+  sections:
+    - number: "01"
+      title: what it does
+      lead: Pick a stream and a network, press Run, and watch a real hls.js player fight it.
+      text: The bandwidth it gets, what it thinks it gets, the quality it picks, the buffer draining, every stall. Then a report with the numbers viewers feel, and what to try next.
+      parts:
+        - kind: figure
+          host: rebuffer.azamatos.com/run
+          hasHost: true
+          maxw: 820px
+          img: { shot: run }
+          alt: "A recorded run through a tunnel: the network drops, the player switches down, the buffer drains and stalls"
+          caption: "A recorded run: Try the tunnel, the network drops, hls.js switches down, the buffer drains, then the report."
+        - kind: cards
+          min: 240px
+          items:
+            - title: Run
+              body: Any HLS stream through a simulated network, with three live charts on one time axis and an event log.
+            - title: Draw a network
+              body: A bandwidth curve with the stream’s qualities drawn over it. Seven presets, four recorded 4G journeys, or your own.
+            - title: Read the report
+              body: A score from a published QoE model, numbered notes on what happened when, and ideas to try next.
+            - title: Change one thing and compare
+              body: "Run B with another player setup or network: what changed, a verdict, and the charts overlaid."
+            - title: Inspect a playlist
+              body: The ladder by codec, each segment’s bitrate against what’s declared, and findings with the spec they break.
+            - title: Tune the player
+              body: hls.js defaults, a low-memory TV preset, quality first, fast start, or one setting changed.
+    - number: "02"
+      title: how it works
+      lead: The player is the real one. The network is simulated where the player can’t tell.
+      parts:
+        - kind: flow
+          items:
+            - tag: react
+              title: Screens
+              body: Setup, run, report, compare and inspect.
+              highlight: false
+            - tag: unmodified
+              title: hls.js
+              body: Keeps its own loader, bandwidth estimator and abandon rules.
+              highlight: false
+            - tag: service worker
+              title: Network shaper
+              body: Fetches the real bytes and releases them on the curve’s schedule.
+              highlight: false
+            - tag: canvas
+              title: Log, charts, report
+              body: Charts draw from the event log every frame, never through React state.
+              highlight: false
+        - kind: cards
+          min: 260px
+          items:
+            - title: Honest numbers
+              body: The simulation can slow a download down, never speed it up. A run says how many downloads were late because the visitor’s own network was slower.
+            - title: Repeatable
+              body: Repeat runs take their bytes from a copy saved in the browser, so they don’t depend on the visitor’s connection.
+            - title: A framework-free core
+              body: The playlist parser, network simulator, metrics and report text import no React, and the link scheduler is tested with a fake clock.
+    - number: "03"
+      title: draw a network
+      lead: A network is a curve of bandwidth over time plus a latency. Draw one with the keyboard or a pointer, or import it.
+      parts:
+        - kind: figure
+          host: rebuffer.azamatos.com/networks
+          hasHost: true
+          maxw: 100%
+          img: { shot: networks }
+          alt: "Rebuffer network editor: Train through a tunnel, a bandwidth curve with the qualities of Tears of Steel drawn as dashed lines"
+          caption: Where the curve dips below a dashed line, that quality downloads slower than it plays. Import JSON, CSV or a HAR file.
+    - number: "04"
+      title: measured
+      lead: "Each of the seven networks, run five times: scores within {scoreSpread} points of each other, with the same stalls and switches."
+      parts:
+        - kind: table
+          label: Repeatability, 7 networks × 5 runs
+          head:
+            - network
+            - score
+            - first frame
+            - stalls
+            - switches
+          cols: minmax(170px, 1.6fr) 80px 150px 70px 80px
+          minw: 600px
+          note: "Measured on 22 Oct 2026 in Chromium, with hls.js 1.7.3 and a synthetic 2-minute stream with five qualities from 240p to 1080p. Rural 3G scores 0: its 11.7 s wait for the first frame costs more than its picture earns."
+          rows:
+            - - Home fibre
+              - 89–91
+              - 0.36–0.62 s
+              - "0"
+              - "1"
+            - - Busy café Wi-Fi
+              - "86"
+              - 2.99–3.02 s
+              - "0"
+              - "0"
+            - - 4G commute
+              - "100"
+              - 1.71–1.73 s
+              - "0"
+              - "3"
+            - - Train through a tunnel
+              - 37–38
+              - 2.23–2.26 s
+              - "1"
+              - "4"
+            - - Rural 3G
+              - "0"
+              - 11.56–11.66 s
+              - "0"
+              - "1"
+            - - Lift
+              - 41–42
+              - 1.59–1.69 s
+              - "0"
+              - "0"
+            - - Evening congestion
+              - 88–89
+              - 1.20–1.22 s
+              - "0"
+              - "2"
+  builtWith:
+    - group: app
+      items:
+        - { name: React, version: "{react}" }
+        - { name: TanStack Router }
+        - { name: Zustand, version: "{zustand}" }
+        - { name: Zod, version: "{zod}" }
+        - { name: Tailwind CSS, version: "{tailwind}" }
+        - { name: Vite, version: "{vite}" }
+        - { name: TypeScript, version: "{typescript}" }
+      note: Home is rendered at build time, so the first screen needs no JavaScript to show.
+    - group: video
+      items:
+        - { name: hls.js, version: "{hlsjs}" }
+        - { name: Service Worker }
+        - { name: IndexedDB }
+      note: hls.js runs unmodified. The Service Worker shapes every request it makes, and saved runs and their bytes stay in the browser.
+    - group: charts
+      items:
+        - { name: Canvas 2D }
+        - { name: own scales and drawing }
+      note: "{chartMedian} per frame at the median, {chartMax} at most, with the CPU throttled four times."
+    - group: hosting
+      items:
+        - { name: Cloudflare }
+        - { name: static files }
+      note: "No backend and no accounts: runs and networks stay in the browser that made them."
+    - group: quality
+      items:
+        - { name: Vitest }
+        - { name: Playwright }
+        - { name: axe }
+        - { name: size-limit }
+        - { name: Lighthouse CI }
+        - { name: GitHub Actions }
+      note: CI fails on a bundle over budget or a Lighthouse score under 0.95; a repeatability job runs every preset five times each week.
+  log:
+    title: what shipped
+    items:
+      - label: run
+        note: live charts and an event log on one time axis
+        state: done
+      - label: report
+        note: a QoE score, notes and ideas to try next
+        state: done
+      - label: networks
+        note: presets, recorded 4G journeys and an editor
+        state: done
+      - label: compare
+        note: change one thing, run B, see what changed
+        state: done
+      - label: inspect
+        note: the ladder, codecs and findings for any playlist
+        state: done
+      - label: themes
+        note: system, light and dark, axe on every screen
+        state: done
+  aside:
+    title: credits
+    items:
+      - "Sample film: Tears of Steel, (CC) Blender Foundation, used under CC BY 3.0, re-encoded for streaming."
+      - "Recorded networks: excerpts of the Irish 4G dataset (Raca et al., ACM MMSys 2018, CC BY 4.0)."
+      - "Score: the linear QoE model from Yin et al., SIGCOMM 2015."
+  actions:
+    - label: Open rebuffer.azamatos.com
+      href: https://rebuffer.azamatos.com
+      primary: true
+    - label: Source on GitHub
+      href: https://github.com/azamatos/rebuffer
+      primary: false
+  next: pass
+
+values:
+  commits:
+    from: github
+    get: commits
+    means: Commits on the main branch of azamatos/rebuffer.
+    maxAge: 14
+  react:
+    from: github
+    get: version
+    package: react
+    means: The major version of React in package.json.
+    maxAge: 14
+  zustand:
+    from: github
+    get: version
+    package: zustand
+    means: The major version of Zustand in package.json.
+    maxAge: 14
+  zod:
+    from: github
+    get: version
+    package: zod
+    means: The major version of Zod in package.json.
+    maxAge: 14
+  tailwind:
+    from: github
+    get: version
+    package: tailwindcss
+    means: The major version of Tailwind CSS in package.json.
+    maxAge: 14
+  vite:
+    from: github
+    get: version
+    package: vite
+    means: The major version of Vite in package.json.
+    maxAge: 14
+  typescript:
+    from: github
+    get: version
+    package: typescript
+    means: The major version of TypeScript in package.json.
+    maxAge: 14
+  hlsjs:
+    from: github
+    get: version
+    package: hls.js
+    parts: 3
+    means: The exact version of hls.js in package.json.
+    maxAge: 14
+  hlsMinor:
+    from: github
+    get: version
+    package: hls.js
+    parts: 2
+    means: The major and minor version of hls.js in package.json.
+    maxAge: 14
+  unitTests:
+    from: ci
+    workflow: ci.yml
+    job: Types, lint, unit tests, build, budgets
+    pattern: '\bTests\s+(\d+) passed'
+    means: Vitest unit tests that passed in the latest successful CI run.
+    maxAge: 14
+  e2eTests:
+    from: ci
+    workflow: ci.yml
+    job: Keyboard and accessibility tests (Chromium, Firefox, WebKit)
+    pattern: '^\s*(\d+) passed \('
+    means: Playwright checks that passed in the latest successful CI run, over Chromium, Firefox and WebKit (skipped ones not counted).
+    maxAge: 14
+  homeJs:
+    from: ci
+    workflow: ci.yml
+    job: Types, lint, unit tests, build, budgets
+    pattern: 'Home: JavaScript \(brotli\)\s+Size limit:\s+[\d.]+ kB\s+Size:\s+([\d.]+) kB'
+    means: The brotli-compressed JavaScript Home loads, as size-limit measures it against the 100 KB budget in CI.
+    maxAge: 14
+    format: { decimals: 1, suffix: " KB" }
+  lateRange:
+    from: manual
+    value: 3–24
+    checked: 2026-10-20
+    sourceUrl: https://github.com/azamatos/rebuffer#measured
+    means: How far behind the drawn network curve the shaper delivers a 1 MiB download at 4 Mbps steps and 100 ms RTT, in Chromium, Firefox and WebKit.
+    format: { suffix: " ms" }
+  chartMedian:
+    from: manual
+    value: 0.1
+    checked: 2026-10-20
+    sourceUrl: https://github.com/azamatos/rebuffer#measured
+    means: The live charts' drawing time per frame at the median, with the CPU throttled 4×.
+    format: { decimals: 1, suffix: " ms" }
+  chartMax:
+    from: manual
+    value: 1.8
+    checked: 2026-10-20
+    sourceUrl: https://github.com/azamatos/rebuffer#measured
+    means: The live charts' longest drawing time per frame, with the CPU throttled 4×.
+    format: { decimals: 1, suffix: " ms" }
+  scoreSpread:
+    from: manual
+    value: 2
+    checked: 2026-10-22
+    sourceUrl: https://github.com/azamatos/rebuffer#repeatability
+    means: The largest gap between scores of one network over five runs, in the repeatability table.
+
+shots:
+  home:
+    url: https://rebuffer.azamatos.com/
+    device: desktop
+    theme: dark
+  phone:
+    url: https://rebuffer.azamatos.com/
+    device: phone
+    theme: dark
+  networks:
+    url: https://rebuffer.azamatos.com/networks
+    device: desktop
+    theme: dark
+  run:
+    # "Try the tunnel" on Home: the run starts by itself.
+    url: https://rebuffer.azamatos.com/run?start=now
+    device: desktop
+    theme: dark
+    video: { seconds: 20 }

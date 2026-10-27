@@ -1,0 +1,42 @@
+{
+  "refreshedAt": "2026-10-27T16:08:58.184Z",
+  "values": {
+    "commits": {
+      "value": 37,
+      "asOf": "2026-10-27T16:08:58.184Z",
+      "source": "https://github.com/azamatos/password-generator/commits/main"
+    },
+    "astro": {
+      "value": "7",
+      "asOf": "2026-10-27T16:08:58.184Z",
+      "source": "https://github.com/azamatos/password-generator/blob/main/package.json"
+    },
+    "presets": {
+      "value": 16,
+      "asOf": "2026-10-27T16:08:58.184Z",
+      "source": "https://raw.githubusercontent.com/azamatos/password-generator/main/src/data/platforms.json"
+    },
+    "unitTests": {
+      "value": 89,
+      "asOf": "2026-10-27T16:08:58.184Z",
+      "source": "https://github.com/azamatos/password-generator/actions/runs/40502692405/job/122184063997"
+    },
+    "e2eTests": {
+      "value": 136,
+      "asOf": "2026-10-27T16:08:58.184Z",
+      "source": "https://github.com/azamatos/password-generator/actions/runs/40502692405/job/122184064215"
+    },
+    "siteJs": {
+      "value": 13.4,
+      "asOf": "2026-10-27T16:08:58.184Z",
+      "source": "https://github.com/azamatos/password-generator/actions/runs/40502692405/job/122184063997"
+    },
+    "healthJs": {
+      "value": 10.7,
+      "asOf": "2026-10-27T16:08:58.184Z",
+      "source": "https://github.com/azamatos/password-generator/actions/runs/40502692405/job/122184063997"
+    }
+  },
+  "shots": {},
+  "problems": []
+}
