@@ -1,8 +1,9 @@
 ---
 // The big numbers between two rules, and the note on where they come from (with `{checked}` already filled in).
-// A number with `count` counts up from 0 over 1.1 s when it scrolls into view (reveal.ts); the HTML holds the final
-// text, so it's what shows without JavaScript and with reduced motion. Tabular figures and no wrapping keep the
-// count from moving anything; the numbers aren't a live region.
+// A number with `count` counts up from 0 over 1.1 s when it scrolls into view (reveal.ts): its text stays the final
+// value, and its empty aria-hidden `.shown` draws the count over it. Without JavaScript and with reduced motion the
+// text simply shows. Tabular figures and no wrapping keep the count from moving anything; the numbers aren't a live
+// region.
 
 import type { Figure } from "@/lib/projects";
 
@@ -24,6 +25,7 @@ const { numbers, note } = Astro.props;
           data-count={n.count && JSON.stringify(n.count)}
         >
           {n.text}
+          {n.count && <span class="shown" aria-hidden="true" />}
         </dd>
       </div>
     ))}
@@ -69,7 +71,28 @@ const { numbers, note } = Astro.props;
   }
 
   .counts {
+    position: relative;
     white-space: nowrap;
+  }
+
+  /* Counting (reveal.ts): the real text keeps its place, invisible, and the count shows over it. */
+  .counts[data-counting] {
+    color: transparent;
+  }
+
+  .shown {
+    display: none;
+  }
+
+  [data-counting] .shown {
+    display: block;
+    position: absolute;
+    inset: 0;
+    color: var(--fg);
+  }
+
+  .shown::after {
+    content: attr(data-n);
   }
 
   .note {

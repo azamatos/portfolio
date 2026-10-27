@@ -7,6 +7,10 @@
 //                             (animating), and the component's CSS keys its animation off those two values
 //   data-count='{"to":14988,"decimals":0,"prefix":"","suffix":""}'
 //                             on a number inside it, which counts from 0 to `to` when it's revealed
+//
+// A number's text never changes: find in page, reader views, translators and screen readers always get the real
+// value. While it counts, data-counting makes that text transparent, and its aria-hidden `.shown` child draws the
+// count over it from data-n (CSS generated content, which isn't page text).
 
 type Count = { to: number; decimals: number; prefix: string; suffix: string };
 
@@ -28,33 +32,40 @@ const countOf = (el: HTMLElement): Count | undefined => {
   }
 };
 
-/** Each number's text as the server wrote it, before `zero` replaces it. */
-const finals = new WeakMap<HTMLElement, string | null>();
+/** Each number with its count and the element that draws it. */
+function numbers(root: HTMLElement) {
+  return [...root.querySelectorAll<HTMLElement>("[data-count]")].flatMap(
+    (el) => {
+      const c = countOf(el);
+      const shown = el.querySelector<HTMLElement>(".shown");
+      return c && shown ? [{ el, c, shown }] : [];
+    },
+  );
+}
+
+/** Shows `n` in place of the number, until `done`. */
+const show = (el: HTMLElement, shown: HTMLElement, text: string) => {
+  el.dataset.counting = "";
+  shown.dataset.n = text;
+};
+const done = (el: HTMLElement) => delete el.dataset.counting;
 
 function countUp(root: HTMLElement) {
-  for (const el of root.querySelectorAll<HTMLElement>("[data-count]")) {
-    const c = countOf(el);
-    if (!c) continue;
-    const final = finals.has(el) ? finals.get(el)! : el.textContent;
+  for (const { el, c, shown } of numbers(root)) {
     const start = performance.now();
     const step = (now: number) => {
       const t = Math.min(1, (now - start) / COUNT_MS);
-      const eased = 1 - Math.pow(1 - t, 3);
-      // The last frame prints the server's text, so the final value is exactly what the HTML had.
-      el.textContent = t < 1 ? format(c.to * eased, c) : final;
-      if (t < 1) requestAnimationFrame(step);
+      if (t === 1) return done(el);
+      show(el, shown, format(c.to * (1 - Math.pow(1 - t, 3)), c));
+      requestAnimationFrame(step);
     };
+    show(el, shown, format(0, c));
     requestAnimationFrame(step);
   }
 }
 
 function zero(root: HTMLElement) {
-  for (const el of root.querySelectorAll<HTMLElement>("[data-count]")) {
-    const c = countOf(el);
-    if (!c) continue;
-    finals.set(el, el.textContent);
-    el.textContent = format(0, c);
-  }
+  for (const { el, c, shown } of numbers(root)) show(el, shown, format(0, c));
 }
 
 function reveal(el: HTMLElement) {
