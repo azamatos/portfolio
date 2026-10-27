@@ -83,7 +83,7 @@ page:
           hasHost: true
           maxw: 820px
           img: { shot: run }
-          alt: "A recorded run through a tunnel: the network drops, the player switches down, the buffer drains and stalls"
+          alt: "A recorded run through a tunnel: the network drops, hls.js switches down, and the buffer drains but lasts until the signal returns, with no stalls"
           caption: "A recorded run: Try the tunnel, the network drops, hls.js switches down, the buffer drains, then the report."
         - kind: cards
           min: 240px

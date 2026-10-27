@@ -39,16 +39,21 @@ export function heroSource(
   return `src/assets/projects/fallback/${id}-${hero.shot}.webp`; // fallback: goes with fallback.ts
 }
 
-/** The card, when the refresh has made one for the hero the page shows. */
+/**
+ * The card, when the refresh has made one for the hero the page shows. Its alt ends with the hero's: a screenshot's
+ * says so, and a design's alt says it's a design, as every design alt does.
+ */
 export function shareImage(project: Project): ShareImage | undefined {
   const { og } = project;
   if (!og) return undefined;
+  const { image, alt } = project.page.hero;
+  const design = image.kind === "asset" && image.design;
   return {
     url: og.url,
     width: og.width,
     height: og.height,
     type: imageType(og.url),
-    alt: `${project.name}, ${project.statusText}: ${project.readme.headline} Screenshot: ${project.page.hero.alt}`,
+    alt: `${project.name}, ${project.statusText}: ${project.readme.headline} ${design ? "" : "Screenshot: "}${alt}`,
   };
 }
 

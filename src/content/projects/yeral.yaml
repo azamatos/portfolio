@@ -15,7 +15,7 @@ readme:
   host: business.yeral.app
   image: { shot: calendar }
   phoneImage: { shot: calendar }
-  alt: "Ýeral business workspace: the team’s day calendar with bookings and requests"
+  alt: "Ýeral business calendar design: the team’s day with bookings and requests"
   panImage: false
   headline: Booking for any business that sells its time.
   description: Clients book a chair, a table or a class without calling. The business gets a free workspace for its calendar, requests, clients and team. One monorepo holds the marketplace, the workspace, the CMS and the API.
@@ -71,9 +71,9 @@ page:
   hero:
     host: business.yeral.app
     image: { shot: calendar }
-    alt: "Ýeral business workspace: the day calendar with each specialist’s bookings and requests"
+    alt: "Ýeral business calendar design: the day with each specialist’s bookings and requests"
     phoneImage: { shot: phone-calendar }
-    phoneAlt: "Ýeral business calendar on a phone: one specialist’s day with visits and requests"
+    phoneAlt: "Ýeral business calendar design for a phone: one specialist’s day with visits and requests"
   numbers:
     - value: "{productQuestions}"
       label: product questions answered in a product book before the code
