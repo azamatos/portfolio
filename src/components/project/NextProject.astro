@@ -3,7 +3,7 @@
 // project's page: "next project", `➜ ~ cd ../<id>` with the arrow in that project's accent, its headline, and a round
 // arrow. The border turns to this page's accent on hover, and the arrow nudges forward.
 
-import type { Project } from "@/lib/projects";
+import { accentStyle, type Project } from "@/lib/projects";
 import AllProjects from "./AllProjects.astro";
 
 interface Props {
@@ -22,7 +22,12 @@ const { project, next } = Astro.props;
     <span class="text">
       <span class="kicker">next project</span>
       <span class="title">
-        <span class="arrow" data-project={next.id} aria-hidden="true">
+        <span
+          class="arrow"
+          data-project={next.id}
+          style={accentStyle(next.accent)}
+          aria-hidden="true"
+        >
           ➜
         </span>
         <span class="tilde" aria-hidden="true">

@@ -99,21 +99,27 @@
   }
 }
 
-/* Project accents: set data-project on the project page's <main>.
- * --acc is the project colour, --acc2 the second colour (Visaproof's "won't sponsor" orange), --on-acc text on --acc. */
-[data-project="visaproof"] { --acc: #76beff; --acc2: #f99f5d; --on-acc: #010101; }
-[data-project="yeral"] { --acc: #9a85ff; --acc2: #f99f5d; --on-acc: #010101; }
-[data-project="rebuffer"] { --acc: #68edc0; --acc2: #f2c14e; --on-acc: #010101; }
-[data-project="pass"] { --acc: #ff6b4d; --acc2: #f2c14e; --on-acc: #010101; }
-:root[data-theme="light"] [data-project="visaproof"] { --acc: #0863a9; --acc2: #a14808; --on-acc: #ffffff; }
-:root[data-theme="light"] [data-project="yeral"] { --acc: #5a3fe0; --acc2: #a14808; --on-acc: #ffffff; }
-:root[data-theme="light"] [data-project="rebuffer"] { --acc: #0b7f5a; --acc2: #8a5a00; --on-acc: #ffffff; }
-:root[data-theme="light"] [data-project="pass"] { --acc: #c23a1d; --acc2: #8a5a00; --on-acc: #ffffff; }
+/* Project accents: an element with data-project gets the project's colours inline, per theme (accentStyle in
+ * src/lib/projects, from the `accent` in its YAML), and this picks the theme's: --acc is the project colour, --acc2 the
+ * second one (Visaproof's "won't sponsor" orange), --on-acc text on --acc. */
+[data-project] {
+  --acc: var(--acc-dark);
+  --acc2: var(--acc2-dark);
+  --on-acc: var(--on-acc-dark);
+}
+
+:root[data-theme="light"] [data-project] {
+  --acc: var(--acc-light);
+  --acc2: var(--acc2-light);
+  --on-acc: var(--on-acc-light);
+}
+
 @media (prefers-color-scheme: light) {
-  :root:not([data-theme]) [data-project="visaproof"] { --acc: #0863a9; --acc2: #a14808; --on-acc: #ffffff; }
-  :root:not([data-theme]) [data-project="yeral"] { --acc: #5a3fe0; --acc2: #a14808; --on-acc: #ffffff; }
-  :root:not([data-theme]) [data-project="rebuffer"] { --acc: #0b7f5a; --acc2: #8a5a00; --on-acc: #ffffff; }
-  :root:not([data-theme]) [data-project="pass"] { --acc: #c23a1d; --acc2: #8a5a00; --on-acc: #ffffff; }
+  :root:not([data-theme]) [data-project] {
+    --acc: var(--acc-light);
+    --acc2: var(--acc2-light);
+    --on-acc: var(--on-acc-light);
+  }
 }
 
 /* Layout */

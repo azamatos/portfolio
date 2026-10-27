@@ -4,7 +4,11 @@ status: live
 site: https://visaproof.azamatos.com
 repo: azamatos/visaproof
 palette: visa-friendly developer jobs
-accent: { dark: "#76beff", light: "#0863a9" }
+accent:
+  dark: "#76beff"
+  light: "#0863a9"
+  # The "won't sponsor" orange of the waffle and the bars.
+  acc2: { dark: "#f99f5d", light: "#a14808" }
 list:
   dir: visaproof/
   mode: drwxr-xr-x

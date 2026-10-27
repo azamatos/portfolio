@@ -129,6 +129,20 @@ export type Project = {
 export const statusText = (status: Config["status"]) =>
   status === "live" ? "live" : "in development";
 
+/**
+ * A project's colours as an inline style, for an element with `data-project`: each one per theme (`--acc-dark`,
+ * `--acc-light`, …), and tokens.css picks --acc, --acc2 and --on-acc for the theme on show.
+ */
+export function accentStyle(accent: Config["accent"]): string {
+  const { dark, light, acc2, onAcc } = accent;
+  const colours = { acc: { dark, light }, acc2, "on-acc": onAcc };
+  return Object.entries(colours)
+    .map(
+      ([name, c]) => `--${name}-dark: ${c.dark}; --${name}-light: ${c.light}`,
+    )
+    .join("; ");
+}
+
 type Ctx = {
   id: string;
   values: Map<string, Value>;

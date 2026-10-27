@@ -52,7 +52,7 @@ const preconnect =
   canonical={page.path}
   preconnect={preconnect}
   labelledby="project-title"
-  project={project.id}
+  project={project}
   jsonLd={projectJsonLd(project, new URL(page.path, Astro.site).href, image)}
 >
   <PageHead project={project} />

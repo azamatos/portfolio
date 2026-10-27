@@ -21,7 +21,7 @@ Lighthouse, mobile emulation, production build:
 
 What changed: every word is in the HTML instead of being rendered by JavaScript, the only JavaScript is the typing title and the copy-email button (inlined, about 2 KB together, no framework), the hero wave is a cached SVG file instead of 42 KB of markup inside the JS bundle, and fonts are preloaded with size-matched fallbacks.
 
-CI fails if accessibility, best practices or SEO drop below 100 (`lighthouserc.json`). The 404 page skips the SEO check, since it is kept out of search on purpose.
+CI fails if accessibility, best practices or SEO drop below 100 on any page (`lighthouserc.cjs`). The 404 page skips the SEO check, since it is kept out of search on purpose.
 
 ---
 
@@ -72,7 +72,13 @@ A number that can't be read, is older than its `maxAge`, or drops to 0 (unless `
 
 **GitHub secrets**, from the same `.env`: `gh secret set -f .env --repo azamatos/portfolio`. Reading the project repos' CI logs uses the job's own token; if GitHub ever refuses it, add `GH_READ_TOKEN` (a fine-grained token, read-only, with Actions: read on the four project repos) and the job uses that instead.
 
-**Add a project:** copy one of the YAML files to `src/content/projects/<id>.yaml`, edit it, run `pnpm data:refresh <id>` and commit both files.
+**Add a project:**
+
+1. Copy one of the YAML files to `src/content/projects/<id>.yaml` (the file name is the id and the page's address, `/projects/<id>/`) and edit it. `order` places it in the list; `accent` is its colour in the dark and the light theme, with optional `acc2` (a second colour for charts, amber by default) and `onAcc` (text on the accent, near-black and white by default).
+2. Run `pnpm data:refresh <id>` for its numbers, screenshots and share card.
+3. `pnpm build` to check it, then commit both files.
+
+The home page's terminal, the ⌘K palette, the project pages, the sitemap and the Lighthouse CI run (`lighthouserc.cjs`) pick it up from there.
 
 ## Structure
 

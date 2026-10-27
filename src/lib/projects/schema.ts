@@ -12,6 +12,8 @@ import { exprNames } from "./expr.ts";
 const text = z.string().trim().min(1);
 const url = z.url({ protocol: /^https?$/ });
 const hex = z.string().regex(/^#[0-9a-f]{6}$/i, "a colour like #76beff");
+/** A colour per theme. */
+const themed = z.strictObject({ dark: hex, light: hex });
 const cssLength = z
   .string()
   .regex(/^(\d+(\.\d+)?(px|%|rem)|0)$/, "a CSS length like 320px or 100%");
@@ -598,7 +600,16 @@ const projectFields = z.strictObject({
   site: url,
   /** The public GitHub repository, `owner/name`. */
   repo: z.string().regex(/^[\w.-]+\/[\w.-]+$/, "owner/name"),
-  accent: z.strictObject({ dark: hex, light: hex }),
+  /**
+   * The project's colour in each theme (--acc), set on its page's <main> and read by tokens.css. `acc2` is a second
+   * colour for its charts (--acc2, amber by default), `onAcc` the text on an --acc fill (--on-acc).
+   */
+  accent: z.strictObject({
+    dark: hex,
+    light: hex,
+    acc2: themed.default({ dark: "#f2c14e", light: "#8a5a00" }),
+    onAcc: themed.default({ dark: "#010101", light: "#ffffff" }),
+  }),
   /** The palette's `cd <id>` description; the status is added in code. */
   palette: text,
   list: z.strictObject({

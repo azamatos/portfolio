@@ -5,7 +5,7 @@ import Footer from "@/components/Footer.astro";
 import CommandPalette from "@/components/CommandPalette.astro";
 import heroPhoto from "@/assets/hero-photo.webp";
 import ogImage from "@/assets/og-image.png";
-import { getProjects } from "@/lib/projects";
+import { accentStyle, getProjects, type Project } from "@/lib/projects";
 import { collectedSiteSchema } from "@/lib/projects/schema";
 import { imageType, PERSON_ID, type ShareImage } from "@/lib/projects/share";
 import { THEME_COLOR, themeInitScript } from "@/lib/theme";
@@ -29,8 +29,8 @@ interface Props {
   preconnect?: string[];
   /** The id of the heading that names <main> (a project page's h1). */
   labelledby?: string;
-  /** A project page: turns on that project's accent tokens (--acc, --acc2, --on-acc) inside <main>. */
-  project?: string;
+  /** A project page: its colours (--acc, --acc2, --on-acc) inside <main>. */
+  project?: Pick<Project, "id" | "accent">;
   /** More schema.org nodes about the page, in one @graph after the Person (no @context). */
   jsonLd?: Record<string, unknown>[];
 }
@@ -204,7 +204,12 @@ const graph = {
   <body>
     <div class="page">
       <Header />
-      <main id="main" data-project={project} aria-labelledby={labelledby}>
+      <main
+        id="main"
+        data-project={project?.id}
+        style={project && accentStyle(project.accent)}
+        aria-labelledby={labelledby}
+      >
         <slot />
       </main>
       <Footer />
