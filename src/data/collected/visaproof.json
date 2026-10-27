@@ -1,84 +1,84 @@
 {
-  "refreshedAt": "2026-10-27T21:16:15.609Z",
+  "refreshedAt": "2026-10-27T22:57:17.320Z",
   "values": {
     "commits": {
       "value": 75,
-      "asOf": "2026-10-27T21:16:16.296Z",
+      "asOf": "2026-10-27T22:57:18.642Z",
       "source": "https://github.com/azamatos/visaproof/commits/main"
     },
     "nuxt": {
       "value": "4",
-      "asOf": "2026-10-27T21:16:16.296Z",
+      "asOf": "2026-10-27T22:57:18.642Z",
       "source": "https://github.com/azamatos/visaproof/blob/main/apps/web/package.json"
     },
     "vue": {
       "value": "3.5",
-      "asOf": "2026-10-27T21:16:16.296Z",
+      "asOf": "2026-10-27T22:57:18.642Z",
       "source": "https://github.com/azamatos/visaproof/blob/main/apps/web/package.json"
     },
     "tailwind": {
       "value": "4",
-      "asOf": "2026-10-27T21:16:16.296Z",
+      "asOf": "2026-10-27T22:57:18.642Z",
       "source": "https://github.com/azamatos/visaproof/blob/main/apps/web/package.json"
     },
     "postgres": {
       "value": "18",
-      "asOf": "2026-10-27T21:16:16.296Z",
+      "asOf": "2026-10-27T22:57:18.642Z",
       "source": "https://github.com/azamatos/visaproof/blob/main/deploy/compose.yml"
     },
     "node": {
       "value": "22",
-      "asOf": "2026-10-27T21:16:16.296Z",
+      "asOf": "2026-10-27T22:57:18.642Z",
       "source": "https://github.com/azamatos/visaproof/blob/main/.nvmrc"
     },
     "roles": {
       "value": 14988,
-      "asOf": "2026-10-27T21:16:16.647Z",
+      "asOf": "2026-10-27T22:57:19.555Z",
       "source": "https://visaproof.azamatos.com/api/stats"
     },
     "companies": {
       "value": 2476,
-      "asOf": "2026-10-27T21:16:16.647Z",
+      "asOf": "2026-10-27T22:57:19.555Z",
       "source": "https://visaproof.azamatos.com/api/stats"
     },
     "boardsKnown": {
       "value": 16098,
-      "asOf": "2026-10-27T21:16:16.647Z",
+      "asOf": "2026-10-27T22:57:19.555Z",
       "source": "https://visaproof.azamatos.com/api/stats"
     },
     "countries": {
       "value": 42,
-      "asOf": "2026-10-27T21:16:16.654Z",
+      "asOf": "2026-10-27T22:57:19.554Z",
       "source": "https://visaproof.azamatos.com/api/status"
     },
     "newRoles": {
       "value": 251,
-      "asOf": "2026-10-27T21:16:16.654Z",
+      "asOf": "2026-10-27T22:57:19.554Z",
       "source": "https://visaproof.azamatos.com/api/status"
     },
     "sponsors": {
       "value": 366,
-      "asOf": "2026-10-27T21:16:16.647Z",
+      "asOf": "2026-10-27T22:57:19.555Z",
       "source": "https://visaproof.azamatos.com/api/stats"
     },
     "wont": {
       "value": 711,
-      "asOf": "2026-10-27T21:16:16.648Z",
+      "asOf": "2026-10-27T22:57:19.555Z",
       "source": "https://visaproof.azamatos.com/api/stats"
     },
     "mentions": {
       "value": 3265,
-      "asOf": "2026-10-27T21:16:16.648Z",
+      "asOf": "2026-10-27T22:57:19.555Z",
       "source": "https://visaproof.azamatos.com/api/stats"
     },
     "nlSponsors": {
       "value": 13016,
-      "asOf": "2026-10-27T21:16:16.654Z",
+      "asOf": "2026-10-27T22:57:19.554Z",
       "source": "https://visaproof.azamatos.com/api/status"
     },
     "ukSponsors": {
       "value": 122355,
-      "asOf": "2026-10-27T21:16:16.654Z",
+      "asOf": "2026-10-27T22:57:19.554Z",
       "source": "https://visaproof.azamatos.com/api/status"
     }
   },
@@ -86,22 +86,22 @@
     "search-full": {
       "kind": "image",
       "width": 2880,
-      "height": 6424,
-      "base": "https://media.azamatos.com/portfolio/visaproof/search-full.630fa21f75",
+      "height": 6344,
+      "base": "https://media.azamatos.com/portfolio/visaproof/search-full.e3b7b50caf",
       "widths": [480, 960, 1440, 2880],
       "formats": ["avif", "webp"],
-      "asOf": "2026-10-27T21:16:16.654Z",
-      "source": "https://visaproof.azamatos.com/?country=GB,DE,NL"
+      "asOf": "2026-10-27T22:57:19.559Z",
+      "source": "https://visaproof.azamatos.com/"
     },
     "search": {
       "kind": "image",
       "width": 2880,
       "height": 1800,
-      "base": "https://media.azamatos.com/portfolio/visaproof/search.3f483b3fd7",
+      "base": "https://media.azamatos.com/portfolio/visaproof/search.4237b985e5",
       "widths": [480, 960, 1440, 2880],
       "formats": ["avif", "webp"],
-      "asOf": "2026-10-27T19:07:08.627Z",
-      "source": "https://visaproof.azamatos.com/?country=GB,DE,NL"
+      "asOf": "2026-10-27T22:57:39.516Z",
+      "source": "https://visaproof.azamatos.com/"
     },
     "job": {
       "kind": "image",
@@ -125,12 +125,12 @@
     }
   },
   "og": {
-    "url": "https://media.azamatos.com/portfolio/visaproof/og.ddfdbf51e9.jpg",
+    "url": "https://media.azamatos.com/portfolio/visaproof/og.4081cf00cd.jpg",
     "width": 1200,
     "height": 630,
     "shot": "search",
-    "from": "https://media.azamatos.com/portfolio/visaproof/search.3f483b3fd7",
-    "asOf": "2026-10-27T21:16:40.928Z"
+    "from": "https://media.azamatos.com/portfolio/visaproof/search.4237b985e5",
+    "asOf": "2026-10-27T22:57:55.802Z"
   },
   "skipped": [],
   "problems": []
