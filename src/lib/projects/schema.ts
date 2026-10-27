@@ -821,7 +821,7 @@ export const collectedOgSchema = z.strictObject({
 });
 
 export const collectedSchema = z.strictObject({
-  /** When the refresh command last ran for this project; written on every run. */
+  /** When the refresh last checked every value of the project: a run with a value problem keeps the old time. */
   refreshedAt: isoTime,
   values: z.record(
     z.string().regex(VALUE_NAME),

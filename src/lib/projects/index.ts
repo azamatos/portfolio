@@ -120,7 +120,7 @@ export type Project = {
   };
   /** Every value by name, with its raw number, date and source; `checked` is the last refresh's day. */
   values: Record<string, Value>;
-  /** When the refresh command last ran for this project (ISO); `values.checked.text` prints it as "27 Oct". */
+  /** When the refresh last checked every value (ISO); `values.checked.text` prints it as "27 Oct". */
   refreshedAt?: string;
   /** The share card the refresh made for the hero in use (see share.ts); none until it has. */
   og?: CollectedOg;

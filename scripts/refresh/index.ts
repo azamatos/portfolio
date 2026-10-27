@@ -154,6 +154,11 @@ async function refresh(id: string): Promise<Problem[]> {
       });
   }
   for (const p of staleManual(config, now)) problem(p);
+  // "Checked <day>" and the sitemap's lastmod come from refreshedAt: a run that couldn't check every value keeps the
+  // last day they all were.
+  const checkedAll = problems.length === 0;
+  const refreshedAt =
+    checkedAll || !before ? now.toISOString() : before.refreshedAt;
 
   // Shots
   const shots: Record<string, ShotEntry> = {};
@@ -230,7 +235,7 @@ async function refresh(id: string): Promise<Problem[]> {
     const r = await shareImage(
       id,
       config,
-      { refreshedAt: now.toISOString(), values, shots, skipped, problems },
+      { refreshedAt, values, shots, skipped, problems },
       before?.og,
       stills,
       publish,
@@ -265,7 +270,7 @@ async function refresh(id: string): Promise<Problem[]> {
 
   // Every value resolves the way the build will resolve it (calc inputs included).
   const after: Collected = {
-    refreshedAt: now.toISOString(),
+    refreshedAt,
     values,
     shots,
     og,
@@ -279,6 +284,7 @@ async function refresh(id: string): Promise<Problem[]> {
       { name: "values", message: (e as Error).message },
       `✗ ${(e as Error).message}`,
     );
+    if (before) after.refreshedAt = before.refreshedAt;
   }
 
   if (dryRun) console.log(`  ~ src/data/collected/${id}.json not written`);
