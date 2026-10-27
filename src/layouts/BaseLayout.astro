@@ -2,6 +2,7 @@
 import { Font } from "astro:assets";
 import Header from "@/components/Header.astro";
 import Footer from "@/components/Footer.astro";
+import CommandPalette from "@/components/CommandPalette.astro";
 import ogImage from "@/assets/og-image.png";
 import { SITE } from "@/site";
 import "@/styles/global.css";
@@ -102,6 +103,7 @@ const person = {
         <slot />
       </main>
       <Footer />
+      <CommandPalette />
     </div>
   </body>
 </html>

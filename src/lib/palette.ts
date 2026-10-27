@@ -4,8 +4,8 @@ import { numberWord, type Project } from "@/lib/projects";
 import { SITE } from "@/site";
 
 export type PaletteAction =
-  /** Go to a page or a section of one. */
-  | { type: "link"; href: string; external?: true }
+  /** Go to a page or a section of one, open another site in a new tab, or download a file. */
+  | { type: "link"; href: string; external?: true; download?: true }
   /** Copy the text instead of closing. */
   | { type: "copy"; text: string }
   /** Switch the theme in place. */
@@ -52,7 +52,7 @@ export function paletteCommands(projects: Project[]): PaletteCommand[] {
       verb: "cat",
       arg: "resume.pdf",
       description: `download my resume, ${SITE.resume.pages} pages`,
-      action: { type: "link", href: SITE.resume.url },
+      action: { type: "link", href: SITE.resume.url, download: true },
     },
     {
       group: "do",
