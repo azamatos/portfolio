@@ -1,0 +1,129 @@
+---
+// A table: mono column heads, the first column (a row header) in Geist, the rest in mono. Each row is a CSS grid on
+// `cols`, so the columns line up as in the design; the ARIA roles keep it a table for screen readers that drop table
+// semantics when rows change their display. On a phone it scrolls sideways inside its own region (`minw` wide).
+
+import type { PartOf } from "../types";
+
+interface Props {
+  part: PartOf<"table">;
+}
+
+const { part } = Astro.props;
+/** The caption names the scrolling region; the id comes from the label, so builds stay the same. */
+const id = `table-${part.label
+  .toLowerCase()
+  .replace(/[^a-z0-9]+/g, "-")
+  .replace(/^-|-$/g, "")}`;
+---
+
+<div class="part">
+  <div class="scroll" role="region" aria-labelledby={id} tabindex="0">
+    <table role="table" style={`--cols: ${part.cols}; min-width: ${part.minw}`}>
+      <caption id={id}>{part.label}</caption>
+      <thead role="rowgroup">
+        <tr role="row">
+          {part.head.map((h) => (
+            <th scope="col" role="columnheader">
+              {h}
+            </th>
+          ))}
+        </tr>
+      </thead>
+      <tbody role="rowgroup">
+        {part.rows.map(([first, ...rest]) => (
+          <tr role="row">
+            <th scope="row" role="rowheader">
+              {first}
+            </th>
+            {rest.map((c) => (
+              <td role="cell">{c}</td>
+            ))}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+  <p class="note">{part.note}</p>
+</div>
+
+<style>
+  .part {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    min-width: 0;
+  }
+
+  .scroll {
+    overflow-x: auto;
+    border-radius: 2px;
+  }
+
+  table {
+    display: block;
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  caption {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  thead,
+  tbody {
+    display: block;
+  }
+
+  tr {
+    display: grid;
+    grid-template-columns: var(--cols);
+    align-items: baseline;
+    gap: 16px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--line2);
+  }
+
+  thead tr {
+    padding: 0 0 10px;
+    border-bottom-color: var(--line);
+  }
+
+  th,
+  td {
+    padding: 0;
+    font-weight: 400;
+    text-align: left;
+  }
+
+  thead th {
+    font-family: var(--font-space-mono), monospace;
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  tbody th {
+    color: var(--fg);
+  }
+
+  td {
+    font-family: var(--font-space-mono), monospace;
+    color: var(--fg2);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .note {
+    margin: 0;
+    font-family: var(--font-space-mono), monospace;
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--muted);
+  }
+</style>

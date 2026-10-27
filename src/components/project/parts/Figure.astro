@@ -1,0 +1,42 @@
+---
+// One framed screenshot or loop, up to `maxw` wide, with the host bar when `hasHost` and a mono caption.
+
+import Media from "../Media.astro";
+import type { PartOf } from "../types";
+
+interface Props {
+  part: PartOf<"figure">;
+}
+
+const { part } = Astro.props;
+// The content column is at most 1440 − 2 × 120 − 220 − 64 = 916px wide; `maxw` may cap it lower.
+const max = part.maxw.endsWith("px") ? `min(${part.maxw}, 916px)` : "916px";
+const sizes = `(max-width: 800px) calc(100vw - 40px), (max-width: 1200px) calc(100vw - 160px), ${max}`;
+---
+
+<figure style={`max-width: ${part.maxw}`}>
+  <Media
+    media={part.img}
+    alt={part.alt}
+    frame={part.hasHost ? "figure" : "plain"}
+    host={part.host}
+    sizes={sizes}
+  />
+  <figcaption>{part.caption}</figcaption>
+</figure>
+
+<style>
+  figure {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin: 0;
+  }
+
+  figcaption {
+    font-family: var(--font-space-mono), monospace;
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--fg2);
+  }
+</style>

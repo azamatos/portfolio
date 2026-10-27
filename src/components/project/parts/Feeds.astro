@@ -1,0 +1,70 @@
+---
+// What feeds the flow, and how often: dashed cards with a mono `when` in the accent, a title and a body.
+
+import type { PartOf } from "../types";
+
+interface Props {
+  part: PartOf<"feeds">;
+}
+
+const { part } = Astro.props;
+---
+
+<ul class="feeds">
+  {part.items.map((item) => (
+    <li>
+      <span class="when">{item.when}</span>
+      <div class="text">
+        <h3>{item.title}</h3>
+        <p>{item.body}</p>
+      </div>
+    </li>
+  ))}
+</ul>
+
+<style>
+  .feeds {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  li {
+    display: flex;
+    flex: 1 1 240px;
+    gap: 14px;
+    padding: 16px 18px;
+    border: 1px dashed var(--line);
+    border-radius: 12px;
+  }
+
+  .when {
+    font-family: var(--font-space-mono), monospace;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--acc);
+  }
+
+  .text {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  h3 {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 1.5;
+  }
+
+  p {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--fg2);
+  }
+</style>

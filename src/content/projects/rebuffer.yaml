@@ -111,10 +111,12 @@ page:
               body: Setup, run, report, compare and inspect.
               highlight: false
             - tag: unmodified
+              accent: true
               title: hls.js
               body: Keeps its own loader, bandwidth estimator and abandon rules.
               highlight: false
             - tag: service worker
+              accent: true
               title: Network shaper
               body: Fetches the real bytes and releases them on the curve’s schedule.
               highlight: false

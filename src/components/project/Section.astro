@@ -1,0 +1,116 @@
+---
+// A numbered section of a project page: the label column ("01 · the problem", above the content on a phone) and the
+// content column: the lead, the text, then the parts, or the slot (built with, the log).
+//   layout "stack" (default): one column, 28px apart · "flush": one column, no gap (rows with their own rules) ·
+//   "split": side by side, wrapping (the log and its aside)
+
+import type { ProjectPart } from "@/lib/projects";
+import Part from "./Part.astro";
+
+interface Props {
+  /** "01" */
+  number: string;
+  title: string;
+  lead?: string;
+  text?: string;
+  parts?: ProjectPart[];
+  layout?: "stack" | "flush" | "split";
+}
+
+const { number, title, lead, text, parts = [], layout = "stack" } = Astro.props;
+const id = `section-${number}`;
+---
+
+<section class="section" aria-labelledby={id}>
+  <h2 id={id} class="label">
+    {number} · {title}
+  </h2>
+  <div class="body" data-layout={layout}>
+    {lead && <p class="lead">{lead}</p>}
+    {text && <p class="text">{text}</p>}
+    {parts.map((part) => (
+      <div class="part">
+        <Part part={part} />
+      </div>
+    ))}
+    <slot />
+  </div>
+</section>
+
+<style>
+  .section {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 32px 64px;
+    padding: 56px var(--g);
+    scroll-margin-top: 84px;
+  }
+
+  .label {
+    flex: 0 0 220px;
+    margin: 0;
+    font-family: var(--font-space-mono), monospace;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.5;
+    color: var(--fg2);
+  }
+
+  .body {
+    display: flex;
+    flex: 1 1 560px;
+    flex-direction: column;
+    gap: 28px;
+    min-width: 0;
+  }
+
+  .body[data-layout="flush"] {
+    gap: 0;
+  }
+
+  .body[data-layout="split"] {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 32px 56px;
+  }
+
+  .lead {
+    max-width: 760px;
+    margin: 0;
+    font-size: 30px;
+    font-weight: 500;
+    line-height: 1.25;
+    letter-spacing: -0.035em;
+  }
+
+  .text {
+    max-width: 680px;
+    margin: 0;
+    font-size: 17px;
+    line-height: 1.6;
+    color: var(--fg2);
+  }
+
+  .part {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    min-width: 0;
+  }
+
+  @media (max-width: 800px) {
+    .section {
+      gap: 16px;
+      padding: 36px var(--g);
+      scroll-margin-top: 64px;
+    }
+
+    .label {
+      flex-basis: 100%;
+    }
+
+    .lead {
+      font-size: 23px;
+    }
+  }
+</style>

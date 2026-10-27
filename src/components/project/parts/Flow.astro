@@ -1,0 +1,123 @@
+---
+// Steps in a row with arrows between them (no arrows on a phone, where they stack). A step's mono tag is muted, in the
+// project accent with `accent`, and amber with an amber border with `highlight`.
+
+import type { PartOf } from "../types";
+
+interface Props {
+  part: PartOf<"flow">;
+}
+
+const { part } = Astro.props;
+---
+
+<ol class="flow">
+  {part.items.map((item, i) => (
+    <li>
+      <div
+        class:list={[
+          "step",
+          { accent: item.accent, highlight: item.highlight },
+        ]}
+      >
+        <span class="tag">{item.tag}</span>
+        <h3>{item.title}</h3>
+        <p>{item.body}</p>
+      </div>
+      {i < part.items.length - 1 && (
+        <span class="arrow" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="18" height="18">
+            <path d="M5 12h14" />
+            <path d="M13 6l6 6-6 6" />
+          </svg>
+        </span>
+      )}
+    </li>
+  ))}
+</ol>
+
+<style>
+  .flow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    gap: 12px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  li {
+    display: flex;
+    flex: 1 1 180px;
+    align-items: stretch;
+    gap: 12px;
+    min-width: 0;
+  }
+
+  .step {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+    padding: 18px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--chip);
+  }
+
+  .tag {
+    font-family: var(--font-space-mono), monospace;
+    font-size: 11px;
+    line-height: 1.5;
+    color: var(--muted);
+  }
+
+  .accent .tag {
+    color: var(--acc);
+  }
+
+  .highlight {
+    border-color: color-mix(in srgb, var(--amber) 45%, transparent);
+  }
+
+  .highlight .tag {
+    color: var(--amber);
+  }
+
+  h3 {
+    margin: 0;
+    font-size: 17px;
+    font-weight: 500;
+    line-height: 1.5;
+    letter-spacing: -0.02em;
+  }
+
+  p {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--fg2);
+  }
+
+  .arrow {
+    display: flex;
+    align-items: center;
+    color: var(--muted);
+  }
+
+  .arrow svg {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.75;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  @media (max-width: 800px) {
+    .arrow {
+      display: none;
+    }
+  }
+</style>
