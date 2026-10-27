@@ -20,7 +20,8 @@
     "preview": "astro preview",
     "check": "astro check",
     "lint": "eslint .",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "data:refresh": "node --env-file-if-exists=.env scripts/refresh/index.ts"
   },
   "keywords": [
     "portfolio",
@@ -31,12 +32,17 @@
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
     "@eslint/js": "^10.0.1",
+    "@types/node": "^22.20.5",
+    "aws4fetch": "^1.0.20",
     "eslint": "^10.12.0",
     "eslint-plugin-astro": "^3.2.1",
+    "playwright": "^1.64.1",
     "prettier": "^3.8.1",
     "prettier-plugin-astro": "^1.1.1",
+    "sharp": "^0.35.5",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.71.2"
+    "typescript-eslint": "^8.71.2",
+    "yaml": "^2.9.1"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.4",

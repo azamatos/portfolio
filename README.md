@@ -30,7 +30,7 @@ CI fails if accessibility, best practices or SEO drop below 100 (`lighthouserc.j
 - [Astro](https://astro.build) 7, static output, no client framework
 - TypeScript (strict), ESLint, Prettier
 - Self-hosted Geist and Space Mono through the Astro Fonts API
-- GitHub Actions: type check, lint, build, Lighthouse CI
+- GitHub Actions: type check, lint, build, Lighthouse CI; a weekly refresh of the project data (Playwright, sharp, ffmpeg, Cloudflare R2)
 
 ---
 
@@ -52,6 +52,21 @@ pnpm lint
 - **Resume:** replace `public/Azamat_Jorayev_Resume.pdf` with the new full-stack PDF (same file name).
 - **Share image:** replace `src/assets/og-image.png` (1200×630). Its URL changes with the file, so LinkedIn and Telegram fetch the new one when you refresh the link preview.
 
+## Project data
+
+Each project is two files: `src/content/projects/<id>.yaml`, written by hand (the text, the links, and where every number and screenshot comes from), and `src/data/collected/<id>.json`, written only by the refresh command (each number with its date and source, and the screenshots on `media.azamatos.com`). The build reads both and fetches nothing.
+
+```sh
+pnpm data:refresh               # every project
+pnpm data:refresh visaproof     # one project
+pnpm data:refresh --no-shots    # numbers and links only
+pnpm data:refresh --dry-run     # read and capture, write and upload nothing
+```
+
+It needs Playwright's Chromium (`pnpm exec playwright install chromium`) and ffmpeg. Uploads need `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID` and `R2_SECRET_ACCESS_KEY` in `.env`; without them the shots go to `.cache/refresh/` and the JSON keeps its old ones. A number that can't be read keeps its last value, goes under `problems` and makes the command fail. GitHub runs it every Monday (and from **Run workflow** in Actions), then commits the JSON if it changed.
+
+**Add a project:** copy one of the YAML files to `src/content/projects/<id>.yaml`, edit it, run `pnpm data:refresh <id>` and commit both files.
+
 ## Structure
 
 ```text
@@ -64,6 +79,10 @@ src/
   pages/llms.txt.ts          plain-text profile for AI assistants (/llms.txt)
   styles/global.css          tokens and reset
   assets/                    fonts, share image
+  content/projects/          one YAML file per project
+  data/collected/            what the refresh command collected, one JSON file per project
+  lib/projects/              schema, values and media for the project pages
+scripts/refresh/             pnpm data:refresh
 public/                      resume PDF, icons, hero.svg, _redirects (old resume links)
 ```
 

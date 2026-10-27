@@ -385,8 +385,12 @@ shots:
     device: desktop
     theme: dark
   run:
-    # "Try the tunnel" on Home: the run starts by itself.
+    # "Try the tunnel" on Home: the run starts by itself. The loop is 0:36 to 0:56 of it: the tunnel, 12 s with no
+    # signal, and the climb back.
     url: https://rebuffer.azamatos.com/run?start=now
     device: desktop
     theme: dark
     video: { seconds: 20 }
+    steps:
+      - click: role=button[name="Got it"]
+      - waitFor: '[aria-label="Run progress"][aria-valuenow="36"]'

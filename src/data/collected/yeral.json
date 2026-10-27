@@ -1,57 +1,66 @@
 {
-  "refreshedAt": "2026-10-27T16:08:58.184Z",
+  "refreshedAt": "2026-10-27T16:56:03.635Z",
   "values": {
     "commits": {
-      "value": 252,
-      "asOf": "2026-10-27T16:08:58.184Z",
+      "value": 254,
+      "asOf": "2026-10-27T16:56:03.635Z",
       "source": "https://github.com/azamatos/yeral/commits/main"
     },
     "react": {
       "value": "19",
-      "asOf": "2026-10-27T16:08:58.184Z",
+      "asOf": "2026-10-27T16:56:03.635Z",
       "source": "https://github.com/azamatos/yeral/blob/main/pnpm-workspace.yaml"
     },
     "vite": {
       "value": "8",
-      "asOf": "2026-10-27T16:08:58.184Z",
+      "asOf": "2026-10-27T16:56:03.635Z",
       "source": "https://github.com/azamatos/yeral/blob/main/pnpm-workspace.yaml"
     },
     "tailwind": {
       "value": "4",
-      "asOf": "2026-10-27T16:08:58.184Z",
+      "asOf": "2026-10-27T16:56:03.635Z",
       "source": "https://github.com/azamatos/yeral/blob/main/pnpm-workspace.yaml"
     },
     "hono": {
       "value": "4",
-      "asOf": "2026-10-27T16:08:58.184Z",
+      "asOf": "2026-10-27T16:56:03.635Z",
       "source": "https://github.com/azamatos/yeral/blob/main/pnpm-workspace.yaml"
     },
     "zod": {
       "value": "4",
-      "asOf": "2026-10-27T16:08:58.184Z",
+      "asOf": "2026-10-27T16:56:03.635Z",
       "source": "https://github.com/azamatos/yeral/blob/main/pnpm-workspace.yaml"
     },
     "storybook": {
       "value": "10",
-      "asOf": "2026-10-27T16:08:58.184Z",
+      "asOf": "2026-10-27T16:56:03.635Z",
       "source": "https://github.com/azamatos/yeral/blob/main/pnpm-workspace.yaml"
     },
     "components": {
       "value": 107,
-      "asOf": "2026-10-27T16:08:58.184Z",
+      "asOf": "2026-10-27T16:56:03.635Z",
       "source": "https://storybook.yeral.app/index.json"
     },
     "tests": {
       "value": 1908,
-      "asOf": "2026-10-27T16:08:58.184Z",
-      "source": "https://github.com/azamatos/yeral/actions/runs/40513358887/job/122220603188"
+      "asOf": "2026-10-27T16:56:03.635Z",
+      "source": "https://github.com/azamatos/yeral/actions/runs/40542165518/job/122323150189"
     },
     "decisions": {
       "value": 28,
-      "asOf": "2026-10-27T16:08:58.184Z",
+      "asOf": "2026-10-27T16:56:03.635Z",
       "source": "https://github.com/azamatos/yeral/tree/main/docs/decisions"
     }
   },
   "shots": {},
-  "problems": []
+  "problems": [
+    {
+      "name": "shot calendar",
+      "message": "step 3 (copy: \"[role=\\\"status\\\"] b\", into: \"input[autocomplete=\\\"one-time-code\\\"]\"): locator.innerText: Timeout 20000ms exceeded."
+    },
+    {
+      "name": "shot phone-calendar",
+      "message": "step 3 (copy: \"[role=\\\"status\\\"] b\", into: \"input[autocomplete=\\\"one-time-code\\\"]\"): locator.innerText: Timeout 20000ms exceeded."
+    }
+  ]
 }

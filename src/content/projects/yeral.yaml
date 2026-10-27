@@ -314,7 +314,9 @@ shots:
     url: https://business.yeral.app/login
     device: desktop
     theme: light
-    # The demo signs in any made-up number starting with 69 and shows the code on the screen.
+    # BLOCKED (27 Oct 2026): these steps fail. The code sign-in refuses the demo's 69 numbers on purpose (Ýeral's
+    # F-242), and "Try the business app", the demo's own way in, isn't in the business app yet. Until it is, the page
+    # shows the design fallback and the refresh reports this shot.
     steps: &signIn
       - fill: 'input[type="tel"]'
         value: "69123456"

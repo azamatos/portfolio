@@ -517,11 +517,11 @@ shots:
     theme: dark
     steps:
       - click: 'a[href^="/jobs/"]'
-      - waitFor: h1
+      - waitFor: text=Where the answers come from
   job-phone:
     url: https://visaproof.azamatos.com/?visa=sponsors
     device: phone
     theme: dark
     steps:
       - click: 'a[href^="/jobs/"]'
-      - waitFor: h1
+      - waitFor: text=Where the answers come from

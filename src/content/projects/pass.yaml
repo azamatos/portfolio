@@ -315,7 +315,9 @@ shots:
     url: https://pass.azamatos.com/health/
     device: desktop
     theme: dark
+    # The leak check is on by default; the shot waits for the strength (word lists) and the leak answer.
     steps:
-      - click: "[data-leak-opt-in]"
       - fill: "#password"
         value: Tuned-Lantern-Orbit-42
+      - waitFor: text=Very strong
+      - waitFor: text=Not found in known leaks

@@ -1,0 +1,162 @@
+// One shot from config to collected entry: capture, hash, then reuse the old entry when the hash is the same, or
+// encode and upload (or, without R2 credentials, save under .cache/refresh/).
+
+import { mkdir, writeFile } from "node:fs/promises";
+import { fileURLToPath } from "node:url";
+import type {
+  CollectedImage,
+  CollectedVideo,
+  ShotConfig,
+} from "../../../src/lib/projects/schema.ts";
+import { CACHE_DIR } from "../config.ts";
+import { MEDIA_URL, saveLocally, upload } from "../r2.ts";
+import { captureLoop, captureStill } from "./capture.ts";
+import {
+  contentHash,
+  encodeImage,
+  encodeLoop,
+  type EncodedImage,
+} from "./encode.ts";
+
+export type ShotEntry = CollectedImage | CollectedVideo;
+
+export type ShotResult = {
+  entry: ShotEntry;
+  /** The hash matched the old entry, which is kept as it was. */
+  same: boolean;
+  /** Files encoded, files sent to R2 (0 when they were there or saved locally), and where local ones went. */
+  files: number;
+  sent: number;
+  savedTo?: string;
+};
+
+const TIMEOUT = 4 * 60_000;
+
+/** The raw capture, for looking at: .cache/refresh/raw/<project>/<shot>.<ext>. */
+async function keepRaw(project: string, file: string, body: Buffer) {
+  const dir = new URL(`raw/${project}/`, CACHE_DIR);
+  await mkdir(dir, { recursive: true });
+  await writeFile(new URL(file, dir), body);
+}
+
+function imageEntry(
+  enc: EncodedImage,
+  base: string,
+  asOf: string,
+  source: string,
+): CollectedImage {
+  return {
+    kind: "image",
+    width: enc.width,
+    height: enc.height,
+    base,
+    widths: enc.widths,
+    formats: enc.formats,
+    asOf,
+    source,
+  };
+}
+
+async function take(
+  project: string,
+  name: string,
+  shot: ShotConfig,
+  old: ShotEntry | undefined,
+  publish: boolean,
+): Promise<ShotResult> {
+  const prefix = `portfolio/${project}`;
+  const asOf = new Date().toISOString();
+
+  if (!shot.video) {
+    const png = await captureStill(shot);
+    await keepRaw(project, `${name}.png`, png);
+    const key = `${name}.${contentHash([png])}`;
+    const base = `${MEDIA_URL}/${prefix}/${key}`;
+    if (old?.kind === "image" && old.base === base)
+      return { entry: old, same: true, files: 0, sent: 0 };
+    const enc = await encodeImage(png, key);
+    const entry = imageEntry(enc, base, asOf, shot.url);
+    if (!publish)
+      return {
+        entry,
+        same: false,
+        files: enc.files.length,
+        sent: 0,
+        savedTo: await saveLocally(prefix, enc.files),
+      };
+    return {
+      entry,
+      same: false,
+      files: enc.files.length,
+      sent: await upload(prefix, enc.files),
+    };
+  }
+
+  const { frames } = await captureLoop(shot);
+  const key = `${name}.${contentHash(frames.flatMap((f) => [f.jpeg, f.seconds.toFixed(4)]))}`;
+  const base = `${MEDIA_URL}/${prefix}/${key}`;
+  if (old?.kind === "video" && old.poster.base === base)
+    return { entry: old, same: true, files: 0, sent: 0 };
+  const enc = await encodeLoop(frames, key);
+  const mp4 = enc.files.find((f) => f.name.endsWith(".mp4"))!;
+  await keepRaw(project, `${name}.mp4`, mp4.body);
+  await keepRaw(
+    project,
+    `${name}.poster.webp`,
+    enc.poster.files.find((f) => f.name.endsWith(`${enc.width}.webp`))!.body,
+  );
+  const entry: CollectedVideo = {
+    kind: "video",
+    width: enc.width,
+    height: enc.height,
+    poster: imageEntry(enc.poster, base, asOf, shot.url),
+    sources: enc.files.map((f) => ({
+      type: f.type,
+      url: `${MEDIA_URL}/${prefix}/${f.name}`,
+    })),
+    asOf,
+    source: shot.url,
+  };
+  const files = [...enc.files, ...enc.poster.files];
+  if (!publish)
+    return {
+      entry,
+      same: false,
+      files: files.length,
+      sent: 0,
+      savedTo: await saveLocally(prefix, files),
+    };
+  return {
+    entry,
+    same: false,
+    files: files.length,
+    sent: await upload(prefix, files),
+  };
+}
+
+/** A shot, or an error after four minutes. */
+export async function takeShot(
+  project: string,
+  name: string,
+  shot: ShotConfig,
+  old: ShotEntry | undefined,
+  publish: boolean,
+): Promise<ShotResult> {
+  let timer: NodeJS.Timeout | undefined;
+  try {
+    return await Promise.race([
+      take(project, name, shot, old, publish),
+      new Promise<never>((_, reject) => {
+        timer = setTimeout(
+          () =>
+            reject(new Error(`took longer than ${TIMEOUT / 60_000} minutes`)),
+          TIMEOUT,
+        );
+      }),
+    ]);
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+export const rawDir = () => fileURLToPath(new URL("raw/", CACHE_DIR));
