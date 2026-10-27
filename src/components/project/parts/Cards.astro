@@ -1,0 +1,64 @@
+---
+// A grid of cards, as many per row as fit at `min` wide: an optional mono tag in the accent, a title and a body.
+
+import type { PartOf } from "../types";
+
+interface Props {
+  part: PartOf<"cards">;
+}
+
+const { part } = Astro.props;
+---
+
+<ul class="cards" style={`--min: ${part.min}`}>
+  {part.items.map((item) => (
+    <li>
+      {item.tag && <span class="tag">{item.tag}</span>}
+      <h3>{item.title}</h3>
+      <p>{item.body}</p>
+    </li>
+  ))}
+</ul>
+
+<style>
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(var(--min), 100%), 1fr));
+    gap: 12px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  li {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 20px;
+    border: 1px solid var(--line2);
+    border-radius: 12px;
+    background: var(--chip);
+  }
+
+  .tag {
+    font-family: var(--font-space-mono), monospace;
+    font-size: 11px;
+    line-height: 1.5;
+    color: var(--acc);
+  }
+
+  h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.5;
+    letter-spacing: -0.01em;
+  }
+
+  p {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--fg2);
+  }
+</style>

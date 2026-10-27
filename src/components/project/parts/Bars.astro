@@ -1,0 +1,147 @@
+---
+// Groups of labelled bars for percentages: the metric, a 10px bar on a --line2 track, and the value in mono, so the
+// number is there in text and not only as a length. The bars grow from the left when they scroll into view.
+
+import type { PartOf } from "../types";
+
+interface Props {
+  part: PartOf<"bars">;
+}
+
+const { part } = Astro.props;
+---
+
+<div class="bars" data-reveal>
+  <p class="title">{part.title}</p>
+  {part.groups.map((g) => (
+    <div class="group">
+      <h3>{g.who}</h3>
+      <dl>
+        {g.rows.map((r) => (
+          <div class="row">
+            <dt>{r.metric}</dt>
+            <dd class="track" aria-hidden="true">
+              <span
+                class="bar"
+                style={`width: ${r.width}; background: ${r.color}`}
+              />
+            </dd>
+            <dd class="value">{r.value}</dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+  ))}
+  <p class="text">{part.text}</p>
+</div>
+
+<script>
+  import "../reveal.ts";
+</script>
+
+<style>
+  .bars {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    max-width: 760px;
+  }
+
+  .title {
+    margin: 0;
+    font-family: var(--font-space-mono), monospace;
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--muted);
+  }
+
+  .group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  h3 {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 1.5;
+  }
+
+  dl {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 0;
+  }
+
+  .row {
+    display: grid;
+    grid-template-columns: 90px minmax(0, 1fr) 56px;
+    align-items: center;
+    gap: 14px;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  dt {
+    color: var(--fg2);
+  }
+
+  dd {
+    margin: 0;
+  }
+
+  .track {
+    display: block;
+    height: 10px;
+    overflow: hidden;
+    border-radius: 5px;
+    background: var(--line2);
+  }
+
+  .bar {
+    display: block;
+    height: 100%;
+    border-radius: 5px;
+    transform-origin: left center;
+  }
+
+  [data-reveal="wait"] .bar {
+    transform: scaleX(0);
+  }
+
+  [data-reveal="in"] .bar {
+    animation: grow 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) 0.3s both;
+  }
+
+  @keyframes grow {
+    from {
+      transform: scaleX(0);
+    }
+    to {
+      transform: scaleX(1);
+    }
+  }
+
+  .value {
+    font-family: var(--font-space-mono), monospace;
+    font-size: 13px;
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+  }
+
+  .text {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--fg2);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    [data-reveal] .bar {
+      transform: none;
+      animation: none;
+    }
+  }
+</style>

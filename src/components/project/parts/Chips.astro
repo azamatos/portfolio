@@ -1,0 +1,37 @@
+---
+// A list of pills, named by `label`.
+
+import type { PartOf } from "../types";
+
+interface Props {
+  part: PartOf<"chips">;
+}
+
+const { part } = Astro.props;
+---
+
+<ul aria-label={part.label}>
+  {part.items.map((item) => (
+    <li>{item}</li>
+  ))}
+</ul>
+
+<style>
+  ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  li {
+    padding: 5px 12px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--fg);
+  }
+</style>
