@@ -2,6 +2,7 @@
 import { Font } from "astro:assets";
 import Header from "@/components/Header.astro";
 import Footer from "@/components/Footer.astro";
+import CommandPalette from "@/components/CommandPalette.astro";
 import ogImage from "@/assets/og-image.png";
 import { THEME_COLOR, themeInitScript } from "@/lib/theme";
 import { SITE } from "@/site";
@@ -129,6 +130,7 @@ const person = {
         <slot />
       </main>
       <Footer />
+      <CommandPalette />
     </div>
     <!-- The ⌘K command palette goes here (phase 8). -->
   </body>
