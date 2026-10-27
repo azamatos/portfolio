@@ -120,6 +120,17 @@ async function runStep(page: Page, step: Step) {
       sheet.replaceSync(`${selector} { display: none !important; }`);
       document.adoptedStyleSheets = [...document.adoptedStyleSheets, sheet];
     }, step.hide);
+  } else if ("follow" in step) {
+    // A click on a link that isn't on screen: the page's router, if it has one, takes it like any other.
+    const href = new URL(step.follow, page.url()).href;
+    await page.evaluate((href) => {
+      const a = document.createElement("a");
+      a.href = href;
+      document.body.append(a);
+      a.click();
+      a.remove();
+    }, href);
+    await page.waitForURL(href, { timeout });
   } else if ("wait" in step) await page.waitForTimeout(step.wait * 1000);
   else if ("restartRandom" in step)
     await page.evaluate(() =>

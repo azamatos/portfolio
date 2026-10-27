@@ -293,6 +293,11 @@ export const shotStepSchema = z.union([
    * elements that appear later. For what describes the recording machine rather than the product.
    */
   z.strictObject({ hide: text }),
+  /**
+   * Opens another page of the site (a path or URL) the way a link to it does, so a site with a client-side router
+   * swaps it in place, without the menu a visitor would pick it from: for a loop that shows pages, not the menu.
+   */
+  z.strictObject({ follow: text }),
   /** Seconds to wait: the pace of a loop's steps. */
   z.strictObject({ wait: z.number().positive().max(30) }),
   /**
