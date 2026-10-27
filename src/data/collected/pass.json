@@ -1,42 +1,84 @@
 {
-  "refreshedAt": "2026-10-27T16:39:25.380Z",
+  "refreshedAt": "2026-10-27T19:06:17.634Z",
   "values": {
     "commits": {
       "value": 38,
-      "asOf": "2026-10-27T16:39:25.380Z",
+      "asOf": "2026-10-27T19:06:18.870Z",
       "source": "https://github.com/azamatos/password-generator/commits/main"
     },
     "astro": {
       "value": "7",
-      "asOf": "2026-10-27T16:39:25.380Z",
+      "asOf": "2026-10-27T19:06:18.870Z",
       "source": "https://github.com/azamatos/password-generator/blob/main/package.json"
     },
     "presets": {
       "value": 16,
-      "asOf": "2026-10-27T16:39:25.380Z",
+      "asOf": "2026-10-27T19:06:19.687Z",
       "source": "https://raw.githubusercontent.com/azamatos/password-generator/main/src/data/platforms.json"
     },
     "unitTests": {
-      "value": 89,
-      "asOf": "2026-10-27T16:39:25.380Z",
-      "source": "https://github.com/azamatos/password-generator/actions/runs/40502692405/job/122184063997"
+      "value": 88,
+      "asOf": "2026-10-27T17:09:44.000Z",
+      "source": "https://github.com/azamatos/password-generator/actions/runs/40540241849/job/122316363081"
     },
     "e2eTests": {
       "value": 136,
-      "asOf": "2026-10-27T16:39:25.380Z",
-      "source": "https://github.com/azamatos/password-generator/actions/runs/40502692405/job/122184064215"
+      "asOf": "2026-10-27T17:09:44.000Z",
+      "source": "https://github.com/azamatos/password-generator/actions/runs/40540241849/job/122316363527"
     },
     "siteJs": {
       "value": 13.4,
-      "asOf": "2026-10-27T16:39:25.380Z",
-      "source": "https://github.com/azamatos/password-generator/actions/runs/40502692405/job/122184063997"
+      "asOf": "2026-10-27T17:09:44.000Z",
+      "source": "https://github.com/azamatos/password-generator/actions/runs/40540241849/job/122316363081"
+    },
+    "siteBudget": {
+      "value": 14,
+      "asOf": "2026-10-27T17:09:44.000Z",
+      "source": "https://github.com/azamatos/password-generator/actions/runs/40540241849/job/122316363081"
     },
     "healthJs": {
       "value": 10.7,
-      "asOf": "2026-10-27T16:39:25.380Z",
-      "source": "https://github.com/azamatos/password-generator/actions/runs/40502692405/job/122184063997"
+      "asOf": "2026-10-27T17:09:44.000Z",
+      "source": "https://github.com/azamatos/password-generator/actions/runs/40540241849/job/122316363081"
+    },
+    "healthBudget": {
+      "value": 11.5,
+      "asOf": "2026-10-27T17:09:44.000Z",
+      "source": "https://github.com/azamatos/password-generator/actions/runs/40540241849/job/122316363081"
     }
   },
-  "shots": {},
+  "shots": {
+    "github": {
+      "kind": "image",
+      "width": 2880,
+      "height": 1800,
+      "base": "https://media.azamatos.com/portfolio/pass/github.330649add8",
+      "widths": [480, 960, 1440, 2880],
+      "formats": ["avif", "webp"],
+      "asOf": "2026-10-27T17:28:33.019Z",
+      "source": "https://pass.azamatos.com/github/"
+    },
+    "phone": {
+      "kind": "image",
+      "width": 780,
+      "height": 1688,
+      "base": "https://media.azamatos.com/portfolio/pass/phone.f071eddd64",
+      "widths": [480, 780],
+      "formats": ["avif", "webp"],
+      "asOf": "2026-10-27T17:28:44.518Z",
+      "source": "https://pass.azamatos.com/github/"
+    },
+    "health": {
+      "kind": "image",
+      "width": 2880,
+      "height": 1800,
+      "base": "https://media.azamatos.com/portfolio/pass/health.44fddfc45f",
+      "widths": [480, 960, 1440, 2880],
+      "formats": ["avif", "webp"],
+      "asOf": "2026-10-27T17:28:50.293Z",
+      "source": "https://pass.azamatos.com/health/"
+    }
+  },
+  "skipped": [],
   "problems": []
 }

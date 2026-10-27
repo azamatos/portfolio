@@ -1,67 +1,164 @@
 {
-  "refreshedAt": "2026-10-27T16:53:53.480Z",
+  "refreshedAt": "2026-10-27T19:06:35.263Z",
   "values": {
     "commits": {
       "value": 140,
-      "asOf": "2026-10-27T16:53:53.480Z",
+      "asOf": "2026-10-27T19:06:36.119Z",
       "source": "https://github.com/azamatos/rebuffer/commits/main"
     },
     "react": {
       "value": "19",
-      "asOf": "2026-10-27T16:53:53.480Z",
+      "asOf": "2026-10-27T19:06:36.119Z",
       "source": "https://github.com/azamatos/rebuffer/blob/main/package.json"
     },
     "zustand": {
       "value": "5",
-      "asOf": "2026-10-27T16:53:53.480Z",
+      "asOf": "2026-10-27T19:06:36.119Z",
       "source": "https://github.com/azamatos/rebuffer/blob/main/package.json"
     },
     "zod": {
       "value": "4",
-      "asOf": "2026-10-27T16:53:53.480Z",
+      "asOf": "2026-10-27T19:06:36.119Z",
       "source": "https://github.com/azamatos/rebuffer/blob/main/package.json"
     },
     "tailwind": {
       "value": "4",
-      "asOf": "2026-10-27T16:53:53.480Z",
+      "asOf": "2026-10-27T19:06:36.119Z",
       "source": "https://github.com/azamatos/rebuffer/blob/main/package.json"
     },
     "vite": {
       "value": "8",
-      "asOf": "2026-10-27T16:53:53.480Z",
+      "asOf": "2026-10-27T19:06:36.119Z",
       "source": "https://github.com/azamatos/rebuffer/blob/main/package.json"
     },
     "typescript": {
       "value": "6",
-      "asOf": "2026-10-27T16:53:53.480Z",
+      "asOf": "2026-10-27T19:06:36.119Z",
       "source": "https://github.com/azamatos/rebuffer/blob/main/package.json"
     },
     "hlsjs": {
       "value": "1.7.3",
-      "asOf": "2026-10-27T16:53:53.480Z",
+      "asOf": "2026-10-27T19:06:36.119Z",
       "source": "https://github.com/azamatos/rebuffer/blob/main/package.json"
     },
     "hlsMinor": {
       "value": "1.7",
-      "asOf": "2026-10-27T16:53:53.480Z",
+      "asOf": "2026-10-27T19:06:36.119Z",
       "source": "https://github.com/azamatos/rebuffer/blob/main/package.json"
     },
     "unitTests": {
       "value": 554,
-      "asOf": "2026-10-27T16:53:53.480Z",
+      "asOf": "2026-10-27T16:52:49.000Z",
       "source": "https://github.com/azamatos/rebuffer/actions/runs/40538641674/job/122310662656"
     },
     "e2eTests": {
       "value": 178,
-      "asOf": "2026-10-27T16:53:53.480Z",
+      "asOf": "2026-10-27T16:52:49.000Z",
       "source": "https://github.com/azamatos/rebuffer/actions/runs/40538641674/job/122310662117"
     },
     "homeJs": {
       "value": 96.89,
-      "asOf": "2026-10-27T16:53:53.480Z",
+      "asOf": "2026-10-27T16:52:49.000Z",
       "source": "https://github.com/azamatos/rebuffer/actions/runs/40538641674/job/122310662656"
+    },
+    "homeBudget": {
+      "value": 100,
+      "asOf": "2026-10-27T16:52:49.000Z",
+      "source": "https://github.com/azamatos/rebuffer/actions/runs/40538641674/job/122310662656"
+    },
+    "repeat": {
+      "value": [
+        ["Home fibre", "91", "0.46 s–0.50 s", "0", "1"],
+        ["Busy café Wi-Fi", "44", "3.39 s–3.42 s", "0", "1"],
+        ["4G commute", "100", "2.01 s–2.03 s", "0", "4"],
+        ["Train through a tunnel", "33", "2.53 s–2.55 s", "1", "3"],
+        ["Rural 3G", "31", "13.46 s–13.48 s", "0", "1"],
+        ["Lift", "78", "1.90 s–1.91 s", "0", "1"],
+        ["Evening congestion", "79", "1.39 s–1.42 s", "0", "2"]
+      ],
+      "asOf": "2026-10-26T09:18:14.000Z",
+      "source": "https://github.com/azamatos/rebuffer/actions/runs/40291888746/job/121468644619"
+    },
+    "repeatRuns": {
+      "value": 5,
+      "asOf": "2026-10-26T09:18:14.000Z",
+      "source": "https://github.com/azamatos/rebuffer/actions/runs/40291888746/job/121468644619"
+    },
+    "scoreSpread": {
+      "value": 0,
+      "asOf": "2026-10-26T09:18:14.000Z",
+      "source": "https://github.com/azamatos/rebuffer/actions/runs/40291888746/job/121468644619"
+    },
+    "repeatSetup": {
+      "value": "Chromium 156.0.8078.4, hls.js 1.7.3",
+      "asOf": "2026-10-26T09:18:14.000Z",
+      "source": "https://github.com/azamatos/rebuffer/actions/runs/40291888746/job/121468644619"
+    },
+    "repeatStream": {
+      "value": "synthetic, 2:00, five qualities from 240p (0.47 Mbps) to 1080p (6 Mbps), 4 s segments",
+      "asOf": "2026-10-26T09:18:14.000Z",
+      "source": "https://github.com/azamatos/rebuffer/actions/runs/40291888746/job/121468644619"
     }
   },
-  "shots": {},
+  "shots": {
+    "home": {
+      "kind": "image",
+      "width": 2880,
+      "height": 1800,
+      "base": "https://media.azamatos.com/portfolio/rebuffer/home.dcb3fcead1",
+      "widths": [480, 960, 1440, 2880],
+      "formats": ["avif", "webp"],
+      "asOf": "2026-10-27T17:29:11.360Z",
+      "source": "https://rebuffer.azamatos.com/"
+    },
+    "phone": {
+      "kind": "image",
+      "width": 780,
+      "height": 1688,
+      "base": "https://media.azamatos.com/portfolio/rebuffer/phone.c9d48e913b",
+      "widths": [480, 780],
+      "formats": ["avif", "webp"],
+      "asOf": "2026-10-27T17:29:22.710Z",
+      "source": "https://rebuffer.azamatos.com/"
+    },
+    "networks": {
+      "kind": "image",
+      "width": 2880,
+      "height": 1800,
+      "base": "https://media.azamatos.com/portfolio/rebuffer/networks.a28a6703d8",
+      "widths": [480, 960, 1440, 2880],
+      "formats": ["avif", "webp"],
+      "asOf": "2026-10-27T17:29:28.859Z",
+      "source": "https://rebuffer.azamatos.com/networks"
+    },
+    "run": {
+      "kind": "video",
+      "width": 1440,
+      "height": 900,
+      "poster": {
+        "kind": "image",
+        "width": 1440,
+        "height": 900,
+        "base": "https://media.azamatos.com/portfolio/rebuffer/run.61976fad3f",
+        "widths": [480, 960, 1440],
+        "formats": ["avif", "webp"],
+        "asOf": "2026-10-27T17:29:41.089Z",
+        "source": "https://rebuffer.azamatos.com/run?start=now"
+      },
+      "sources": [
+        {
+          "type": "video/webm",
+          "url": "https://media.azamatos.com/portfolio/rebuffer/run.61976fad3f.webm"
+        },
+        {
+          "type": "video/mp4",
+          "url": "https://media.azamatos.com/portfolio/rebuffer/run.61976fad3f.mp4"
+        }
+      ],
+      "asOf": "2026-10-27T17:29:41.089Z",
+      "source": "https://rebuffer.azamatos.com/run?start=now"
+    }
+  },
+  "skipped": [],
   "problems": []
 }
