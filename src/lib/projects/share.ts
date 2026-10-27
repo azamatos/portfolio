@@ -1,8 +1,10 @@
-// A project page's link preview image (og:image): the card the refresh command renders (scripts/refresh/shots/og.ts)
-// and records as `og` in the collected file; until there's one for the hero the page shows, the page keeps the site's.
+// How a project page is shared and found: its title and description, its link preview image (og:image) and its
+// schema.org nodes. The image is the card the refresh command renders (scripts/refresh/shots/og.ts) and records as
+// `og` in the collected file; until there's one for the hero the page shows, the page keeps the site's.
 //
-// Type-only imports, so the refresh command can import `heroSource` as well.
+// Type-only imports and src/site.ts, so the refresh command can import `heroSource` as well.
 
+import { SITE } from "../../site.ts";
 import type { Project } from "./index.ts";
 import type { Collected, MediaRef } from "./schema.ts";
 
@@ -14,6 +16,9 @@ export type ShareImage = {
   type: string;
   alt: string;
 };
+
+/** The Person every page describes (BaseLayout), for other nodes to point at. */
+export const PERSON_ID = `${SITE.url}/#person`;
 
 /** The MIME type of a share image, from its file name. */
 export const imageType = (url: string) =>
@@ -45,4 +50,48 @@ export function shareImage(project: Project): ShareImage | undefined {
     type: imageType(og.url),
     alt: `${project.name}, ${project.statusText}: ${project.readme.headline} Screenshot: ${project.page.hero.alt}`,
   };
+}
+
+/** "Visaproof: Developer jobs in Europe, with the visa answer first": the name and the headline, which say it all. */
+export const projectTitle = (p: Project) =>
+  `${p.name}: ${p.readme.headline.replace(/\.$/, "")}`;
+
+/**
+ * 120 to 160 characters, as search results show them: the tagline when it's that long, else the tagline and the
+ * first sentence of the short README text, else the headline and that text. The tagline when none fits.
+ */
+export function projectDescription(p: Project): string {
+  const tagline = `${p.page.tagline.strong} ${p.page.tagline.rest}`;
+  const [first] = p.readme.short.split(/(?<=[.!?])\s+/);
+  return (
+    [
+      tagline,
+      `${tagline} ${first}`,
+      `${p.readme.headline} ${p.readme.short}`,
+    ].find((d) => d.length >= 120 && d.length <= 160) ?? tagline
+  );
+}
+
+/** The project as source code with a live site, by the Person, and the page's place: Home → Projects → name. */
+export function projectJsonLd(p: Project, page: string, image?: ShareImage) {
+  return [
+    {
+      "@type": "SoftwareSourceCode",
+      "@id": `${page}#project`,
+      name: p.name,
+      description: p.readme.short,
+      url: p.site,
+      codeRepository: p.repoUrl,
+      author: { "@id": PERSON_ID },
+      ...(image && { image: image.url }),
+    },
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { name: "Home", item: `${SITE.url}/` },
+        { name: "Projects", item: `${SITE.url}/#projects` },
+        { name: p.name, item: page },
+      ].map((crumb, i) => ({ "@type": "ListItem", position: i + 1, ...crumb })),
+    },
+  ];
 }

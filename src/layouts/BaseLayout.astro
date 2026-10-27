@@ -3,25 +3,21 @@ import { Font } from "astro:assets";
 import Header from "@/components/Header.astro";
 import Footer from "@/components/Footer.astro";
 import CommandPalette from "@/components/CommandPalette.astro";
+import heroPhoto from "@/assets/hero-photo.webp";
 import ogImage from "@/assets/og-image.png";
+import { getProjects } from "@/lib/projects";
+import { collectedSiteSchema } from "@/lib/projects/schema";
+import { imageType, PERSON_ID, type ShareImage } from "@/lib/projects/share";
 import { THEME_COLOR, themeInitScript } from "@/lib/theme";
 import { SITE } from "@/site";
 import "@/styles/global.css";
-
-/** A link preview's image: an absolute URL, its size and what it shows. */
-export type ShareImage = {
-  url: string;
-  width: number;
-  height: number;
-  alt: string;
-};
 
 interface Props {
   title?: string;
   description?: string;
   /** The link preview's description: `description` when that's given, else the site's short one. */
   shareDescription?: string;
-  /** The link preview's image; the site's og-image.png by default. */
+  /** The link preview's image; the site's card by default. */
   image?: ShareImage;
   /** og:type: "article" for a project page. */
   type?: "website" | "article";
@@ -35,8 +31,8 @@ interface Props {
   labelledby?: string;
   /** A project page: turns on that project's accent tokens (--acc, --acc2, --on-acc) inside <main>. */
   project?: string;
-  /** More schema.org data about the page, after the Person. */
-  jsonLd?: Record<string, unknown>;
+  /** More schema.org nodes about the page, in one @graph after the Person (no @context). */
+  jsonLd?: Record<string, unknown>[];
 }
 
 const {
@@ -49,26 +45,52 @@ const {
   preconnect = [],
   labelledby,
   project,
-  jsonLd,
+  jsonLd = [],
 } = Astro.props;
 
+const home = `${SITE.url}/`;
 const canonical = new URL(
   Astro.props.canonical ?? Astro.url.pathname,
   Astro.site,
 ).href;
-// Imported, so the file name carries a content hash and link previews refetch it after every change.
-const share: ShareImage = image ?? {
-  url: new URL(ogImage.src, Astro.site).href,
-  width: ogImage.width,
-  height: ogImage.height,
-  alt: `${SITE.name}, ${SITE.role}`,
-};
+
+// The site's card (the projects in a terminal), once the refresh command has made one: src/data/collected/_site.json.
+// Until then, the old image, imported so its file name carries a content hash.
+const siteFile = Object.values(
+  import.meta.glob<unknown>("/src/data/collected/_site.json", {
+    eager: true,
+    import: "default",
+  }),
+)[0];
+const siteOg =
+  siteFile === undefined ? undefined : collectedSiteSchema.parse(siteFile).og;
+const names = new Intl.ListFormat("en").format(
+  (await getProjects()).map((p) => p.name),
+);
+const share: ShareImage =
+  image ??
+  (siteOg
+    ? {
+        url: siteOg.url,
+        width: siteOg.width,
+        height: siteOg.height,
+        type: imageType(siteOg.url),
+        alt: `${SITE.name}, ${SITE.role}. A terminal lists his projects: ${names}.`,
+      }
+    : {
+        url: new URL(ogImage.src, Astro.site).href,
+        width: ogImage.width,
+        height: ogImage.height,
+        type: "image/png",
+        alt: `${SITE.name}, ${SITE.role}`,
+      });
 
 const person = {
-  "@context": "https://schema.org",
   "@type": "Person",
+  "@id": PERSON_ID,
   name: SITE.name,
-  url: SITE.url,
+  url: home,
+  image: new URL(heroPhoto.src, Astro.site).href,
   jobTitle: SITE.role,
   email: `mailto:${SITE.email}`,
   knowsAbout: [
@@ -84,6 +106,19 @@ const person = {
     name: "Belarus State Aviation Academy",
   },
   sameAs: [SITE.links.github, SITE.links.linkedin],
+};
+// The home page names the site, for the name search results show above it.
+const website = {
+  "@type": "WebSite",
+  "@id": `${home}#website`,
+  name: SITE.name,
+  alternateName: "azamatos",
+  url: home,
+  author: { "@id": PERSON_ID },
+};
+const graph = {
+  "@context": "https://schema.org",
+  "@graph": [person, ...(canonical === home ? [website] : []), ...jsonLd],
 };
 ---
 
@@ -129,13 +164,15 @@ const person = {
       </style>
     </noscript>
 
-    <!-- Open Graph (LinkedIn / Telegram / Discord) -->
+    <!-- Open Graph (LinkedIn / Telegram / Discord / Slack); og:url is the canonical URL, so a noindex page has none -->
+    <meta property="og:site_name" content={SITE.name} />
+    <meta property="og:locale" content="en_US" />
     <meta property="og:type" content={type} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={shareDescription} />
-    <meta property="og:url" content={canonical} />
-    <meta property="og:site_name" content="azamatos" />
+    {!noindex && <meta property="og:url" content={canonical} />}
     <meta property="og:image" content={share.url} />
+    <meta property="og:image:type" content={share.type} />
     <meta property="og:image:width" content={String(share.width)} />
     <meta property="og:image:height" content={String(share.height)} />
     <meta property="og:image:alt" content={share.alt} />
@@ -144,7 +181,7 @@ const person = {
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={shareDescription} />
     <meta name="twitter:image" content={share.url} />
-    {image && <meta name="twitter:image:alt" content={share.alt} />}
+    <meta name="twitter:image:alt" content={share.alt} />
 
     <link rel="icon" href="/favicon.ico" sizes="48x48" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
@@ -156,18 +193,12 @@ const person = {
     <Font cssVariable="--font-geist" preload />
     <Font cssVariable="--font-space-mono" preload />
 
+    <!-- "<" escaped, so no text in the data can close the script. -->
     <script
       is:inline
       type="application/ld+json"
-      set:html={JSON.stringify(person)}
+      set:html={JSON.stringify(graph).replace(/</g, "\\u003c")}
     />
-    {jsonLd && (
-      <script
-        is:inline
-        type="application/ld+json"
-        set:html={JSON.stringify(jsonLd)}
-      />
-    )}
   </head>
 
   <body>

@@ -13,8 +13,12 @@ import PageHead from "@/components/project/PageHead.astro";
 import Section from "@/components/project/Section.astro";
 import { sectionNumber } from "@/components/project/types";
 import { getProjects, type Project } from "@/lib/projects";
-import { shareImage } from "@/lib/projects/share";
-import { SITE } from "@/site";
+import {
+  projectDescription,
+  projectJsonLd,
+  projectTitle,
+  shareImage,
+} from "@/lib/projects/share";
 
 export async function getStaticPaths() {
   const projects = await getProjects();
@@ -34,33 +38,22 @@ const { project, next } = Astro.props;
 const { page } = project;
 const last = page.sections.length;
 
-const title = `${project.name}: ${project.readme.headline.replace(/\.$/, "")} — ${SITE.name}`;
-const description = `${page.tagline.strong} ${page.tagline.rest}`;
 const image = shareImage(project);
 // The hero is the page's first image: connect to R2 early when it's there.
 const preconnect =
   page.hero.image.kind === "asset" ? [] : ["https://media.azamatos.com"];
-
-const work = {
-  "@context": "https://schema.org",
-  "@type": "CreativeWork",
-  name: project.name,
-  description: project.readme.short,
-  url: project.site,
-  author: { "@type": "Person", name: SITE.name, url: SITE.url },
-};
 ---
 
 <BaseLayout
-  title={title}
-  description={description}
+  title={projectTitle(project)}
+  description={projectDescription(project)}
   image={image}
   type="article"
   canonical={page.path}
   preconnect={preconnect}
   labelledby="project-title"
   project={project.id}
-  jsonLd={work}
+  jsonLd={projectJsonLd(project, new URL(page.path, Astro.site).href, image)}
 >
   <PageHead project={project} />
   <Numbers numbers={page.numbers} note={page.numbersNote} />
