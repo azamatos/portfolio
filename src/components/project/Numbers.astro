@@ -1,0 +1,101 @@
+---
+// The big numbers between two rules, and the note on where they come from (with `{checked}` already filled in).
+// A number with `count` counts up from 0 over 1.1 s when it scrolls into view (reveal.ts); the HTML holds the final
+// text, so it's what shows without JavaScript and with reduced motion. Tabular figures and no wrapping keep the
+// count from moving anything; the numbers aren't a live region.
+
+import type { Figure } from "@/lib/projects";
+
+interface Props {
+  numbers: Figure[];
+  note: string;
+}
+
+const { numbers, note } = Astro.props;
+---
+
+<section class="numbers" aria-label="In numbers" data-reveal>
+  <dl>
+    {numbers.map((n) => (
+      <div class="number">
+        <dt>{n.label}</dt>
+        <dd
+          class:list={{ counts: n.count }}
+          data-count={n.count && JSON.stringify(n.count)}
+        >
+          {n.text}
+        </dd>
+      </div>
+    ))}
+  </dl>
+  <p class="note">{note}</p>
+</section>
+
+<script>
+  import "./reveal.ts";
+</script>
+
+<style>
+  .numbers {
+    padding: 72px var(--g) 40px;
+  }
+
+  dl {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr));
+    gap: 32px;
+    margin: 0;
+    padding: 32px 0;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .number {
+    display: flex;
+    flex-direction: column-reverse;
+    justify-content: flex-end;
+    gap: 6px;
+  }
+
+  dt {
+    font-size: 14px;
+    line-height: 1.45;
+    color: var(--fg2);
+  }
+
+  dd {
+    margin: 0;
+    font-size: 48px;
+    font-weight: 500;
+    line-height: 1.05;
+    letter-spacing: -0.04em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .counts {
+    white-space: nowrap;
+  }
+
+  .note {
+    margin: 14px 0 0;
+    font-family: var(--font-space-mono), monospace;
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--muted);
+  }
+
+  @media (max-width: 800px) {
+    .numbers {
+      padding-top: 40px;
+    }
+
+    dl {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 24px 16px;
+    }
+
+    dd {
+      font-size: 30px;
+    }
+  }
+</style>

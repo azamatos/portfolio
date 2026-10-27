@@ -1,0 +1,279 @@
+---
+// The top of a project page: the back link, the status chip, the name (the page's h1, id "project-title"), the
+// tagline, the meta list (role, stack, links), then the hero: the framed desktop screenshot, 700px tall, and the phone
+// screenshot overlapping its bottom right. On a phone only the framed screenshot shows, at its natural height. The head
+// and the hero rise in on load. The desktop screenshot is the page's first image: it loads at once, high priority.
+
+import "@/styles/project.css";
+import type { Project } from "@/lib/projects";
+import Media from "./Media.astro";
+
+interface Props {
+  project: Project;
+}
+
+const { project } = Astro.props;
+const { page } = project;
+const live = project.status === "live";
+---
+
+<section class="head">
+  <a href="/#projects" class="back pj-rise">
+    <span class="prompt" aria-hidden="true">
+      ➜
+    </span>
+    <span class="path" aria-hidden="true">
+      ~/projects/{project.id}
+    </span>
+    <span>
+      cd ..<span class="pj-sr-only">, back to all projects</span>
+    </span>
+  </a>
+
+  <div class="intro pj-rise">
+    <div class="title">
+      <p class:list={["status", { live }]}>
+        <span
+          class:list={["dot", { "pj-pulse": !live }]}
+          aria-hidden="true"
+        ></span>
+        {page.statusLabel}
+      </p>
+      <h1 id="project-title">{project.name}</h1>
+      <p class="tagline">
+        <span class="strong">{page.tagline.strong}</span> {page.tagline.rest}
+      </p>
+    </div>
+    <dl class="meta">
+      {page.meta.map((m) => (
+        <>
+          <dt>{m.label}</dt>
+          <dd>
+            {"text" in m ? (
+              <span>{m.text}</span>
+            ) : (
+              m.links.map((l) => <a href={l.href}>{l.label}</a>)
+            )}
+          </dd>
+        </>
+      ))}
+    </dl>
+  </div>
+
+  <div class="hero pj-rise">
+    <figure class="shot">
+      <Media
+        media={page.hero.image}
+        alt={page.hero.alt}
+        frame="hero"
+        host={page.hero.host}
+        fill
+        priority
+        sizes="(max-width: 800px) calc(100vw - 40px), (max-width: 1200px) calc(100vw - 280px), calc(100vw - 360px)"
+      />
+    </figure>
+    <figure class="phone">
+      <Media
+        media={page.hero.phoneImage}
+        alt={page.hero.phoneAlt}
+        sizes="260px"
+      />
+    </figure>
+  </div>
+</section>
+
+<style>
+  .head {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    padding: 40px var(--g) 56px;
+  }
+
+  .back {
+    display: inline-flex;
+    align-items: center;
+    align-self: flex-start;
+    gap: 0.6em;
+    min-height: 44px;
+    font-family: var(--font-space-mono), monospace;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--fg2);
+    text-decoration: none;
+    animation-delay: 0.05s;
+    transition: color 0.16s ease;
+  }
+
+  .back:hover {
+    color: var(--fg);
+  }
+
+  .prompt {
+    color: var(--mint);
+  }
+
+  .path {
+    color: var(--teal);
+  }
+
+  .intro {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 32px 64px;
+    animation-delay: 0.22s;
+  }
+
+  .title {
+    display: flex;
+    flex: 1 1 560px;
+    flex-direction: column;
+    gap: 20px;
+    max-width: 780px;
+  }
+
+  .status {
+    --status: var(--amber);
+
+    display: inline-flex;
+    align-items: center;
+    align-self: flex-start;
+    gap: 10px;
+    margin: 0;
+    padding: 6px 14px 6px 12px;
+    border: 1px solid color-mix(in srgb, var(--status) 40%, transparent);
+    border-radius: 999px;
+    font-family: var(--font-space-mono), monospace;
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--status);
+  }
+
+  .status.live {
+    --status: var(--mint);
+  }
+
+  .dot {
+    flex: none;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--status);
+  }
+
+  h1 {
+    margin: 0;
+    font-size: 80px;
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: -0.06em;
+  }
+
+  .tagline {
+    margin: 0;
+    font-size: 26px;
+    line-height: 1.3;
+    letter-spacing: -0.03em;
+    color: var(--fg2);
+  }
+
+  .strong {
+    color: var(--fg);
+  }
+
+  .meta {
+    display: grid;
+    flex: 0 1 400px;
+    grid-template-columns: 96px minmax(0, 1fr);
+    gap: 10px 16px;
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  dt {
+    font-family: var(--font-space-mono), monospace;
+    font-size: 12px;
+    line-height: 1.75;
+    color: var(--muted);
+  }
+
+  dd {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 16px;
+    margin: 0;
+    color: var(--fg);
+  }
+
+  /* 2px above and below make the target 25px tall (WCAG 2.5.8) without moving the text. */
+  dd a {
+    margin: -2px 0;
+    padding: 2px 0;
+    color: var(--acc);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .hero {
+    position: relative;
+    height: 700px;
+    margin-top: 12px;
+  }
+
+  .shot {
+    position: absolute;
+    inset: 0 120px 0 0;
+    margin: 0;
+  }
+
+  /* The frame fills the hero's 700px; on a phone the hero's height is auto, and so is the frame's. */
+  .shot > :global(.frame) {
+    height: 100%;
+  }
+
+  .phone {
+    position: absolute;
+    right: 0;
+    bottom: -40px;
+    width: 260px;
+    max-height: 560px;
+    margin: 0;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: 32px;
+    background: #0b0c0e;
+    box-shadow: 0 40px 100px rgba(0, 0, 0, 0.5);
+  }
+
+  @media (max-width: 800px) {
+    h1 {
+      font-size: 44px;
+    }
+
+    .tagline {
+      font-size: 20px;
+    }
+
+    .hero {
+      height: auto;
+    }
+
+    .shot {
+      position: relative;
+      inset: auto;
+    }
+
+    .phone {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .back {
+      transition: none;
+    }
+  }
+</style>

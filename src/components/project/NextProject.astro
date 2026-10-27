@@ -1,0 +1,134 @@
+---
+// The card that links to the next project's page: "next project", `➜ ~ cd ../<id>` with the arrow in that project's
+// accent, its headline, and a round arrow. The border turns to this page's accent on hover.
+
+import type { Project } from "@/lib/projects";
+
+interface Props {
+  /** The next project: `getProject(project.page.next)`. */
+  next: Project;
+}
+
+const { next } = Astro.props;
+---
+
+<section class="next" aria-label="Next project">
+  <a href={next.path} class="card">
+    <span class="text">
+      <span class="kicker">next project</span>
+      <span class="title">
+        <span class="arrow" data-project={next.id} aria-hidden="true">
+          ➜
+        </span>
+        <span class="tilde" aria-hidden="true">
+          ~
+        </span>
+        <span>cd ../{next.id}</span>
+      </span>
+      <span class="headline">{next.readme.headline}</span>
+    </span>
+    <span class="go" aria-hidden="true">
+      <svg viewBox="0 0 24 24" width="20" height="20">
+        <path d="M5 12h14" />
+        <path d="M13 6l6 6-6 6" />
+      </svg>
+    </span>
+  </a>
+</section>
+
+<style>
+  .next {
+    padding: 56px var(--g) 120px;
+  }
+
+  .card {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 32px 36px;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background: var(--chip);
+    color: inherit;
+    text-decoration: none;
+    transition:
+      border-color 0.16s ease,
+      background 0.16s ease;
+  }
+
+  .card:hover {
+    border-color: var(--acc);
+  }
+
+  .text {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+  }
+
+  .kicker {
+    font-family: var(--font-space-mono), monospace;
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--muted);
+  }
+
+  .title {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    font-family: var(--font-space-mono), monospace;
+    font-size: 30px;
+    line-height: 1.5;
+    color: var(--logo);
+  }
+
+  .arrow {
+    color: var(--acc);
+  }
+
+  .tilde {
+    color: var(--teal);
+  }
+
+  .headline {
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--fg2);
+  }
+
+  .go {
+    display: flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 52px;
+    height: 52px;
+    border: 1px solid var(--line);
+    border-radius: 50%;
+    color: var(--fg);
+  }
+
+  .go svg {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  @media (max-width: 800px) {
+    .title {
+      font-size: 22px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .card {
+      transition: none;
+    }
+  }
+</style>

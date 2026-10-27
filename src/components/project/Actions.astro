@@ -1,0 +1,81 @@
+---
+// The page's links out, as buttons with an ↗: the primary one filled (--btn-bg), the rest outlined.
+
+import type { Action } from "./types";
+
+interface Props {
+  actions: Action[];
+}
+
+const { actions } = Astro.props;
+---
+
+<div class="actions">
+  {actions.map((a) => (
+    <a href={a.href} class:list={["action", { primary: a.primary }]}>
+      {a.label}
+      <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+        <path d="M7 17L17 7" />
+        <path d="M8 7h9v9" />
+      </svg>
+    </a>
+  ))}
+</div>
+
+<style>
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding-top: 10px;
+  }
+
+  .action {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    height: 46px;
+    padding: 0 18px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--chip);
+    color: var(--fg);
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    text-decoration: none;
+    transition:
+      border-color 0.16s ease,
+      background 0.16s ease;
+  }
+
+  .action:hover {
+    border-color: var(--fg2);
+  }
+
+  .primary {
+    border-color: var(--btn-bg);
+    background: var(--btn-bg);
+    color: var(--btn-fg);
+  }
+
+  .primary:hover {
+    border-color: var(--btn-bg);
+    opacity: 0.88;
+  }
+
+  svg {
+    flex: none;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .action {
+      transition: none;
+    }
+  }
+</style>
