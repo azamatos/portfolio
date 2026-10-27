@@ -61,5 +61,5 @@ export async function readMeasure(def: Def<"measure">): Promise<Reading> {
     def.metric === "jsBytes"
       ? await jsBytes(def.url)
       : await lighthouse(def.url);
-  return { value, source: def.url };
+  return { value, source: def.url, asOf: new Date().toISOString() };
 }

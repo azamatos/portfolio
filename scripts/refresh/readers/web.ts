@@ -49,16 +49,21 @@ export function pick(doc: unknown, path: string): unknown {
   return at;
 }
 
-export async function readJson(
-  def: Def<"json">,
-  url: string,
-): Promise<Reading> {
-  const doc = await fetchJson(url);
+/** `pick`, or undefined where there's nothing. */
+function pickOrNot(doc: unknown, path: string): unknown {
+  try {
+    return pick(doc, path);
+  } catch {
+    return undefined;
+  }
+}
+
+/** A number from `path`, or a count of the items at `count` that match `where` (different `distinct` values). */
+function readFrom(doc: unknown, def: Def<"json">): number {
   if (def.path !== undefined) {
     const found = pick(doc, def.path);
-    if (typeof found === "number") return { value: found, source: url };
-    if (typeof found === "string")
-      return { value: firstNumber(found, def.path), source: url };
+    if (typeof found === "number") return found;
+    if (typeof found === "string") return firstNumber(found, def.path);
     throw new Error(
       `"${def.path}" is ${JSON.stringify(found)?.slice(0, 60)}, not a number`,
     );
@@ -66,15 +71,30 @@ export async function readJson(
   const list = pick(doc, def.count!);
   if (!list || typeof list !== "object")
     throw new Error(`"${def.count}" is not a list`);
-  const items = Array.isArray(list) ? list : Object.values(list);
-  if (def.distinct === undefined) return { value: items.length, source: url };
+  const where = Object.entries(def.where ?? {});
+  const items = (Array.isArray(list) ? list : Object.values(list)).filter(
+    (item) => where.every(([k, v]) => String(pickOrNot(item, k)) === String(v)),
+  );
+  if (def.distinct === undefined) return items.length;
   const seen = new Set(
     items.map((item) => {
       const v = pick(item, def.distinct!);
       return typeof v === "object" ? JSON.stringify(v) : String(v);
     }),
   );
-  return { value: seen.size, source: url };
+  return seen.size;
+}
+
+export async function readJson(
+  def: Def<"json">,
+  url: string,
+): Promise<Reading> {
+  const doc = await fetchJson(url);
+  return {
+    value: readFrom(doc, def),
+    source: url,
+    asOf: new Date().toISOString(),
+  };
 }
 
 export async function readPage(def: Def<"page">): Promise<Reading> {
@@ -86,5 +106,6 @@ export async function readPage(def: Def<"page">): Promise<Reading> {
   return {
     value: firstNumber(m[1], `the match "${m[0].trim().slice(0, 80)}"`),
     source: def.url,
+    asOf: new Date().toISOString(),
   };
 }

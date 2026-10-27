@@ -20,7 +20,7 @@ import {
 export type { Media } from "./media.ts";
 export { imageSrcset, imageUrl } from "./media.ts";
 export type { Value } from "./values.ts";
-export { formatNumber, numberWord } from "./values.ts";
+export { formatDay, formatNumber, numberWord } from "./values.ts";
 
 /** Config types with every media ref resolved. Strings stay strings, now with their placeholders filled. */
 type Resolved<T> = T extends MediaRef
@@ -33,6 +33,8 @@ type Resolved<T> = T extends MediaRef
 
 type Config = ProjectConfig;
 type WaffleConfig = Extract<Part, { kind: "waffle" }>;
+type BarsConfig = Extract<Part, { kind: "bars" }>;
+type TableConfig = Extract<Part, { kind: "table" }>;
 type SectionConfig = Config["page"]["sections"][number];
 type FigureConfig = Config["page"]["numbers"][number];
 
@@ -55,7 +57,22 @@ export type Waffle = {
   }[];
 };
 
-export type ProjectPart = Exclude<Resolved<Part>, { kind: "waffle" }> | Waffle;
+/** Bars with their values printed (`value`) and each bar's CSS width from the raw number ("33%"). */
+export type Bars = Omit<Resolved<BarsConfig>, "groups"> & {
+  groups: {
+    who: string;
+    rows: { metric: string; value: string; width: string; color: string }[];
+  }[];
+};
+
+/** A table with its rows, typed in or from a table value. */
+export type Table = Omit<Resolved<TableConfig>, "rows"> & { rows: string[][] };
+
+export type ProjectPart =
+  | Exclude<Resolved<Part>, { kind: "waffle" | "bars" | "table" }>
+  | Waffle
+  | Bars
+  | Table;
 
 /**
  * A big number on a project page. `text` is the final form (no JavaScript, reduced motion); with `count`, the page
@@ -83,7 +100,7 @@ export type Project = {
   accent: Config["accent"];
   /** The palette's `cd` description, without the status. */
   palette: string;
-  list: Omit<Config["list"], "commits"> & { commits: string };
+  list: Resolved<Config["list"]>;
   readme: Resolved<Config["readme"]>;
   page: Omit<Resolved<Config["page"]>, "numbers" | "sections"> & {
     path: string;
@@ -91,10 +108,12 @@ export type Project = {
     sections: (Omit<Resolved<SectionConfig>, "parts"> & {
       parts: ProjectPart[];
     })[];
+    /** The id of the project the "next project" card links to: the next by `order`, the first after the last. */
+    next: string;
   };
-  /** Every value by name, with its raw number, date and source. */
+  /** Every value by name, with its raw number, date and source; `checked` is the last refresh's day. */
   values: Record<string, Value>;
-  /** When the refresh command last ran for this project. */
+  /** When the refresh command last ran for this project (ISO); `values.checked.text` prints it as "27 Oct". */
   refreshedAt?: string;
 };
 
@@ -117,17 +136,18 @@ function valueOf(field: string, ctx: Ctx, path: string): Value {
   return v;
 }
 
+/** The number a one-placeholder field names. */
+function numberOf(field: string, ctx: Ctx, path: string): number {
+  const n = valueOf(field, ctx, path).raw;
+  if (typeof n !== "number")
+    throw new Error(`${at(ctx, path)}: ${field} isn't a number`);
+  return n;
+}
+
 function resolveWaffle(w: WaffleConfig, ctx: Ctx, path: string): Waffle {
   const counts: Record<string, number> = {};
-  for (const [key, c] of Object.entries(w.counts)) {
-    const n =
-      typeof c === "number" ? c : valueOf(c, ctx, `${path}.counts.${key}`).raw;
-    if (typeof n !== "number")
-      throw new Error(
-        `${at(ctx, `${path}.counts.${key}`)}: ${c} isn't a number`,
-      );
-    counts[key] = n;
-  }
+  for (const [key, c] of Object.entries(w.counts))
+    counts[key] = numberOf(c, ctx, `${path}.counts.${key}`);
   const shares = squaresOf(counts);
   const legend = w.legend.map((l, i) => ({
     key: l.key,
@@ -153,6 +173,58 @@ function resolveWaffle(w: WaffleConfig, ctx: Ctx, path: string): Waffle {
   };
 }
 
+function resolveBars(b: BarsConfig, ctx: Ctx, path: string): Bars {
+  const fill = (s: string, where: string) =>
+    interpolate(s, ctx.values, at(ctx, `${path}.${where}`));
+  return {
+    kind: "bars",
+    title: fill(b.title, "title"),
+    text: fill(b.text, "text"),
+    groups: b.groups.map((g, i) => ({
+      who: fill(g.who, `groups[${i}].who`),
+      rows: g.rows.map((r, j) => {
+        const where = `${path}.groups[${i}].rows[${j}].value`;
+        const n = numberOf(r.value, ctx, where);
+        if (n < 0 || n > 100)
+          throw new Error(`${at(ctx, where)}: ${n} isn't from 0 to 100`);
+        return {
+          metric: fill(r.metric, `groups[${i}].rows[${j}].metric`),
+          value: valueOf(r.value, ctx, where).text,
+          width: `${Number(n.toFixed(2))}%`,
+          color: r.color,
+        };
+      }),
+    })),
+  };
+}
+
+function resolveTable(t: TableConfig, ctx: Ctx, path: string): Table {
+  const { rows, ...rest } = t;
+  // Field by field: the object itself would come back here, being a table.
+  const resolved = Object.fromEntries(
+    Object.entries(rest).map(([k, v]) => [
+      k,
+      resolveDeep(v, ctx, `${path}.${k}`),
+    ]),
+  ) as Omit<Table, "rows">;
+  if (typeof rows !== "string")
+    return {
+      ...resolved,
+      rows: resolveDeep(rows, ctx, `${path}.rows`) as string[][],
+    };
+  const v = valueOf(rows, ctx, `${path}.rows`);
+  if (!v.rows)
+    throw new Error(`${at(ctx, `${path}.rows`)}: ${rows} isn't a table value`);
+  if (v.rows.length === 0)
+    throw new Error(`${at(ctx, `${path}.rows`)}: ${rows} has no rows`);
+  for (const [i, r] of v.rows.entries())
+    if (r.length !== t.head.length)
+      throw new Error(
+        `${at(ctx, `${path}.rows`)}: row ${i + 1} of ${rows} has ${r.length} cells, \`head\` has ${t.head.length}`,
+      );
+  return { ...resolved, rows: v.rows };
+}
+
 function resolveFigure(f: FigureConfig, ctx: Ctx, path: string): Figure {
   const label = interpolate(f.label, ctx.values, at(ctx, `${path}.label`));
   if ("text" in f)
@@ -162,10 +234,6 @@ function resolveFigure(f: FigureConfig, ctx: Ctx, path: string): Figure {
     };
   const before = f.prefix ?? "";
   const after = f.suffix ?? "";
-  if (typeof f.value === "number") {
-    const count = { to: f.value, decimals: 0, prefix: before, suffix: after };
-    return { label, text: before + formatNumber(f.value) + after, count };
-  }
   const v = valueOf(f.value, ctx, `${path}.value`);
   if (v.number === undefined) return { label, text: before + v.text + after };
   const count = {
@@ -181,7 +249,7 @@ function resolveFigure(f: FigureConfig, ctx: Ctx, path: string): Figure {
   };
 }
 
-/** Fills every string and resolves every media ref and waffle, anywhere in the content. */
+/** Fills every string and resolves every media ref, waffle, bars and table, anywhere in the content. */
 function resolveDeep(o: unknown, ctx: Ctx, path: string): unknown {
   if (typeof o === "string") return interpolate(o, ctx.values, at(ctx, path));
   if (Array.isArray(o))
@@ -191,6 +259,10 @@ function resolveDeep(o: unknown, ctx: Ctx, path: string): unknown {
       return resolveMedia(o as MediaRef, ctx.id, ctx.collected, at(ctx, path));
     if ("kind" in o && o.kind === "waffle")
       return resolveWaffle(o as WaffleConfig, ctx, path);
+    if ("kind" in o && o.kind === "bars")
+      return resolveBars(o as BarsConfig, ctx, path);
+    if ("kind" in o && o.kind === "table")
+      return resolveTable(o as TableConfig, ctx, path);
     return Object.fromEntries(
       Object.entries(o).map(([k, v]) => [
         k,
@@ -205,12 +277,12 @@ function resolveProject(
   id: string,
   config: Config,
   collected: Collected | undefined,
+  next: string,
 ): Project {
   const values = resolveValues(id, config, collected);
   const ctx: Ctx = { id, values, collected };
   const path = `/projects/${id}`;
   const { numbers, sections, ...page } = config.page;
-  const { commits, ...list } = config.list;
   return {
     id,
     path,
@@ -223,13 +295,7 @@ function resolveProject(
     repoUrl: `https://github.com/${config.repo}`,
     accent: config.accent,
     palette: config.palette,
-    list: {
-      ...(resolveDeep(list, ctx, "list") as Omit<Config["list"], "commits">),
-      commits:
-        typeof commits === "number"
-          ? formatNumber(commits)
-          : interpolate(commits, values, at(ctx, "list.commits")),
-    },
+    list: resolveDeep(config.list, ctx, "list") as Project["list"],
     readme: resolveDeep(config.readme, ctx, "readme") as Project["readme"],
     page: {
       ...(resolveDeep(page, ctx, "page") as Omit<
@@ -245,6 +311,7 @@ function resolveProject(
         ctx,
         "page.sections",
       ) as Project["page"]["sections"],
+      next,
     },
     values: Object.fromEntries(values),
     refreshedAt: collected?.refreshedAt,
@@ -258,21 +325,22 @@ export async function getProjects(): Promise<Project[]> {
     getCollection("collected"),
   ]);
   const byId = new Map(collected.map((c) => [c.id, c.data]));
-  const projects = configs
-    .map((c) => resolveProject(c.id, c.data, byId.get(c.id)))
-    .sort((a, b) => a.order - b.order);
+  const sorted = [...configs].sort((a, b) => a.data.order - b.data.order);
+  for (const [i, c] of sorted.entries())
+    if (i > 0 && sorted[i - 1].data.order === c.data.order)
+      throw new Error(
+        `${c.id}: order ${c.data.order} is taken by ${sorted[i - 1].id}`,
+      );
+  const projects = sorted.map((c, i) =>
+    resolveProject(
+      c.id,
+      c.data,
+      byId.get(c.id),
+      sorted[(i + 1) % sorted.length].id,
+    ),
+  );
 
   const ids = new Set(projects.map((p) => p.id));
-  for (const [i, p] of projects.entries()) {
-    if (i > 0 && projects[i - 1].order === p.order)
-      throw new Error(
-        `${p.id}: order ${p.order} is taken by ${projects[i - 1].id}`,
-      );
-    if (!ids.has(p.page.next) || p.page.next === p.id)
-      throw new Error(
-        `${p.id}: page.next "${p.page.next}" isn't another project`,
-      );
-  }
   for (const id of byId.keys())
     if (!ids.has(id))
       throw new Error(`src/data/collected/${id}.json belongs to no project`);

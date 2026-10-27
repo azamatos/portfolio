@@ -10,14 +10,20 @@ import {
   type ValueFormat,
 } from "./schema.ts";
 
-/** A value ready for text: `text` goes into sentences; `number` and the rest let a figure count up to it. */
+/**
+ * A value ready for text: `text` goes into sentences; `number` and the rest let a figure count up to it. A table
+ * value (`rows`) only fills a table's rows.
+ */
 export type Value = {
   name: string;
-  from: ValueConfig["from"];
+  /** Where it comes from; "refresh" for the built-in `{checked}`. */
+  from: ValueConfig["from"] | "refresh";
   /** As read or computed, before formatting. */
-  raw: number | string;
+  raw: number | string | string[][];
   /** As printed: "14,959", "1,900+", "96.9 KB". */
   text: string;
+  /** A table value's rows. */
+  rows?: string[][];
   /** For numbers: the value after `floor` and rounding, which `text` shows. */
   number?: number;
   decimals: number;
@@ -25,7 +31,7 @@ export type Value = {
   prefix: string;
   suffix: string;
   means: string;
-  /** When it was read, checked or computed (ISO), and where. Missing for calc. */
+  /** When the source produced it (ISO: a CI run's end, a fetch, a manual value's `checked`), and where. Missing for calc. */
   asOf?: string;
   source?: string;
 };
@@ -66,6 +72,15 @@ export function formatValue(raw: number | string, format: ValueFormat = {}) {
   };
 }
 
+const dayFormat = new Intl.DateTimeFormat("en-GB", {
+  day: "numeric",
+  month: "short",
+  timeZone: "UTC",
+});
+
+/** A day as the pages print it: "2026-10-27T06:12:00Z" → "27 Oct". */
+export const formatDay = (iso: string) => dayFormat.format(new Date(iso));
+
 /** Numbers as words for copy, up to twelve: 3 → "three". */
 export function numberWord(n: number): string {
   const words = [
@@ -88,7 +103,8 @@ export function numberWord(n: number): string {
 
 /**
  * Every value of one project, by name. Manual values come from the config, calc values are computed here, and the
- * rest come from the collected file; a value that isn't collected yet fails with what to run.
+ * rest come from the collected file; a value that isn't collected yet fails with what to run. `{checked}` is the
+ * day of the last refresh.
  */
 export function resolveValues(
   id: string,
@@ -97,6 +113,18 @@ export function resolveValues(
 ): Map<string, Value> {
   const defs = config.values ?? {};
   const out = new Map<string, Value>();
+  if (collected)
+    out.set("checked", {
+      name: "checked",
+      from: "refresh",
+      raw: collected.refreshedAt,
+      text: formatDay(collected.refreshedAt),
+      decimals: 0,
+      prefix: "",
+      suffix: "",
+      means: "The day the refresh command last read this project's values.",
+      asOf: collected.refreshedAt,
+    });
 
   const get = (name: string, chain: string[] = []): Value => {
     const done = out.get(name);
@@ -107,7 +135,7 @@ export function resolveValues(
         `${id}: unknown value "${name}"${chain.length ? ` (used by ${chain.at(-1)})` : ""}`,
       );
 
-    let raw: number | string;
+    let raw: Value["raw"];
     let asOf: string | undefined;
     let source: string | undefined;
     if (def.from === "manual") {
@@ -136,7 +164,15 @@ export function resolveValues(
       name,
       from: def.from,
       raw,
-      ...formatValue(raw, def.format),
+      ...(Array.isArray(raw)
+        ? {
+            text: `a table of ${raw.length} rows`,
+            rows: raw,
+            decimals: 0,
+            prefix: "",
+            suffix: "",
+          }
+        : formatValue(raw, def.format)),
       means: def.means,
       asOf,
       source,
@@ -157,14 +193,30 @@ export function interpolate(
 ): string {
   return s.replace(PLACEHOLDER, (_, name: string) => {
     const v = values.get(name);
-    if (!v) throw new Error(`${where}: unknown placeholder {${name}}`);
+    if (!v)
+      throw new Error(
+        name === "checked"
+          ? `${where}: {checked} needs a refresh first. Run \`pnpm data:refresh\`.`
+          : `${where}: unknown placeholder {${name}}`,
+      );
+    if (v.rows)
+      throw new Error(
+        `${where}: {${name}} is a table; it can only fill a table's \`rows\``,
+      );
     return v.text;
   });
 }
 
+/** A share as the legend prints it, rounded first: under 10 with one decimal ("2.5%"), else none ("78%", "10%"). */
+export function formatPercent(exact: number): string {
+  const tenths = Math.round(exact * 10) / 10;
+  if (tenths >= 10) return `${formatNumber(Math.round(exact))}%`;
+  if (tenths === 0) return "0%";
+  return `${formatNumber(tenths, 1)}%`;
+}
+
 /**
  * Shares of a whole as 100 squares: the largest remainders get the leftover squares, so they always add up to 100.
- * Percentages under 10 keep one decimal ("2.5%"), the rest none ("78%").
  */
 export function squaresOf(
   counts: Record<string, number>,
@@ -187,7 +239,7 @@ export function squaresOf(
       r.key,
       {
         squares: r.squares,
-        percent: `${formatNumber(r.exact, r.exact < 10 ? 1 : 0)}%`,
+        percent: formatPercent(r.exact),
       },
     ]),
   );

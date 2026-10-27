@@ -1,7 +1,14 @@
 import type { ValueConfig } from "../../../src/lib/projects/schema.ts";
 
-/** What a reader found, and where: a URL a person can open to see the same number. */
-export type Reading = { value: number | string; source: string };
+/**
+ * What a reader found, where (a URL a person can open to see the same number), and when the source produced it
+ * (ISO): a CI run's end, or the time of the fetch.
+ */
+export type Reading = {
+  value: number | string | string[][];
+  source: string;
+  asOf: string;
+};
 
 /** The values the refresh command fetches; `manual` and `calc` aren't fetched. */
 export type FetchedConfig = Exclude<ValueConfig, { from: "manual" | "calc" }>;

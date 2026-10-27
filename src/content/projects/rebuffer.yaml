@@ -35,7 +35,7 @@ readme:
       label: Playwright checks in Chromium, Firefox and WebKit
       short: Playwright checks
     - value: "{homeJs}"
-      label: of JavaScript on Home, budget 100 KB
+      label: of JavaScript on Home, budget {homeBudget}
       short: JavaScript on Home
   secondaryLink:
     label: Open rebuffer.azamatos.com
@@ -70,8 +70,8 @@ page:
     - text: "{lateRange}"
       label: how far downloads land behind the network curve, never ahead
     - text: "{homeJs}"
-      label: of JavaScript on Home, against a 100 KB budget
-  numbersNote: Measured locally and in CI; the repeatability job runs every week.
+      label: of JavaScript on Home, against a {homeBudget} budget
+  numbersNote: Measured locally and in CI. CI numbers checked {checked}; the repeatability job runs every week.
   sections:
     - number: "01"
       title: what it does
@@ -144,10 +144,10 @@ page:
           caption: Where the curve dips below a dashed line, that quality downloads slower than it plays. Import JSON, CSV or a HAR file.
     - number: "04"
       title: measured
-      lead: "Each of the seven networks, run five times: scores within {scoreSpread} points of each other, with the same stalls and switches."
+      lead: "Every network runs {repeatRuns} times each week in CI. The largest score gap between runs of one network: {scoreSpread}."
       parts:
         - kind: table
-          label: Repeatability, 7 networks × 5 runs
+          label: Repeatability, {repeatRuns} runs of each network
           head:
             - network
             - score
@@ -156,43 +156,8 @@ page:
             - switches
           cols: minmax(170px, 1.6fr) 80px 150px 70px 80px
           minw: 600px
-          note: "Measured on 22 Oct 2026 in Chromium, with hls.js 1.7.3 and a synthetic 2-minute stream with five qualities from 240p to 1080p. Rural 3G scores 0: its 11.7 s wait for the first frame costs more than its picture earns."
-          rows:
-            - - Home fibre
-              - 89–91
-              - 0.36–0.62 s
-              - "0"
-              - "1"
-            - - Busy café Wi-Fi
-              - "86"
-              - 2.99–3.02 s
-              - "0"
-              - "0"
-            - - 4G commute
-              - "100"
-              - 1.71–1.73 s
-              - "0"
-              - "3"
-            - - Train through a tunnel
-              - 37–38
-              - 2.23–2.26 s
-              - "1"
-              - "4"
-            - - Rural 3G
-              - "0"
-              - 11.56–11.66 s
-              - "0"
-              - "1"
-            - - Lift
-              - 41–42
-              - 1.59–1.69 s
-              - "0"
-              - "0"
-            - - Evening congestion
-              - 88–89
-              - 1.20–1.22 s
-              - "0"
-              - "2"
+          note: "The latest weekly run in CI: {repeatSetup}; stream: {repeatStream}. Where runs differ, a cell shows the lowest and highest."
+          rows: "{repeat}"
   builtWith:
     - group: app
       items:
@@ -228,7 +193,7 @@ page:
         - { name: size-limit }
         - { name: Lighthouse CI }
         - { name: GitHub Actions }
-      note: CI fails on a bundle over budget or a Lighthouse score under 0.95; a repeatability job runs every preset five times each week.
+      note: CI fails on a bundle over budget or a Lighthouse score under 0.95; a repeatability job runs every preset {repeatRuns} times each week.
   log:
     title: what shipped
     items:
@@ -263,7 +228,6 @@ page:
     - label: Source on GitHub
       href: https://github.com/azamatos/rebuffer
       primary: false
-  next: pass
 
 values:
   commits:
@@ -327,28 +291,37 @@ values:
     job: Types, lint, unit tests, build, budgets
     pattern: '\bTests\s+(\d+) passed'
     means: Vitest unit tests that passed in the latest successful CI run.
-    maxAge: 14
+    maxAge: 90
   e2eTests:
     from: ci
     workflow: ci.yml
     job: Keyboard and accessibility tests (Chromium, Firefox, WebKit)
     pattern: '^\s*(\d+) passed \('
     means: Playwright checks that passed in the latest successful CI run, over Chromium, Firefox and WebKit (skipped ones not counted).
-    maxAge: 14
+    maxAge: 90
   homeJs:
     from: ci
     workflow: ci.yml
     job: Types, lint, unit tests, build, budgets
     pattern: 'Home: JavaScript \(brotli\)\s+Size limit:\s+[\d.]+ kB\s+Size:\s+([\d.]+) kB'
-    means: The brotli-compressed JavaScript Home loads, as size-limit measures it against the 100 KB budget in CI.
-    maxAge: 14
+    means: The brotli-compressed JavaScript Home loads, as size-limit measures it against its budget in CI.
+    maxAge: 90
     format: { decimals: 1, suffix: " KB" }
+  homeBudget:
+    from: ci
+    workflow: ci.yml
+    job: Types, lint, unit tests, build, budgets
+    pattern: 'Home: JavaScript \(brotli\)\s+Size limit:\s+([\d.]+) kB'
+    means: The size-limit budget for the brotli-compressed JavaScript Home loads; CI fails above it.
+    maxAge: 90
+    format: { suffix: " KB" }
   lateRange:
     from: manual
     value: 3–24
     checked: 2026-10-20
     sourceUrl: https://github.com/azamatos/rebuffer#measured
     means: How far behind the drawn network curve the shaper delivers a 1 MiB download at 4 Mbps steps and 100 ms RTT, in Chromium, Firefox and WebKit.
+    maxAge: 180
     format: { suffix: " ms" }
   chartMedian:
     from: manual
@@ -356,6 +329,7 @@ values:
     checked: 2026-10-20
     sourceUrl: https://github.com/azamatos/rebuffer#measured
     means: The live charts' drawing time per frame at the median, with the CPU throttled 4×.
+    maxAge: 180
     format: { decimals: 1, suffix: " ms" }
   chartMax:
     from: manual
@@ -363,13 +337,42 @@ values:
     checked: 2026-10-20
     sourceUrl: https://github.com/azamatos/rebuffer#measured
     means: The live charts' longest drawing time per frame, with the CPU throttled 4×.
+    maxAge: 180
     format: { decimals: 1, suffix: " ms" }
+  # The repeatability job (.github/workflows/repeat.yml) runs on Mondays at 03:00 UTC and prints its table in the log.
+  repeat:
+    from: ci
+    workflow: repeat.yml
+    table: [Network, Score, First frame, Stalls, Switches]
+    means: The repeatability job's table from its latest successful run; a range is the lowest and highest over the runs.
+    maxAge: 14
+  repeatRuns:
+    from: ci
+    workflow: repeat.yml
+    pattern: '^\| Network \| Runs \|.*\n\|[-|]+\|\n\| [^|\n]+ \| (\d+) \|'
+    means: Runs of each network in the repeatability job's latest successful run (the table's Runs column).
+    maxAge: 14
   scoreSpread:
-    from: manual
-    value: 2
-    checked: 2026-10-22
-    sourceUrl: https://github.com/azamatos/rebuffer#repeatability
-    means: The largest gap between scores of one network over five runs, in the repeatability table.
+    from: ci
+    workflow: repeat.yml
+    pattern: 'Scores across runs of one network differ by at most (\d+) points?'
+    allowZero: true
+    means: The largest gap between the scores of one network over its runs, in the repeatability job's latest successful run.
+    maxAge: 14
+  repeatSetup:
+    from: ci
+    workflow: repeat.yml
+    pattern: '^## Repeatability\s+([^;\n]+);'
+    text: true
+    means: The browser and player versions the repeatability job ran with.
+    maxAge: 14
+  repeatStream:
+    from: ci
+    workflow: repeat.yml
+    pattern: '; stream: ([^;\n]+);'
+    text: true
+    means: The test stream the repeatability job plays, as the job describes it.
+    maxAge: 14
 
 shots:
   home:

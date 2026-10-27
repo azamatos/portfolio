@@ -24,7 +24,7 @@ readme:
     - Nuxt {nuxt}
     - Vue {vue}
     - Tailwind CSS {tailwind}
-    - Postgres 18
+    - Postgres {postgres}
     - Claude
     - DuckDB
     - Docker
@@ -72,7 +72,7 @@ page:
       label: job boards found on 8 board types, almost all through Common Crawl
     - value: "{newRoles}"
       label: new roles in the last 24 hours
-  numbersNote: Live from the site’s own data, for the EU, EEA, UK and Switzerland.
+  numbersNote: Live from the site’s own data, for the EU, EEA, UK and Switzerland; checked {checked}.
   sections:
     - number: "01"
       title: the problem
@@ -193,7 +193,7 @@ page:
               r: 999px
     - number: "04"
       title: measured
-      lead: Keyword rules were wrong two times in three. So they never show an answer; a language model does, checked against {labelled} postings labelled by hand.
+      lead: Keyword rules were wrong on {rulesWrong} of the postings they marked “offers”. So they never show an answer; a language model does, checked against {labelled} postings labelled by hand.
       parts:
         - kind: bars
           title: “offers visa sponsorship”, on the labelled set
@@ -203,21 +203,17 @@ page:
               rows:
                 - metric: precision
                   value: "{rulesPrecision}"
-                  width: "{rulesPrecision}"
                   color: var(--acc2)
                 - metric: recall
                   value: "{rulesRecall}"
-                  width: "{rulesRecall}"
                   color: "#5c5c5c"
             - who: Language model (Claude)
               rows:
                 - metric: precision
                   value: "{modelPrecision}"
-                  width: "{modelPrecision}"
                   color: var(--acc)
                 - metric: recall
                   value: "{modelRecall}"
-                  width: "{modelRecall}"
                   color: var(--acc)
     - number: "05"
       title: what the first sweep broke
@@ -248,14 +244,14 @@ page:
     - group: server and data
       items:
         - { name: Nitro server routes }
-        - { name: Postgres, version: "18" }
+        - { name: Postgres, version: "{postgres}" }
         - { name: postgres.js }
         - { name: plain SQL migrations }
         - { name: LRU cache }
       note: The site reads Postgres as a read-only user on the same server; answers are cached for 5 minutes, because the data changes every 6 hours at most.
     - group: pipeline and AI
       items:
-        - { name: Node, version: "22" }
+        - { name: Node, version: "{node}" }
         - { name: Claude }
         - { name: DuckDB }
         - { name: Common Crawl }
@@ -308,7 +304,6 @@ page:
     - label: Source on GitHub
       href: https://github.com/azamatos/visaproof
       primary: false
-  next: yeral
 
 sources:
   stats: https://visaproof.azamatos.com/api/stats
@@ -341,6 +336,20 @@ values:
     package: tailwindcss
     file: apps/web/package.json
     means: The major version of Tailwind CSS the website depends on.
+    maxAge: 14
+  postgres:
+    from: github
+    get: version
+    package: postgres
+    file: deploy/compose.yml
+    means: The major version of the Postgres image in the production compose file.
+    maxAge: 14
+  node:
+    from: github
+    get: version
+    package: node
+    file: .nvmrc
+    means: The major version of Node in .nvmrc.
     maxAge: 14
   roles:
     from: json
@@ -439,6 +448,11 @@ values:
     sourceUrl: https://github.com/azamatos/visaproof/blob/main/docs/findings.md#language-model-results
     means: Of the labelled postings the keyword rules marked "offers sponsorship", the share that really offer it.
     maxAge: 180
+    format: { suffix: "%" }
+  rulesWrong:
+    from: calc
+    expr: 100 - rulesPrecision
+    means: Of the labelled postings the keyword rules marked "offers sponsorship", the share that don't offer it.
     format: { suffix: "%" }
   rulesRecall:
     from: manual

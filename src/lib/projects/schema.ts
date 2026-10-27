@@ -25,10 +25,14 @@ const isoTime = z.iso.datetime({ offset: true });
 
 /** `{name}` in any text is filled from the value of that name. */
 export const PLACEHOLDER = /\{([a-z][A-Za-z0-9]*)\}/g;
+/**
+ * Placeholders every project has without a value of that name: `{checked}` is the day of the last refresh,
+ * "27 Oct".
+ */
+export const BUILTIN_VALUES = ["checked"] as const;
 const VALUE_NAME = /^[a-z][A-Za-z0-9]*$/;
 const SHOT_NAME = /^[a-z][a-z0-9-]*$/;
 const SOURCE_NAME = /^[a-z][A-Za-z0-9]*$/;
-const PROJECT_ID = /^[a-z][a-z0-9-]*$/;
 
 /** A field that holds exactly one placeholder, like `"{commits}"`. */
 const onePlaceholder = z
@@ -70,9 +74,14 @@ export const formatSchema = z.strictObject({
 
 /** Every value says what exactly it counts, in one plain line. */
 const means = text;
-/** Days since a value was read (or `checked`, for manual ones) before the refresh command reports it as stale. */
+/**
+ * Days from when the source produced a value (`asOf`: a CI run's end, a fetch, a manual value's `checked`) before the
+ * refresh command reports it as stale.
+ */
 const maxAge = z.int().positive();
 const format = formatSchema.optional();
+/** A fetched count that drops to 0 from a number above 0 is a problem (and keeps its last value) unless 0 is allowed. */
+const allowZero = z.literal(true).optional();
 
 const regexWithOneGroup = z.string().superRefine((p, ctx) => {
   try {
@@ -97,6 +106,7 @@ const github = z.discriminatedUnion("get", [
     get: z.literal("commits"),
     means,
     maxAge,
+    allowZero,
     format,
   }),
   /** The date of the latest commit on the default branch. */
@@ -105,11 +115,13 @@ const github = z.discriminatedUnion("get", [
     get: z.literal("lastCommit"),
     means,
     maxAge,
+    allowZero,
     format,
   }),
   /**
-   * A dependency's version: from `file` (package.json by default; a pnpm-workspace.yaml reads its catalog), range
-   * characters dropped, cut to `parts` numbers (1 → "19", 2 → "3.5", 3 → "1.7.3").
+   * A version from `file`, range characters dropped, cut to `parts` numbers (1 → "19", 2 → "3.5", 3 → "1.7.3"):
+   * `package` in a package.json (the default) or a pnpm-workspace.yaml's catalog, the tag of the `package` image in a
+   * compose file (`postgres:18-alpine` → "18"), or the whole of an .nvmrc or .node-version (`package: node`).
    */
   z.strictObject({
     from: z.literal("github"),
@@ -119,6 +131,7 @@ const github = z.discriminatedUnion("get", [
     parts: z.int().min(1).max(3).default(1),
     means,
     maxAge,
+    allowZero,
     format,
   }),
   /** Files in the repository matching `path`: a directory, or a glob like `docs/decisions/[0-9][0-9][0-9][0-9]-*.md`. */
@@ -128,33 +141,49 @@ const github = z.discriminatedUnion("get", [
     path: text,
     means,
     maxAge,
+    allowZero,
     format,
   }),
 ]);
 
 /**
- * A number from the log of the latest successful run of `workflow` on the default branch: the first match of
- * `pattern`'s capture group, or with `sum` every match added up. `job` narrows it to the job of that name. The log
- * is read with its timestamps and colour codes stripped, and the pattern runs with the `g` and `m` flags, so `^`
- * is a line start and `\s+` can cross lines.
+ * A value from the log of the latest successful run of `workflow` on the default branch, dated when that run ended.
+ * With `pattern`: the first number in the first match's capture group, every match's added up with `sum`, or the
+ * capture as it is with `text`. With `table`: the rows of the first Markdown table in the log whose header has all
+ * of these columns, cut to them, in this order (a table value only fills a table part's `rows`). `job` narrows it to
+ * the job of that name. The log is read with its timestamps and colour codes stripped, and the pattern runs with the
+ * `g` and `m` flags, so `^` is a line start and `\s+` can cross lines.
  */
-const ci = z.strictObject({
-  from: z.literal("ci"),
-  workflow: z
-    .string()
-    .regex(/^[\w.-]+\.ya?ml$/, "a workflow file name, like ci.yml"),
-  job: text.optional(),
-  pattern: regexWithOneGroup,
-  sum: z.literal(true).optional(),
-  means,
-  maxAge,
-  format,
-});
+const ci = z
+  .strictObject({
+    from: z.literal("ci"),
+    workflow: z
+      .string()
+      .regex(/^[\w.-]+\.ya?ml$/, "a workflow file name, like ci.yml"),
+    job: text.optional(),
+    pattern: regexWithOneGroup.optional(),
+    sum: z.literal(true).optional(),
+    text: z.literal(true).optional(),
+    table: z.array(text).min(1).optional(),
+    means,
+    maxAge,
+    allowZero,
+    format,
+  })
+  .refine(
+    (v) => (v.pattern === undefined) !== (v.table === undefined),
+    "needs either `pattern` or `table`",
+  )
+  .refine(
+    (v) => !(v.sum || v.text) || v.pattern !== undefined,
+    "`sum` and `text` go with `pattern`",
+  )
+  .refine((v) => !(v.sum && v.text), "`sum` or `text`, not both");
 
 /**
  * A number from a JSON document at `url` (or a named `source`). `path` reads one field; `count` counts an array (or
- * an object's values), with `distinct` counting different values of one field instead. Paths are dots, and `.` is
- * the document itself; a segment `k=v` picks the first array item whose `k` is `v`, so
+ * an object's values), only the items whose fields equal `where`'s (`where: { type: story }`), with `distinct`
+ * counting different values of one field instead. Paths are dots, and `.` is the document itself; a segment `k=v` picks the first array item whose `k` is `v`, so
  * `parts.key=roles.rows.k=Countries.v` works. A string found at `path` gives its first number ("13,016 sponsors"
  * → 13016).
  */
@@ -165,9 +194,13 @@ const json = z
     url: url.optional(),
     path: text.optional(),
     count: z.string().optional(),
+    where: z
+      .record(text, z.union([z.string(), z.number(), z.boolean()]))
+      .optional(),
     distinct: text.optional(),
     means,
     maxAge,
+    allowZero,
     format,
   })
   .refine(
@@ -179,8 +212,10 @@ const json = z
     "needs either `path` or `count`",
   )
   .refine(
-    (v) => v.distinct === undefined || v.count !== undefined,
-    "`distinct` goes with `count`",
+    (v) =>
+      (v.distinct === undefined && v.where === undefined) ||
+      v.count !== undefined,
+    "`distinct` and `where` go with `count`",
   );
 
 /** A number from a live page's HTML: the capture group of `pattern`. The last resort. */
@@ -190,6 +225,7 @@ const page = z.strictObject({
   pattern: regexWithOneGroup,
   means,
   maxAge,
+  allowZero,
   format,
 });
 
@@ -200,6 +236,7 @@ const measure = z.strictObject({
   metric: z.enum(["jsBytes", "lighthouse"]),
   means,
   maxAge,
+  allowZero,
   format,
 });
 
@@ -244,16 +281,9 @@ export const valueSchema = z.discriminatedUnion("from", [
 
 /** One step before the capture, in order. Selectors are Playwright's. */
 export const shotStepSchema = z.union([
-  z.strictObject({ goto: url }),
   z.strictObject({ click: text }),
   z.strictObject({ fill: text, value: z.string() }),
-  /** A key, like "Enter" or "Escape". */
-  z.strictObject({ press: text }),
-  /** Milliseconds. */
-  z.strictObject({ wait: z.int().positive().max(30_000) }),
   z.strictObject({ waitFor: text }),
-  /** Pixels down, or a selector to scroll into view. */
-  z.strictObject({ scroll: z.union([z.int(), text]) }),
   /** Types the text of one element into another: Ýeral's sign-in shows its code on the screen. */
   z.strictObject({ copy: text, into: text }),
 ]);
@@ -265,9 +295,14 @@ export const shotSchema = z.strictObject({
   theme: z.enum(["dark", "light"]).optional(),
   /** The whole page, not just the first screen (Visaproof's panning README image). */
   full: z.literal(true).optional(),
-  /** A muted loop instead of a still, with a poster frame. */
+  /**
+   * A muted loop instead of a still, with a poster frame. A loop is recorded only when it isn't collected yet, or
+   * with `--loops`.
+   */
   video: z.strictObject({ seconds: z.number().positive().max(60) }).optional(),
   steps: z.array(shotStepSchema).min(1).optional(),
+  /** Why the shot isn't taken for now: the refresh reports it as skipped, and the page keeps what it has. */
+  skip: text.optional(),
 });
 
 // ── Content: the export's structure, field for field ──────────────────────────────────────────────────────────
@@ -314,10 +349,10 @@ const hero = z.strictObject({
   phoneAlt: text,
 });
 
-/** A big number that counts up (`value`, a placeholder or a plain number), or `text` that just shows. */
+/** A big number that counts up (`value`, one placeholder), or `text` that just shows. */
 const pageNumber = z.union([
   z.strictObject({
-    value: z.union([z.number(), onePlaceholder]),
+    value: onePlaceholder,
     prefix: z.string().optional(),
     suffix: z.string().optional(),
     label: text,
@@ -327,18 +362,15 @@ const pageNumber = z.union([
 
 const parts = {
   /**
-   * 100 squares for shares of a whole. `counts` holds raw counts by key (placeholders or numbers); the resolver
-   * turns them into squares and percentages, and the label's words come from each legend item's `alt`.
+   * 100 squares for shares of a whole. `counts` names the value of each key's raw count; the resolver turns them
+   * into squares and percentages, and the label's words come from each legend item's `alt`.
    */
   waffle: z
     .strictObject({
       kind: z.literal("waffle"),
       label: text,
       note: text,
-      counts: z.record(
-        z.string().regex(/^[a-z]+$/),
-        z.union([z.number().nonnegative(), onePlaceholder]),
-      ),
+      counts: z.record(z.string().regex(/^[a-z]+$/), onePlaceholder),
       legend: z
         .array(z.strictObject({ key: text, swatch: text, text, alt: text }))
         .min(2),
@@ -396,6 +428,7 @@ const parts = {
       )
       .min(1),
   }),
+  /** Bars for percentages: each row's `value` names a number from 0 to 100, which sets the bar's width. */
   bars: z.strictObject({
     kind: z.literal("bars"),
     title: text,
@@ -408,8 +441,7 @@ const parts = {
             .array(
               z.strictObject({
                 metric: text,
-                value: text,
-                width: text,
+                value: onePlaceholder,
                 color: text,
               }),
             )
@@ -447,6 +479,7 @@ const parts = {
       )
       .min(2),
   }),
+  /** `rows` are typed in, or name a table value (a `ci` value with `table`), with one column per `head` item. */
   table: z
     .strictObject({
       kind: z.literal("table"),
@@ -455,12 +488,17 @@ const parts = {
       cols: text,
       minw: cssLength,
       note: text,
-      rows: z.array(z.array(text)).min(1),
+      rows: z.union([z.array(z.array(text)).min(1), onePlaceholder]),
     })
-    .refine((t) => t.rows.every((r) => r.length === t.head.length), {
-      message: "every row needs one cell per column in `head`",
-      path: ["rows"],
-    }),
+    .refine(
+      (t) =>
+        typeof t.rows === "string" ||
+        t.rows.every((r) => r.length === t.head.length),
+      {
+        message: "every row needs one cell per column in `head`",
+        path: ["rows"],
+      },
+    ),
   chips: z.strictObject({
     kind: z.literal("chips"),
     label: text,
@@ -528,8 +566,6 @@ const pageSchema = z.strictObject({
       (a) => a.filter((x) => x.primary).length === 1,
       "exactly one action is primary",
     ),
-  /** The project the "next project" card links to. */
-  next: z.string().regex(PROJECT_ID),
 });
 
 // ── A project ─────────────────────────────────────────────────────────────────────────────────────────────────
@@ -549,7 +585,7 @@ const projectFields = z.strictObject({
   list: z.strictObject({
     dir: text,
     mode: z.string().regex(/^[d-]([r-][w-][x-]){3}$/, "like drwxr-xr-x"),
-    commits: z.union([z.number(), onePlaceholder]),
+    commits: onePlaceholder,
     stack: text,
   }),
   readme: readmeSchema,
@@ -589,6 +625,9 @@ function* mediaRefs(
   }
 }
 
+const isBuiltin = (name: string) =>
+  (BUILTIN_VALUES as readonly string[]).includes(name);
+
 /** The placeholders in a string, or an error for a stray brace. */
 export function placeholdersIn(s: string): { names: string[]; stray: boolean } {
   const names = [...s.matchAll(PLACEHOLDER)].map((m) => m[1]);
@@ -612,7 +651,7 @@ export const projectSchema = projectFields.superRefine((p, ctx) => {
         message: `a "{" or "}" that isn't a placeholder: "${s}"`,
       });
     for (const name of names)
-      if (!(name in values))
+      if (!(name in values) && !isBuiltin(name))
         ctx.addIssue({
           code: "custom",
           path,
@@ -632,6 +671,12 @@ export const projectSchema = projectFields.superRefine((p, ctx) => {
   // Sources exist; calc names exist and don't go round in a circle.
   const calcNames: Record<string, string[]> = {};
   for (const [name, v] of Object.entries(values)) {
+    if (isBuiltin(name))
+      ctx.addIssue({
+        code: "custom",
+        path: ["values", name],
+        message: `"${name}" is built in: pick another name`,
+      });
     if (v.from === "json" && v.source !== undefined && !(v.source in sources))
       ctx.addIssue({
         code: "custom",
@@ -711,11 +756,14 @@ export const collectedVideoSchema = z.strictObject({
 });
 
 export const collectedSchema = z.strictObject({
+  /** When the refresh command last ran for this project; written on every run. */
   refreshedAt: isoTime,
   values: z.record(
     z.string().regex(VALUE_NAME),
     z.strictObject({
-      value: z.union([z.number(), z.string()]),
+      /** A number, a string, or a table's rows (a `ci` value with `table`). */
+      value: z.union([z.number(), z.string(), z.array(z.array(z.string()))]),
+      /** When the source produced it: a CI run's end, or the fetch. */
       asOf: isoTime,
       /** Where it was read: a URL, or a log's run URL. */
       source: url,
@@ -725,6 +773,10 @@ export const collectedSchema = z.strictObject({
     z.string().regex(SHOT_NAME),
     z.discriminatedUnion("kind", [collectedImageSchema, collectedVideoSchema]),
   ),
+  /** Shots the config says to skip for now (`skip`), with the reason. */
+  skipped: z
+    .array(z.strictObject({ name: z.string().regex(SHOT_NAME), reason: text }))
+    .default([]),
   /** What the last refresh couldn't read or check; each kept its last good value. */
   problems: z.array(z.strictObject({ name: text, message: text })),
 });

@@ -1,6 +1,6 @@
 // The ⌘K command palette's commands. The `cd <project>` rows come from the projects; the rest are fixed here.
 
-import { numberWord, statusText, type Project } from "@/lib/projects";
+import { numberWord, type Project } from "@/lib/projects";
 import { SITE } from "@/site";
 
 export type PaletteAction =
@@ -36,7 +36,7 @@ export function paletteCommands(projects: Project[]): PaletteCommand[] {
         group: "go",
         verb: "cd",
         arg: p.id,
-        description: `${p.palette} · ${statusText(p.status)}`,
+        description: `${p.palette} · ${p.statusText}`,
         action: { type: "link", href: p.path },
       }),
     ),

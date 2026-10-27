@@ -36,7 +36,12 @@ function splitPath(path: string): { dir: string; name: RegExp } {
   return { dir: segments.slice(0, -1).join("/"), name: new RegExp(`^${re}$`) };
 }
 
-/** A dependency's version from package.json or a pnpm catalog, range characters dropped, cut to `parts` numbers. */
+const escapeRegex = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+/**
+ * A version, range characters dropped, cut to `parts` numbers: a dependency in package.json or a pnpm catalog, an
+ * image's tag in a compose file, or the whole of an .nvmrc or .node-version.
+ */
 export function versionIn(
   text: string,
   file: string,
@@ -64,9 +69,19 @@ export function versionIn(
     spec =
       ws.catalog?.[pkg] ??
       Object.values(ws.catalogs ?? {}).find((c) => c[pkg])?.[pkg];
-  } else
+  } else if (/(^|\/)(docker-)?compose[^/]*\.ya?ml$/.test(file)) {
+    // `image: postgres:18-alpine`, or with a registry: `docker.io/library/postgres:18`.
+    const compose = parseYaml(text) as {
+      services?: Record<string, { image?: unknown } | null>;
+    };
+    const image = new RegExp(`^(?:[^\\s]*/)?${escapeRegex(pkg)}:([^@\\s]+)`);
+    for (const service of Object.values(compose.services ?? {}))
+      if (typeof service?.image === "string")
+        spec ??= image.exec(service.image)?.[1];
+  } else if (/(^|\/)\.(nvmrc|node-version)$/.test(file)) spec = text.trim();
+  else
     throw new Error(
-      `can't read versions from ${file}: use a package.json or pnpm-workspace.yaml`,
+      `can't read versions from ${file}: use a package.json, pnpm-workspace.yaml, compose file or .nvmrc`,
     );
 
   if (typeof spec !== "string") throw new Error(`${pkg} isn't in ${file}`);
@@ -144,6 +159,7 @@ export async function readGithub(
   if (!head) throw new Error(`${repo} has no default branch`);
   const branch = head.name;
   const web = `https://github.com/${repo}`;
+  const asOf = new Date().toISOString();
 
   const readings = new Map<string, Reading | Error>(errors);
   for (const [valueName, def] of defs) {
@@ -162,11 +178,13 @@ export async function readGithub(
         return {
           value: head!.target.history.totalCount,
           source: `${web}/commits/${branch}`,
+          asOf,
         };
       case "lastCommit":
         return {
           value: head!.target.committedDate.slice(0, 10),
           source: `${web}/commit/${head!.target.oid}`,
+          asOf,
         };
       case "version": {
         const file = def.file ?? "package.json";
@@ -175,6 +193,7 @@ export async function readGithub(
         return {
           value: versionIn(blob.text, file, def.package, def.parts),
           source: `${web}/blob/${branch}/${file}`,
+          asOf,
         };
       }
       case "fileCount": {
@@ -188,7 +207,7 @@ export async function readGithub(
         ).length;
         if (count === 0)
           throw new Error(`no files match ${def.path} in ${repo}`);
-        return { value: count, source: `${web}/tree/${branch}/${dir}` };
+        return { value: count, source: `${web}/tree/${branch}/${dir}`, asOf };
       }
     }
   }

@@ -67,10 +67,10 @@ page:
     - text: "{hashSent} of {hashLength}"
       label: characters of the password’s hash the leak check sends
     - text: "{siteJs}"
-      label: of JavaScript on a site’s page, against a 14 kB budget
+      label: of JavaScript on a site’s page, against a {siteBudget} budget
     - value: "{stored}"
       label: passwords stored, ever
-  numbersNote: Sizes from CI, which runs on every push and once a month.
+  numbersNote: Sizes from CI, which runs on every push and once a month; checked {checked}.
   sections:
     - number: "01"
       title: what it does
@@ -123,7 +123,7 @@ page:
           hasHost: true
           maxw: 100%
           img: { shot: health }
-          alt: "pass health page: a typed password rated Very strong, how long it would take to guess online and offline, and the leak check turned off"
+          alt: "pass health page: a typed password rated Very strong, how long it would take to guess online and offline, and the leak check’s answer: not found in known leaks"
           caption: The strength estimate runs zxcvbn-ts in a Web Worker. With the leak check off, nothing is sent at all.
     - number: "04"
       title: measured
@@ -139,9 +139,9 @@ page:
           note: gzip sizes, measured in CI; the word list and the strength worker load only when first needed.
           rows:
             - - JavaScript on a site’s page
-              - "{siteJs} of 14 kB"
+              - "{siteJs} of {siteBudget}"
             - - JavaScript on /health
-              - "{healthJs} of 11.5 kB"
+              - "{healthJs} of {healthBudget}"
             - - Lighthouse on a phone
               - performance {lighthouse}, the rest 100
             - - Layout shift while a page loads
@@ -211,7 +211,6 @@ page:
     - label: Source on GitHub
       href: https://github.com/azamatos/password-generator
       primary: false
-  next: visaproof
 
 values:
   commits:
@@ -237,21 +236,29 @@ values:
     job: Types, lint, unit tests, build, budgets
     pattern: '\bTests\s+(\d+) passed'
     means: Vitest unit tests that passed in the latest successful CI run.
-    maxAge: 14
+    maxAge: 45
   e2eTests:
     from: ci
     workflow: ci.yml
     job: Browser tests (Chromium, Firefox, WebKit)
     pattern: '^\s*(\d+) passed \('
     means: Playwright checks that passed in the latest successful CI run, over Chromium, Firefox and WebKit (skipped ones not counted).
-    maxAge: 14
+    maxAge: 45
   siteJs:
     from: ci
     workflow: ci.yml
     job: Types, lint, unit tests, build, budgets
     pattern: "A site's page: JavaScript\\s+([\\d.]+) kB"
     means: The gzipped JavaScript a site's page loads up front, as the CI budget check measures it.
-    maxAge: 14
+    maxAge: 45
+    format: { decimals: 1, suffix: " kB" }
+  siteBudget:
+    from: ci
+    workflow: ci.yml
+    job: Types, lint, unit tests, build, budgets
+    pattern: "A site's page: JavaScript\\s+[\\d.]+ kB\\s+of ([\\d.]+) kB"
+    means: The CI budget for the gzipped JavaScript a site's page loads up front; CI fails above it.
+    maxAge: 45
     format: { decimals: 1, suffix: " kB" }
   healthJs:
     from: ci
@@ -259,7 +266,15 @@ values:
     job: Types, lint, unit tests, build, budgets
     pattern: '/health: JavaScript\s+([\d.]+) kB'
     means: The gzipped JavaScript /health loads up front, as the CI budget check measures it.
-    maxAge: 14
+    maxAge: 45
+    format: { decimals: 1, suffix: " kB" }
+  healthBudget:
+    from: ci
+    workflow: ci.yml
+    job: Types, lint, unit tests, build, budgets
+    pattern: '/health: JavaScript\s+[\d.]+ kB\s+of ([\d.]+) kB'
+    means: The CI budget for the gzipped JavaScript /health loads up front; CI fails above it.
+    maxAge: 45
     format: { decimals: 1, suffix: " kB" }
   hashSent:
     from: manual

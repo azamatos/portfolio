@@ -34,7 +34,7 @@ readme:
     - TanStack Start
     - Hono
     - Drizzle
-    - Postgres 18
+    - Postgres {postgres}
     - Tailwind CSS {tailwind}
     - Storybook
   stats:
@@ -42,11 +42,11 @@ readme:
       label: product questions answered before the code
       short: product questions
     - value: "{components}"
-      label: UI components, each with Storybook stories
-      short: UI components
+      label: components and screens in Storybook
+      short: components and screens
     - value: "{tests}"
-      label: unit, API and component tests
-      short: tests
+      label: tests in CI, a render check of every story included
+      short: tests in CI
   secondaryLink:
     label: Open business.yeral.app
     href: https://business.yeral.app
@@ -78,12 +78,12 @@ page:
     - value: "{productQuestions}"
       label: product questions answered in a product book before the code
     - value: "{components}"
-      label: UI components in Storybook, each with stories
+      label: components and screens in Storybook
     - value: "{tests}"
-      label: unit, API and component tests
+      label: tests in CI, a render check of every story included
     - value: "{decisions}"
       label: architecture decisions, each written down
-  numbersNote: "Counted from the repository, its CI and the live Storybook. Launch market: Turkmenistan, Ashgabat first."
+  numbersNote: "Counted from the repository, its CI and the live Storybook; checked {checked}. Launch market: Turkmenistan, Ashgabat first."
   sections:
     - number: "01"
       title: the idea
@@ -168,7 +168,7 @@ page:
         - { name: Zod, version: "{zod}" }
         - { name: OpenAPI }
         - { name: Drizzle ORM }
-        - { name: Postgres, version: "18" }
+        - { name: Postgres, version: "{postgres}" }
       note: Own phone sign-in with SMS codes and sessions; live updates to the calendar over server-sent events.
     - group: architecture
       items:
@@ -203,7 +203,7 @@ page:
         note: REST on Hono and Postgres, one contract for every app
         state: done
       - label: design system
-        note: "{components} components in Storybook"
+        note: "{components} components and screens in Storybook"
         state: done
       - label: business app
         note: calendar, requests, clients and team, on test data
@@ -230,7 +230,6 @@ page:
     - label: Source on GitHub
       href: https://github.com/azamatos/yeral
       primary: false
-  next: rebuffer
 
 values:
   commits:
@@ -280,12 +279,20 @@ values:
     file: pnpm-workspace.yaml
     means: The major version of Storybook in the monorepo's catalog.
     maxAge: 14
+  postgres:
+    from: github
+    get: version
+    package: postgres
+    file: infra/server/yeral/compose.yml
+    means: The major version of the Postgres image in the server's compose file.
+    maxAge: 14
   components:
     from: json
     url: https://storybook.yeral.app/index.json
     count: entries
+    where: { type: story }
     distinct: title
-    means: Component titles in the live Storybook (its index.json); each title is one component or screen with its stories.
+    means: Titles with stories in the live Storybook (its index.json), each one component or app screen; docs pages not counted.
     maxAge: 14
   tests:
     from: ci
@@ -293,8 +300,8 @@ values:
     job: Format, lint, types, tests, build
     pattern: '\bTests\s+(\d+) passed'
     sum: true
-    means: Tests that passed in the latest successful CI run, added up over every package (Vitest's "Tests N passed"), story tests included.
-    maxAge: 14
+    means: Tests that passed in the latest successful CI run, added up over every package (Vitest's "Tests N passed"), including a render check of every Storybook story.
+    maxAge: 90
     format: { floor: 100, plus: true }
   decisions:
     from: github
@@ -314,9 +321,8 @@ shots:
     url: https://business.yeral.app/login
     device: desktop
     theme: light
-    # BLOCKED (27 Oct 2026): these steps fail. The code sign-in refuses the demo's 69 numbers on purpose (Ýeral's
-    # F-242), and "Try the business app", the demo's own way in, isn't in the business app yet. Until it is, the page
-    # shows the design fallback and the refresh reports this shot.
+    # Skipped for now (27 Oct 2026): the page shows the design shots until the demo's way in is live. Then drop `skip`.
+    skip: &blocked "the demo's 69 numbers can't sign in by code, and “Try the business app” (F-242) isn't in the live app yet"
     steps: &signIn
       - fill: 'input[type="tel"]'
         value: "69123456"
@@ -329,4 +335,5 @@ shots:
     url: https://business.yeral.app/login
     device: phone
     theme: light
+    skip: *blocked
     steps: *signIn
