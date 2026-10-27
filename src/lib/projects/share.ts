@@ -1,38 +1,97 @@
-// A project page's link preview image (og:image), 1200 × 630, cut from the top of the page's hero screenshot:
-//   - a hero shot in R2: the JPEG the refresh command cut and uploaded (`og` in the collected file)
-//   - a local hero (Ýeral's design shot while its live shots are skipped): cut here, by the build, the same way
-// A hero shot collected before its share image gets none: the page keeps the site's default.
+// How a project page is shared and found: its title and description, its link preview image (og:image) and its
+// schema.org nodes. The image is the card the refresh command renders (scripts/refresh/shots/og.ts) and records as
+// `og` in the collected file; until there's one for the hero the page shows, the page keeps the site's.
+//
+// Type-only imports and src/site.ts, so the refresh command can import `heroSource` as well.
 
-import { getImage } from "astro:assets";
+import { SITE } from "../../site.ts";
 import type { Project } from "./index.ts";
+import type { Collected, MediaRef } from "./schema.ts";
 
-/** The share image's size and JPEG quality; scripts/refresh/shots/og.ts cuts it the same way. */
-export const SHARE = { width: 1200, height: 630, quality: 82 } as const;
+/** A link preview's image: an absolute URL, its size and type, and what it shows. */
+export type ShareImage = {
+  url: string;
+  width: number;
+  height: number;
+  type: string;
+  alt: string;
+};
 
-export async function shareImage(project: Project, site: URL) {
-  const { hero } = project.page;
-  const alt = hero.alt;
-  if (project.og)
-    return {
-      url: project.og.url,
-      width: project.og.width,
-      height: project.og.height,
-      alt,
-    };
-  if (hero.image.kind !== "asset") return undefined;
-  const image = await getImage({
-    src: hero.image.image,
-    width: SHARE.width,
-    height: SHARE.height,
-    fit: "cover",
-    position: "top",
-    format: "jpeg",
-    quality: SHARE.quality,
-  });
+/** The Person every page describes (BaseLayout), for other nodes to point at. */
+export const PERSON_ID = `${SITE.url}/#person`;
+
+/** The MIME type of a share image, from its file name. */
+export const imageType = (url: string) =>
+  /\.png$/i.test(url) ? "image/png" : "image/jpeg";
+
+/**
+ * Where a share card's screenshot comes from, which ties the card to the hero the page shows: the hero shot's base in
+ * R2, or the local file the page shows in its place (an `asset`, or a shot's fallback while it isn't collected).
+ */
+export function heroSource(
+  id: string,
+  hero: MediaRef,
+  shots: Collected["shots"] | undefined,
+): string {
+  if ("asset" in hero) return `src/assets/projects/${hero.asset}`;
+  const shot = shots?.[hero.shot];
+  if (shot) return shot.kind === "video" ? shot.poster.base : shot.base;
+  return `src/assets/projects/fallback/${id}-${hero.shot}.webp`; // fallback: goes with fallback.ts
+}
+
+/** The card, when the refresh has made one for the hero the page shows. */
+export function shareImage(project: Project): ShareImage | undefined {
+  const { og } = project;
+  if (!og) return undefined;
   return {
-    url: new URL(image.src, site).href,
-    width: SHARE.width,
-    height: SHARE.height,
-    alt,
+    url: og.url,
+    width: og.width,
+    height: og.height,
+    type: imageType(og.url),
+    alt: `${project.name}, ${project.statusText}: ${project.readme.headline} Screenshot: ${project.page.hero.alt}`,
   };
+}
+
+/** "Visaproof: Developer jobs in Europe, with the visa answer first": the name and the headline, which say it all. */
+export const projectTitle = (p: Project) =>
+  `${p.name}: ${p.readme.headline.replace(/\.$/, "")}`;
+
+/**
+ * 120 to 160 characters, as search results show them: the tagline when it's that long, else the tagline and the
+ * first sentence of the short README text, else the headline and that text. The tagline when none fits.
+ */
+export function projectDescription(p: Project): string {
+  const tagline = `${p.page.tagline.strong} ${p.page.tagline.rest}`;
+  const [first] = p.readme.short.split(/(?<=[.!?])\s+/);
+  return (
+    [
+      tagline,
+      `${tagline} ${first}`,
+      `${p.readme.headline} ${p.readme.short}`,
+    ].find((d) => d.length >= 120 && d.length <= 160) ?? tagline
+  );
+}
+
+/** The project as source code with a live site, by the Person, and the page's place: Home → Projects → name. */
+export function projectJsonLd(p: Project, page: string, image?: ShareImage) {
+  return [
+    {
+      "@type": "SoftwareSourceCode",
+      "@id": `${page}#project`,
+      name: p.name,
+      description: p.readme.short,
+      url: p.site,
+      codeRepository: p.repoUrl,
+      author: { "@id": PERSON_ID },
+      ...(image && { image: image.url }),
+    },
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { name: "Home", item: `${SITE.url}/` },
+        { name: "Projects", item: `${SITE.url}/#projects` },
+        { name: p.name, item: page },
+      ].map((crumb, i) => ({ "@type": "ListItem", position: i + 1, ...crumb })),
+    },
+  ];
 }

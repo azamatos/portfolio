@@ -784,16 +784,23 @@ export const collectedVideoSchema = z.strictObject({
 });
 
 /**
- * The page's share image (og:image): a 1200 × 630 JPEG cut from the top of the hero shot, in R2. `from` is the shot's
- * base, so a new hero shot (or a different hero) means a new image.
+ * The page's share image (og:image): a 1200 × 630 card with the hero screenshot in it (scripts/refresh/shots/og.ts),
+ * in R2. `from` is where the screenshot came from, so a new hero shot (or a different hero) drops it until the next
+ * refresh makes a new one.
  */
 export const collectedOgSchema = z.strictObject({
   url,
   width: size,
   height: size,
-  /** The hero shot it was cut from: its name and its base URL. */
-  shot: z.string().regex(SHOT_NAME),
-  from: url,
+  /** The hero shot's name; none for an `asset` hero. */
+  shot: z.string().regex(SHOT_NAME).optional(),
+  /** The shot's base URL, or the local file the page shows in its place (`heroSource` in share.ts). */
+  from: z.union([
+    url,
+    z
+      .string()
+      .regex(/^src\/assets\/projects\/[a-z0-9/-]+\.(webp|png|jpe?g|avif)$/),
+  ]),
   asOf: isoTime,
 });
 
@@ -815,7 +822,7 @@ export const collectedSchema = z.strictObject({
     z.string().regex(SHOT_NAME),
     z.discriminatedUnion("kind", [collectedImageSchema, collectedVideoSchema]),
   ),
-  /** The share image, when the page's hero is a collected shot; a local hero's is made by the build. */
+  /** The share image, once the refresh has made one for the hero the page shows. */
   og: collectedOgSchema.optional(),
   /** Shots the config says to skip for now (`skip`), with the reason. */
   skipped: z
@@ -825,7 +832,17 @@ export const collectedSchema = z.strictObject({
   problems: z.array(z.strictObject({ name: text, message: text })),
 });
 
+/**
+ * The site's own collected file, src/data/collected/_site.json (the `collected` collection skips names that start
+ * with "_"): the home and 404 pages' share image, a card the refresh renders from the project configs and src/site.ts.
+ * Until it exists, those pages use src/assets/og-image.png.
+ */
+export const collectedSiteSchema = z.strictObject({
+  og: z.strictObject({ url, width: size, height: size, asOf: isoTime }),
+});
+
 export type Collected = z.infer<typeof collectedSchema>;
 export type CollectedImage = z.infer<typeof collectedImageSchema>;
 export type CollectedVideo = z.infer<typeof collectedVideoSchema>;
 export type CollectedOg = z.infer<typeof collectedOgSchema>;
+export type CollectedSite = z.infer<typeof collectedSiteSchema>;
