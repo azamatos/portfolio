@@ -1,19 +1,19 @@
 {
-  "refreshedAt": "2026-10-27T19:06:17.634Z",
+  "refreshedAt": "2026-10-27T19:42:45.815Z",
   "values": {
     "commits": {
       "value": 38,
-      "asOf": "2026-10-27T19:06:18.870Z",
+      "asOf": "2026-10-27T19:42:47.019Z",
       "source": "https://github.com/azamatos/password-generator/commits/main"
     },
     "astro": {
       "value": "7",
-      "asOf": "2026-10-27T19:06:18.870Z",
+      "asOf": "2026-10-27T19:42:47.019Z",
       "source": "https://github.com/azamatos/password-generator/blob/main/package.json"
     },
     "presets": {
       "value": 16,
-      "asOf": "2026-10-27T19:06:19.687Z",
+      "asOf": "2026-10-27T19:42:47.790Z",
       "source": "https://raw.githubusercontent.com/azamatos/password-generator/main/src/data/platforms.json"
     },
     "unitTests": {
@@ -78,6 +78,14 @@
       "asOf": "2026-10-27T17:28:50.293Z",
       "source": "https://pass.azamatos.com/health/"
     }
+  },
+  "og": {
+    "url": "https://media.azamatos.com/portfolio/pass/og.2725c41025.jpg",
+    "width": 1200,
+    "height": 630,
+    "shot": "github",
+    "from": "https://media.azamatos.com/portfolio/pass/github.330649add8",
+    "asOf": "2026-10-27T19:43:03.722Z"
   },
   "skipped": [],
   "problems": []
