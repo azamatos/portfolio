@@ -36,7 +36,7 @@ const last = page.sections.length;
 
 const title = `${project.name}: ${project.readme.headline.replace(/\.$/, "")} — ${SITE.name}`;
 const description = `${page.tagline.strong} ${page.tagline.rest}`;
-const image = await shareImage(project, Astro.site!);
+const image = shareImage(project);
 // The hero is the page's first image: connect to R2 early when it's there.
 const preconnect =
   page.hero.image.kind === "asset" ? [] : ["https://media.azamatos.com"];

@@ -7,6 +7,7 @@
 
 import { getCollection } from "astro:content";
 import { resolveMedia, type Media } from "./media.ts";
+import { heroSource } from "./share.ts";
 import type {
   Collected,
   CollectedOg,
@@ -121,7 +122,7 @@ export type Project = {
   values: Record<string, Value>;
   /** When the refresh command last ran for this project (ISO); `values.checked.text` prints it as "27 Oct". */
   refreshedAt?: string;
-  /** The share image the refresh cut from the hero shot in use; none for a local hero (see share.ts). */
+  /** The share card the refresh made for the hero in use (see share.ts); none until it has. */
   og?: CollectedOg;
 };
 
@@ -281,14 +282,12 @@ function resolveDeep(o: unknown, ctx: Ctx, path: string): unknown {
   return o;
 }
 
-/** The collected share image, if it was cut from the hero shot the page shows now. */
-function ogOf(config: Config, collected: Collected | undefined) {
+/** The collected share image, if it shows the hero the page shows now. */
+function ogOf(id: string, config: Config, collected: Collected | undefined) {
   const og = collected?.og;
-  const hero = config.page.hero.image;
-  if (!og || !("shot" in hero) || og.shot !== hero.shot) return undefined;
-  const shot = collected.shots[hero.shot];
-  const base = shot?.kind === "video" ? shot.poster.base : shot?.base;
-  return og.from === base ? og : undefined;
+  return og?.from === heroSource(id, config.page.hero.image, collected?.shots)
+    ? og
+    : undefined;
 }
 
 function resolveProject(
@@ -333,7 +332,7 @@ function resolveProject(
     },
     values: Object.fromEntries(values),
     refreshedAt: collected?.refreshedAt,
-    og: ogOf(config, collected),
+    og: ogOf(id, config, collected),
   };
 }
 

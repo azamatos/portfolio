@@ -19,7 +19,7 @@ import { writeCollected } from "./output.ts";
 import { missingCredentials } from "./r2.ts";
 import { isFetched, readValues } from "./readers/index.ts";
 import { rawDir, takeShot, type ShotEntry } from "./shots/index.ts";
-import { shareImage } from "./shots/og.ts";
+import { loadSite, shareImage, siteShareImage, writeSite } from "./shots/og.ts";
 
 const { values: flags, positionals } = parseArgs({
   allowPositionals: true,
@@ -221,40 +221,32 @@ async function refresh(id: string): Promise<Problem[]> {
       );
     }
   }
-  // Share image: cut from the hero shot. A local hero's is made by the build, and a hero shot that isn't collected
-  // has none.
+  // Share image: a card with the hero screenshot, made again when its text, numbers or hero change (shots/og.ts).
   let og: Collected["og"];
-  const hero = config.page.hero.image;
-  const heroShot = "shot" in hero ? shots[hero.shot] : undefined;
-  if ("shot" in hero && heroShot) {
-    const still = stills.get(
-      heroShot.kind === "image" ? heroShot.base : heroShot.poster.base,
+  try {
+    const r = await shareImage(
+      id,
+      config,
+      { refreshedAt: now.toISOString(), values, shots, skipped, problems },
+      before?.og,
+      stills,
+      publish,
     );
-    try {
-      const r = await shareImage(
-        id,
-        hero.shot,
-        heroShot,
-        before?.og,
-        still,
-        publish,
+    if (r?.same) og = r.og;
+    else if (r) {
+      totals.newOg++;
+      totals.uploaded += r.sent;
+      og = publish ? r.og : before?.og;
+      console.log(
+        `  ✓ og ${pad(r.og.shot ?? "card", 16)}${pad(`${r.og.width}×${r.og.height}`, 18)}${publish ? `${r.sent} of 1 files uploaded` : `saved in ${r.savedTo}`}`,
       );
-      if (r.same) og = r.og;
-      else {
-        totals.newOg++;
-        totals.uploaded += r.sent;
-        og = publish ? r.og : before?.og;
-        console.log(
-          `  ✓ og ${pad(hero.shot, 16)}${pad(`${r.og.width}×${r.og.height}`, 18)}${publish ? `${r.sent} of 1 files uploaded` : `saved in ${r.savedTo}`}`,
-        );
-      }
-    } catch (e) {
-      og = before?.og;
-      problem({
-        name: "og",
-        message: `${(e as Error).message.split("\n")[0]}${og ? " (kept the last one)" : ""}`,
-      });
     }
+  } catch (e) {
+    og = before?.og;
+    problem({
+      name: "og",
+      message: `${(e as Error).message.split("\n")[0]}${og ? " (kept the last one)" : ""}`,
+    });
   }
 
   // Links
@@ -315,6 +307,29 @@ try {
       console.log(`\n✗ ${id}: ${message.split("\n")[0]}`);
       report(id, [{ name: "refresh", message }]);
     }
+  }
+  // The site's share card (home and 404 pages) lists every project, so every run checks it.
+  console.log("\nSite");
+  try {
+    const r = await siteShareImage((await loadSite())?.og, publish);
+    const size = pad(`${r.og.width}×${r.og.height}`, 18);
+    if (r.same) console.log(`  ✓ og ${pad("card", 16)}${size}unchanged`);
+    else {
+      totals.newOg++;
+      totals.uploaded += r.sent;
+      console.log(
+        `  ✓ og ${pad("card", 16)}${size}${publish ? `${r.sent} of 1 files uploaded` : `saved in ${r.savedTo}`}`,
+      );
+      if (publish) {
+        await writeSite({ og: r.og });
+        totals.written++;
+        console.log("  → wrote src/data/collected/_site.json");
+      }
+    }
+  } catch (e) {
+    const message = (e as Error).message;
+    console.log(`  ✗ og ${message.split("\n")[0]}`);
+    report("site", [{ name: "og", message }]);
   }
 } finally {
   await closeBrowser();
