@@ -2,6 +2,14 @@
   "ci": {
     "collect": {
       "staticDistDir": "./dist",
+      "url": [
+        "http://localhost/",
+        "http://localhost/projects/visaproof/",
+        "http://localhost/projects/yeral/",
+        "http://localhost/projects/rebuffer/",
+        "http://localhost/projects/pass/",
+        "http://localhost/404.html"
+      ],
       "numberOfRuns": 3
     },
     "assert": {
