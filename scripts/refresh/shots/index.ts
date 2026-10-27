@@ -26,6 +26,8 @@ export type ShotResult = {
   same: boolean;
   /** Files encoded, files sent to R2 (0 when they were there or saved locally), and where local ones went. */
   files: number;
+  /** The capture at full size: the still, or the loop's poster frame (the share image is cut from it). */
+  still: Buffer;
   sent: number;
   savedTo?: string;
 };
@@ -75,7 +77,7 @@ export async function takeShot(
     const key = `${name}.${contentHash([png])}`;
     const base = `${MEDIA_URL}/${prefix}/${key}`;
     if (old?.kind === "image" && old.base === base)
-      return { entry: old, same: true, files: 0, sent: 0 };
+      return { entry: old, same: true, files: 0, sent: 0, still: png };
     const enc = await encodeImage(png, key);
     const entry = imageEntry(enc, base, asOf, shot.url);
     if (!publish)
@@ -85,20 +87,23 @@ export async function takeShot(
         files: enc.files.length,
         sent: 0,
         savedTo: await saveLocally(prefix, enc.files),
+        still: png,
       };
     return {
       entry,
       same: false,
       files: enc.files.length,
       sent: await upload(prefix, enc.files),
+      still: png,
     };
   }
 
   const { frames } = await captureLoop(shot, CAPTURE_LIMIT);
+  const still = frames.at(-1)!.jpeg;
   const key = `${name}.${contentHash(frames.flatMap((f) => [f.jpeg, f.seconds.toFixed(4)]))}`;
   const base = `${MEDIA_URL}/${prefix}/${key}`;
   if (old?.kind === "video" && old.poster.base === base)
-    return { entry: old, same: true, files: 0, sent: 0 };
+    return { entry: old, same: true, files: 0, sent: 0, still };
   const enc = await encodeLoop(frames, key);
   const mp4 = enc.files.find((f) => f.name.endsWith(".mp4"))!;
   await keepRaw(project, `${name}.mp4`, mp4.body);
@@ -127,12 +132,14 @@ export async function takeShot(
       files: files.length,
       sent: 0,
       savedTo: await saveLocally(prefix, files),
+      still,
     };
   return {
     entry,
     same: false,
     files: files.length,
     sent: await upload(prefix, files),
+    still,
   };
 }
 

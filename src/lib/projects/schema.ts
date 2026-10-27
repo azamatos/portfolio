@@ -757,6 +757,20 @@ export const collectedVideoSchema = z.strictObject({
   source: url,
 });
 
+/**
+ * The page's share image (og:image): a 1200 × 630 JPEG cut from the top of the hero shot, in R2. `from` is the shot's
+ * base, so a new hero shot (or a different hero) means a new image.
+ */
+export const collectedOgSchema = z.strictObject({
+  url,
+  width: size,
+  height: size,
+  /** The hero shot it was cut from: its name and its base URL. */
+  shot: z.string().regex(SHOT_NAME),
+  from: url,
+  asOf: isoTime,
+});
+
 export const collectedSchema = z.strictObject({
   /** When the refresh command last ran for this project; written on every run. */
   refreshedAt: isoTime,
@@ -775,6 +789,8 @@ export const collectedSchema = z.strictObject({
     z.string().regex(SHOT_NAME),
     z.discriminatedUnion("kind", [collectedImageSchema, collectedVideoSchema]),
   ),
+  /** The share image, when the page's hero is a collected shot; a local hero's is made by the build. */
+  og: collectedOgSchema.optional(),
   /** Shots the config says to skip for now (`skip`), with the reason. */
   skipped: z
     .array(z.strictObject({ name: z.string().regex(SHOT_NAME), reason: text }))
@@ -786,3 +802,4 @@ export const collectedSchema = z.strictObject({
 export type Collected = z.infer<typeof collectedSchema>;
 export type CollectedImage = z.infer<typeof collectedImageSchema>;
 export type CollectedVideo = z.infer<typeof collectedVideoSchema>;
+export type CollectedOg = z.infer<typeof collectedOgSchema>;

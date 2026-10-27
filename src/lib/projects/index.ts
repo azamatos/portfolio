@@ -7,7 +7,13 @@
 
 import { getCollection } from "astro:content";
 import { resolveMedia, type Media } from "./media.ts";
-import type { Collected, MediaRef, Part, ProjectConfig } from "./schema.ts";
+import type {
+  Collected,
+  CollectedOg,
+  MediaRef,
+  Part,
+  ProjectConfig,
+} from "./schema.ts";
 import {
   formatNumber,
   interpolate,
@@ -115,6 +121,8 @@ export type Project = {
   values: Record<string, Value>;
   /** When the refresh command last ran for this project (ISO); `values.checked.text` prints it as "27 Oct". */
   refreshedAt?: string;
+  /** The share image the refresh cut from the hero shot in use; none for a local hero (see share.ts). */
+  og?: CollectedOg;
 };
 
 export const statusText = (status: Config["status"]) =>
@@ -273,6 +281,16 @@ function resolveDeep(o: unknown, ctx: Ctx, path: string): unknown {
   return o;
 }
 
+/** The collected share image, if it was cut from the hero shot the page shows now. */
+function ogOf(config: Config, collected: Collected | undefined) {
+  const og = collected?.og;
+  const hero = config.page.hero.image;
+  if (!og || !("shot" in hero) || og.shot !== hero.shot) return undefined;
+  const shot = collected.shots[hero.shot];
+  const base = shot?.kind === "video" ? shot.poster.base : shot?.base;
+  return og.from === base ? og : undefined;
+}
+
 function resolveProject(
   id: string,
   config: Config,
@@ -315,6 +333,7 @@ function resolveProject(
     },
     values: Object.fromEntries(values),
     refreshedAt: collected?.refreshedAt,
+    og: ogOf(config, collected),
   };
 }
 

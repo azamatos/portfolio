@@ -19,6 +19,7 @@ import { writeCollected } from "./output.ts";
 import { missingCredentials } from "./r2.ts";
 import { isFetched, readValues } from "./readers/index.ts";
 import { rawDir, takeShot, type ShotEntry } from "./shots/index.ts";
+import { shareImage } from "./shots/og.ts";
 
 const { values: flags, positionals } = parseArgs({
   allowPositionals: true,
@@ -83,6 +84,7 @@ const totals = {
   shots: 0,
   newShots: 0,
   uploaded: 0,
+  newOg: 0,
   skipped: 0,
   loopsKept: 0,
   links: 0,
@@ -152,6 +154,8 @@ async function refresh(id: string): Promise<Problem[]> {
 
   // Shots
   const shots: Record<string, ShotEntry> = {};
+  /** This run's captures by the base of the entry they belong to, for the share image. */
+  const stills = new Map<string, Buffer>();
   const skipped: Collected["skipped"] = [];
   const keepOld = (name: string) => {
     const old = before?.shots[name];
@@ -185,6 +189,12 @@ async function refresh(id: string): Promise<Problem[]> {
     totals.shots++;
     try {
       const r = await takeShot(id, name, shot, old, publish);
+      const kept = r.same || publish ? r.entry : undefined;
+      if (kept)
+        stills.set(
+          kept.kind === "image" ? kept.base : kept.poster.base,
+          r.still,
+        );
       const size = `${r.entry.width}×${r.entry.height}${r.entry.kind === "video" ? " loop" : ""}`;
       if (r.same) {
         shots[name] = r.entry;
@@ -211,6 +221,42 @@ async function refresh(id: string): Promise<Problem[]> {
       );
     }
   }
+  // Share image: cut from the hero shot. A local hero's is made by the build, and a hero shot that isn't collected
+  // has none.
+  let og: Collected["og"];
+  const hero = config.page.hero.image;
+  const heroShot = "shot" in hero ? shots[hero.shot] : undefined;
+  if ("shot" in hero && heroShot) {
+    const still = stills.get(
+      heroShot.kind === "image" ? heroShot.base : heroShot.poster.base,
+    );
+    try {
+      const r = await shareImage(
+        id,
+        hero.shot,
+        heroShot,
+        before?.og,
+        still,
+        publish,
+      );
+      if (r.same) og = r.og;
+      else {
+        totals.newOg++;
+        totals.uploaded += r.sent;
+        og = publish ? r.og : before?.og;
+        console.log(
+          `  ✓ og ${pad(hero.shot, 16)}${pad(`${r.og.width}×${r.og.height}`, 18)}${publish ? `${r.sent} of 1 files uploaded` : `saved in ${r.savedTo}`}`,
+        );
+      }
+    } catch (e) {
+      og = before?.og;
+      problem({
+        name: "og",
+        message: `${(e as Error).message.split("\n")[0]}${og ? " (kept the last one)" : ""}`,
+      });
+    }
+  }
+
   // Links
   const links = linksIn(config);
   totals.links += links.length;
@@ -227,6 +273,7 @@ async function refresh(id: string): Promise<Problem[]> {
     refreshedAt: now.toISOString(),
     values,
     shots,
+    og,
     skipped,
     problems,
   };
@@ -276,7 +323,7 @@ try {
 console.log(
   `\n${totals.read} of ${totals.fetched} values read` +
     (shotsWanted
-      ? `, ${totals.shots} shots taken (${totals.newShots} new, ${totals.uploaded} files uploaded)` +
+      ? `, ${totals.shots} shots taken (${totals.newShots} new, ${totals.newOg} new share images, ${totals.uploaded} files uploaded)` +
         (totals.loopsKept ? `, ${totals.loopsKept} loops kept` : "")
       : "") +
     (totals.skipped ? `, ${totals.skipped} skipped` : "") +
