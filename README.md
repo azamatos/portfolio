@@ -54,16 +54,21 @@ pnpm lint
 
 ## Project data
 
-Each project is two files: `src/content/projects/<id>.yaml`, written by hand (the text, the links, and where every number and screenshot comes from), and `src/data/collected/<id>.json`, written only by the refresh command (each number with its date and source, and the screenshots on `media.azamatos.com`). The build reads both and fetches nothing.
+Each project is two files: `src/content/projects/<id>.yaml`, written by hand (the text, the links, and where every number and screenshot comes from), and `src/data/collected/<id>.json`, written only by the refresh command (each number with when its source produced it and where, and the screenshots on `media.azamatos.com`). The build reads both and fetches nothing.
 
 ```sh
 pnpm data:refresh               # every project
 pnpm data:refresh visaproof     # one project
 pnpm data:refresh --no-shots    # numbers and links only
+pnpm data:refresh --loops       # record the loops again too (by default only a missing loop is recorded)
 pnpm data:refresh --dry-run     # read and capture, write and upload nothing
 ```
 
-It needs Playwright's Chromium (`pnpm exec playwright install chromium`) and ffmpeg. Uploads need `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID` and `R2_SECRET_ACCESS_KEY` in `.env`; without them the shots go to `.cache/refresh/` and the JSON keeps its old ones. A number that can't be read keeps its last value, goes under `problems` and makes the command fail. GitHub runs it every Monday (and from **Run workflow** in Actions), then commits the JSON if it changed.
+It needs Node 22.18 or later, Playwright's Chromium (`pnpm exec playwright install chromium`) and ffmpeg. Uploads need `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID` and `R2_SECRET_ACCESS_KEY` in `.env`; without them the shots go to `.cache/refresh/` and the JSON keeps its old ones. After an upload run, files under `portfolio/` in R2 that no collected file (in the working tree or at `HEAD`) uses are deleted once they're 30 days old.
+
+A number that can't be read, is older than its `maxAge`, or drops to 0 (unless `allowZero: true`) keeps its last value, goes under `problems` and makes the command fail. A shot with `skip: "<reason>"` isn't taken: the run lists it as skipped, and the page keeps what it has. GitHub runs it every Monday (and from **Run workflow** in Actions, with a box to record the loops again), then commits the JSON.
+
+**GitHub secrets**, from the same `.env`: `gh secret set -f .env --repo azamatos/portfolio`. Reading the project repos' CI logs uses the job's own token; if GitHub ever refuses it, add `GH_READ_TOKEN` (a fine-grained token, read-only, with Actions: read on the four project repos) and the job uses that instead.
 
 **Add a project:** copy one of the YAML files to `src/content/projects/<id>.yaml`, edit it, run `pnpm data:refresh <id>` and commit both files.
 
