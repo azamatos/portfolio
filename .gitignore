@@ -17,3 +17,4 @@ docs/design/screens/
 
 # The refresh command's encoded shots and raw captures.
 .cache/
+.claude/worktrees/
