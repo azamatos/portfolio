@@ -455,7 +455,8 @@ const firstRole = SITE.roles[0].split(" ");
     }
   }
 
-  /* Tablets and phones: the photo becomes a full-width band above the text. */
+  /* Tablets and phones: the photo becomes a full-width band above the text, low enough that the resume buttons
+     stay on a 900px-tall screen. */
   @media (max-width: 1000px) {
     .hero {
       flex-direction: column;
@@ -476,9 +477,21 @@ const firstRole = SITE.roles[0].split(" ");
 
     .photo :global(img) {
       width: 100%;
-      height: 440px;
+      height: 320px;
       object-fit: cover;
       object-position: 45% 0;
+    }
+  }
+
+  /* A tablet's band is wider than the photo at that height: the whole photo shows, as on a phone, its sides faded. */
+  @media (width > 800px) and (max-width: 1000px) {
+    .photo :global(img) {
+      width: auto;
+      margin-inline: auto;
+      mask-image:
+        linear-gradient(to top, transparent 0%, #000 22%),
+        linear-gradient(to right, transparent, #000 18%, #000 82%, transparent);
+      mask-composite: intersect;
     }
   }
 
@@ -489,10 +502,6 @@ const firstRole = SITE.roles[0].split(" ");
 
     .content {
       gap: 20px;
-    }
-
-    .photo :global(img) {
-      height: 320px;
     }
 
     h1 {
