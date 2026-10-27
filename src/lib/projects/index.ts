@@ -92,7 +92,7 @@ export type Figure = {
 
 export type Project = {
   id: string;
-  /** `/projects/<id>` */
+  /** `/projects/<id>/`: with the slash, the page's address on Cloudflare Pages and in the sitemap (no redirect). */
   path: string;
   order: number;
   name: string;
@@ -299,7 +299,7 @@ function resolveProject(
 ): Project {
   const values = resolveValues(id, config, collected);
   const ctx: Ctx = { id, values, collected };
-  const path = `/projects/${id}`;
+  const path = `/projects/${id}/`;
   const { numbers, sections, ...page } = config.page;
   return {
     id,

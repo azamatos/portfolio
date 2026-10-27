@@ -1,0 +1,82 @@
+---
+// A project's case study, /projects/<id>/: the head and hero, the numbers, the sections, built with, the log with
+// its aside and links, then the next project. Everything comes from getProjects(); the page only puts it in order.
+
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Actions from "@/components/project/Actions.astro";
+import Aside from "@/components/project/Aside.astro";
+import BuiltWith from "@/components/project/BuiltWith.astro";
+import Log from "@/components/project/Log.astro";
+import NextProject from "@/components/project/NextProject.astro";
+import Numbers from "@/components/project/Numbers.astro";
+import PageHead from "@/components/project/PageHead.astro";
+import Section from "@/components/project/Section.astro";
+import { sectionNumber } from "@/components/project/types";
+import { getProjects, type Project } from "@/lib/projects";
+import { shareImage } from "@/lib/projects/share";
+import { SITE } from "@/site";
+
+export async function getStaticPaths() {
+  const projects = await getProjects();
+  const byId = new Map(projects.map((p) => [p.id, p]));
+  return projects.map((project) => ({
+    params: { id: project.id },
+    props: { project, next: byId.get(project.page.next)! },
+  }));
+}
+
+interface Props {
+  project: Project;
+  next: Project;
+}
+
+const { project, next } = Astro.props;
+const { page } = project;
+const last = page.sections.length;
+
+const title = `${project.name}: ${project.readme.headline.replace(/\.$/, "")} — ${SITE.name}`;
+const description = `${page.tagline.strong} ${page.tagline.rest}`;
+const image = await shareImage(project, Astro.site!);
+// The hero is the page's first image: connect to R2 early when it's there.
+const preconnect =
+  page.hero.image.kind === "asset" ? [] : ["https://media.azamatos.com"];
+
+const work = {
+  "@context": "https://schema.org",
+  "@type": "CreativeWork",
+  name: project.name,
+  description: project.readme.short,
+  url: project.site,
+  author: { "@type": "Person", name: SITE.name, url: SITE.url },
+};
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  image={image}
+  type="article"
+  canonical={page.path}
+  preconnect={preconnect}
+  labelledby="project-title"
+  project={project.id}
+  jsonLd={work}
+>
+  <PageHead project={project} />
+  <Numbers numbers={page.numbers} note={page.numbersNote} />
+  {page.sections.map((s) => (
+    <Section
+      number={s.number}
+      title={s.title}
+      lead={s.lead}
+      text={s.text}
+      parts={s.parts}
+    />
+  ))}
+  <BuiltWith number={sectionNumber(last + 1)} groups={page.builtWith} />
+  <Log number={sectionNumber(last + 2)} log={page.log}>
+    <Aside aside={page.aside} />
+    <Actions actions={page.actions} />
+  </Log>
+  <NextProject next={next} />
+</BaseLayout>

@@ -66,6 +66,8 @@ pnpm data:refresh --dry-run     # read and capture, write and upload nothing
 
 It needs Node 22.18 or later, Playwright's Chromium (`pnpm exec playwright install chromium`) and ffmpeg. Uploads need `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID` and `R2_SECRET_ACCESS_KEY` in `.env`; without them the shots go to `.cache/refresh/` and the JSON keeps its old ones. After an upload run, files under `portfolio/` in R2 that no collected file (in the working tree or at `HEAD`) uses are deleted once they're 30 days old.
 
+Each project page's share image (og:image) is a 1200×630 JPEG cut from the top of its hero shot: the refresh uploads it next to the shots and records it as `og`, and makes a new one only when the hero shot changes. A hero that's a local file gets its share image from the build instead.
+
 A number that can't be read, is older than its `maxAge`, or drops to 0 (unless `allowZero: true`) keeps its last value, goes under `problems` and makes the command fail. A shot with `skip: "<reason>"` isn't taken: the run lists it as skipped, and the page keeps what it has. GitHub runs it every Monday (and from **Run workflow** in Actions, with a box to record the loops again), then commits the JSON.
 
 **GitHub secrets**, from the same `.env`: `gh secret set -f .env --repo azamatos/portfolio`. Reading the project repos' CI logs uses the job's own token; if GitHub ever refuses it, add `GH_READ_TOKEN` (a fine-grained token, read-only, with Actions: read on the four project repos) and the job uses that instead.
@@ -81,6 +83,7 @@ src/
   components/                Header, Logo, EmailButton, Hero, ResumeActions, Footer
   pages/index.astro          home page
   pages/404.astro            not-found page
+  pages/projects/[id].astro  the project pages (/projects/<id>/)
   pages/llms.txt.ts          plain-text profile for AI assistants (/llms.txt)
   styles/global.css          tokens and reset
   assets/                    fonts, share image

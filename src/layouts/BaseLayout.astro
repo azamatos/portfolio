@@ -8,25 +8,61 @@ import { THEME_COLOR, themeInitScript } from "@/lib/theme";
 import { SITE } from "@/site";
 import "@/styles/global.css";
 
+/** A link preview's image: an absolute URL, its size and what it shows. */
+export type ShareImage = {
+  url: string;
+  width: number;
+  height: number;
+  alt: string;
+};
+
 interface Props {
   title?: string;
   description?: string;
+  /** The link preview's description: `description` when that's given, else the site's short one. */
+  shareDescription?: string;
+  /** The link preview's image; the site's og-image.png by default. */
+  image?: ShareImage;
+  /** og:type: "article" for a project page. */
+  type?: "website" | "article";
+  /** The page's path or URL for rel=canonical and og:url; the current path by default. */
+  canonical?: string;
   /** Keeps the page out of search results (the 404 page). */
   noindex?: boolean;
+  /** Origins the page loads its first images from, connected to early (media.azamatos.com on project pages). */
+  preconnect?: string[];
+  /** The id of the heading that names <main> (a project page's h1). */
+  labelledby?: string;
   /** A project page: turns on that project's accent tokens (--acc, --acc2, --on-acc) inside <main>. */
   project?: string;
+  /** More schema.org data about the page, after the Person. */
+  jsonLd?: Record<string, unknown>;
 }
 
 const {
   title = SITE.title,
-  description = SITE.description,
+  description,
+  shareDescription = description ?? SITE.shareDescription,
+  image,
+  type = "website",
   noindex = false,
+  preconnect = [],
+  labelledby,
   project,
+  jsonLd,
 } = Astro.props;
 
-const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const canonical = new URL(
+  Astro.props.canonical ?? Astro.url.pathname,
+  Astro.site,
+).href;
 // Imported, so the file name carries a content hash and link previews refetch it after every change.
-const ogImageUrl = new URL(ogImage.src, Astro.site).href;
+const share: ShareImage = image ?? {
+  url: new URL(ogImage.src, Astro.site).href,
+  width: ogImage.width,
+  height: ogImage.height,
+  alt: `${SITE.name}, ${SITE.role}`,
+};
 
 const person = {
   "@context": "https://schema.org",
@@ -56,9 +92,12 @@ const person = {
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    {preconnect.map((origin) => (
+      <link rel="preconnect" href={origin} />
+    ))}
 
     <title>{title}</title>
-    <meta name="description" content={description} />
+    <meta name="description" content={description ?? SITE.description} />
     <meta name="author" content={SITE.name} />
     {noindex ? (
       <meta name="robots" content="noindex" />
@@ -91,20 +130,21 @@ const person = {
     </noscript>
 
     <!-- Open Graph (LinkedIn / Telegram / Discord) -->
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={type} />
     <meta property="og:title" content={title} />
-    <meta property="og:description" content={SITE.shareDescription} />
+    <meta property="og:description" content={shareDescription} />
     <meta property="og:url" content={canonical} />
     <meta property="og:site_name" content="azamatos" />
-    <meta property="og:image" content={ogImageUrl} />
-    <meta property="og:image:width" content={String(ogImage.width)} />
-    <meta property="og:image:height" content={String(ogImage.height)} />
-    <meta property="og:image:alt" content={`${SITE.name}, ${SITE.role}`} />
+    <meta property="og:image" content={share.url} />
+    <meta property="og:image:width" content={String(share.width)} />
+    <meta property="og:image:height" content={String(share.height)} />
+    <meta property="og:image:alt" content={share.alt} />
 
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
-    <meta name="twitter:description" content={SITE.shareDescription} />
-    <meta name="twitter:image" content={ogImageUrl} />
+    <meta name="twitter:description" content={shareDescription} />
+    <meta name="twitter:image" content={share.url} />
+    {image && <meta name="twitter:image:alt" content={share.alt} />}
 
     <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -121,12 +161,19 @@ const person = {
       type="application/ld+json"
       set:html={JSON.stringify(person)}
     />
+    {jsonLd && (
+      <script
+        is:inline
+        type="application/ld+json"
+        set:html={JSON.stringify(jsonLd)}
+      />
+    )}
   </head>
 
   <body>
     <div class="page">
       <Header />
-      <main id="main" data-project={project}>
+      <main id="main" data-project={project} aria-labelledby={labelledby}>
         <slot />
       </main>
       <Footer />
