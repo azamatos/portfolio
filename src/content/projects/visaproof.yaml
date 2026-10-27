@@ -22,7 +22,7 @@ readme:
   alt: "Visaproof search: roles grouped by visa answer, with filters for visa, relocation, language and country"
   panImage: true
   headline: Developer jobs in Europe, with the visa answer first.
-  description: "It reads open roles straight from companies' own job boards and answers what a relocating developer asks first: will they sponsor a visa, and will they help me move. Every answer quotes the posting or an official sponsor register."
+  description: "It reads open roles straight from companies’ own job boards and answers what a relocating developer asks first: will they sponsor a visa, and will they help me move. Every answer quotes the posting or an official sponsor register."
   short: Reads open roles from companies’ own job boards. Every visa answer quotes the posting or an official sponsor register.
   tech:
     - Nuxt {nuxt}

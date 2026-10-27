@@ -16,10 +16,10 @@ const firstRole = SITE.roles[0].split(" ");
 
     <h1 id="hero-title">
       <span class="line">
-        <span class="muted">Hi, I'm</span> {SITE.name}.
+        <span class="muted">Hi, I’m</span> {SITE.name}.
       </span>{" "}
       <span class="line">
-        <span class="muted">I'm a</span>{" "}
+        <span class="muted">I’m a</span>{" "}
         <span class="role" data-roles={JSON.stringify(SITE.roles)}>
           {firstRole.map((word, i) => (
             <Fragment>

@@ -308,7 +308,7 @@ values:
     pattern: 'Home: JavaScript \(brotli\)\s+Size limit:\s+[\d.]+ kB\s+Size:\s+([\d.]+) kB'
     means: The brotli-compressed JavaScript Home loads, as size-limit measures it against its budget in CI.
     maxAge: 90
-    format: { decimals: 1, suffix: " KB" }
+    format: { decimals: 1, suffix: " kB" }
   homeBudget:
     from: ci
     workflow: ci.yml
@@ -316,7 +316,7 @@ values:
     pattern: 'Home: JavaScript \(brotli\)\s+Size limit:\s+([\d.]+) kB'
     means: The size-limit budget for the brotli-compressed JavaScript Home loads; CI fails above it.
     maxAge: 90
-    format: { suffix: " KB" }
+    format: { suffix: " kB" }
   lateRange:
     from: manual
     value: 3–24
