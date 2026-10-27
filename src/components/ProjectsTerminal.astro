@@ -8,22 +8,18 @@
 // Motion, never with reduced motion: when the list scrolls into view the command types in, the rows print one by
 // one, then `cat <dir>README.md` types and the README fades up; every later pick types and fades again. The HTML is
 // always the final state (screen readers and no-JavaScript visitors get it at once): typing only clips the text.
-// The cursor blinks, amber dots pulse and Visaproof's full-page screenshot pans; the hero's pause button
+// The cursor blinks, amber dots pulse, Visaproof's full-page screenshot pans, and Rebuffer's and pass's READMEs are
+// loops (Media.astro: only the selected one loads and plays, and only on screen); the hero's pause button
 // (html[data-motion="paused"]) stops them all, like the logo's cursor.
 
 import Media from "@/components/project/Media.astro";
-import {
-  getProjects,
-  projectsIntro,
-  type Media as ProjectMedia,
-} from "@/lib/projects";
+import { getProjects, projectsIntro } from "@/lib/projects";
 
 const projects = await getProjects();
 const intro = await projectsIntro();
 
-/** A loop shows as its still frame here: the README is a screenshot. */
-const still = (m: ProjectMedia): ProjectMedia =>
-  m.kind === "video" ? m.poster : m;
+/** A README loop loads the refresh's README rendition (README_WIDTH in scripts/refresh/shots/encode.ts). */
+const README_VIDEO = 960;
 
 /**
  * How wide the README screenshot shows. The terminal's body is the window less the gutters (120px, 80px up to
@@ -146,7 +142,7 @@ const LS = "ls -la projects";
           <article class="readme" aria-labelledby={`readme-${p.id}-title`}>
             <div class="shot">
               <Media
-                media={still(p.readme.image)}
+                media={p.readme.image}
                 alt={p.readme.alt}
                 sizes={DESK_SIZES}
                 frame="readme"
@@ -154,6 +150,7 @@ const LS = "ls -la projects";
                 ratio="16 / 10"
                 position="50% 0%"
                 pan={p.readme.panImage}
+                videoWidth={README_VIDEO}
               />
             </div>
             <div class="text">
@@ -291,12 +288,13 @@ const LS = "ls -la projects";
             <div class="content">
               <p class="cat">$ cat {p.list.dir}README.md</p>
               <Media
-                media={still(p.readme.phoneImage)}
+                media={p.readme.phoneImage}
                 alt={p.readme.alt}
                 sizes={PHONE_SIZES}
                 frame="phone"
                 host={p.readme.host}
                 ratio="16 / 10"
+                videoWidth={README_VIDEO}
               />
               <h3>{p.readme.headline}</h3>
               <p class="short">{p.readme.short}</p>

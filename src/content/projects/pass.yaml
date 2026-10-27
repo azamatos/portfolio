@@ -12,10 +12,10 @@ list:
   stack: astro · typescript · web worker
 readme:
   kind: password generator
-  host: pass.azamatos.com/github
-  image: { shot: github }
-  phoneImage: { shot: github }
-  alt: "pass.azamatos.com with the GitHub preset: a generated password, its strength, and GitHub’s rules"
+  host: pass.azamatos.com
+  image: { shot: sites }
+  phoneImage: { shot: sites }
+  alt: "pass.azamatos.com switching sites, GitHub, Apple, Google, Microsoft and back: each brings its own colours, rules and a new password that meets them"
   panImage: false
   headline: Passwords that pass each site’s real rules.
   description: Pick a site and get a password its sign-up form accepts, or a passphrase you can type. The strength and leak check runs in your browser, and the password never leaves it.
