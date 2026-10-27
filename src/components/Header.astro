@@ -19,19 +19,22 @@ import { SITE } from "@/site";
       <span class="sr-only">(download)</span>
     </a>
     <EmailButton class="only-desk" />
-    <!-- The command palette's trigger: it un-hides it once the palette has loaded. -->
+    <!-- The command palette's trigger: it un-hides it once the palette has loaded. Named by its hidden text, not
+         aria-label: the visible glyphs are symbols, so a label couldn't contain them (axe: label-content-name-mismatch);
+         the shortcut goes in aria-keyshortcuts. -->
     <button
       class="palette"
       type="button"
       data-palette-open
       aria-haspopup="dialog"
       aria-expanded="false"
-      aria-label="Open the command palette"
+      aria-keyshortcuts="Meta+K Control+K"
       hidden
     >
       <span class="prompt" aria-hidden="true">
         &gt;_
       </span>
+      <span class="sr-only">Command palette</span>
       <kbd class="only-desk" aria-hidden="true">
         ⌘K
       </kbd>
