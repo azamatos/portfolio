@@ -26,20 +26,23 @@
   }
 }
 
-/* An amber dot that pulses: "in development", the current step of a log. */
-.pj-pulse {
-  animation: pj-pulse 1.8s ease-out infinite;
+/* An amber dot that pulses: "in development", the current step of a log. Three times, then it stays still, as the
+   terminal's dots do on a page without the hero's motion switch; never with reduced motion. */
+@media (prefers-reduced-motion: no-preference) {
+  .pj-pulse {
+    animation: pj-pulse 1.8s ease-out 3;
+  }
 }
 
 @keyframes pj-pulse {
   0% {
-    box-shadow: 0 0 0 0 rgba(242, 193, 78, 0.45);
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--amber) 45%, transparent);
   }
   70% {
-    box-shadow: 0 0 0 7px rgba(242, 193, 78, 0);
+    box-shadow: 0 0 0 7px transparent;
   }
   100% {
-    box-shadow: 0 0 0 0 rgba(242, 193, 78, 0);
+    box-shadow: 0 0 0 0 transparent;
   }
 }
 
@@ -60,7 +63,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .pj-pulse,
   .pj-rise {
     animation: none;
   }
