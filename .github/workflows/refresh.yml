@@ -2,9 +2,10 @@ name: Refresh project data
 
 # Reads every project's numbers, takes its screenshots, uploads them to R2 and commits src/data/collected/ to main
 # (every run changes it: the files carry the day they were checked); Cloudflare deploys that push. Pushes made with
-# the job's token don't start ci.yml, so the job checks and builds the site itself before it commits. When the
-# refresh reports problems or runs out of time, what it wrote is still committed and the job then fails, so GitHub
-# sends an email. Loops are recorded again only when asked (the "loops" box).
+# the job's token don't start ci.yml, so the job checks and builds the site itself before it commits, and again after
+# pulling if main moved on meanwhile. When the refresh reports problems or runs out of time, what it wrote is still
+# committed and the job then fails, so GitHub sends an email. Loops are recorded again only when asked (the "loops"
+# box). Only this job, on main, deletes unused media from R2 (scripts/refresh/cleanup.ts).
 
 on:
   schedule:
@@ -76,7 +77,17 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git commit -m "chore: Refresh project data"
+          # Someone may have pushed to main during the run: their change and this data have never been built
+          # together (a new value in a config, say), so build the combined tree before pushing it. If main moves
+          # again meanwhile, the push is refused and the job fails rather than deploy an unbuilt tree.
+          base=$(git rev-parse HEAD~1)
           git pull --rebase origin main
+          if [ "$(git rev-parse HEAD~1)" != "$base" ]; then
+            echo "main moved on during the run: checking and building the combined tree."
+            pnpm install --frozen-lockfile
+            pnpm check
+            pnpm build
+          fi
           git push origin HEAD:main
 
       - name: Fail on problems
