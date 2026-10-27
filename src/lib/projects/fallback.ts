@@ -15,8 +15,18 @@ const files = import.meta.glob<ImageMetadata>(
   },
 );
 
-/** Fallbacks that are design mockups rather than the real site, so the page tags them "design". */
-const DESIGN = new Set(["yeral-calendar", "yeral-phone-calendar"]);
+/**
+ * Fallbacks that are design mockups rather than the real site, so the page tags them "design": the export's Visaproof
+ * and Ýeral images are designs; Rebuffer's and pass's are screenshots of the live sites.
+ */
+const DESIGN = new Set([
+  "visaproof-search-full",
+  "visaproof-search",
+  "visaproof-job",
+  "visaproof-job-phone",
+  "yeral-calendar",
+  "yeral-phone-calendar",
+]);
 
 export function shotFallback(project: string, shot: string): Media | undefined {
   const name = `${project}-${shot}`;
