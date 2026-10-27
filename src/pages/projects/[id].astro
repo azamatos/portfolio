@@ -80,3 +80,9 @@ const work = {
   </Log>
   <NextProject next={next} />
 </BaseLayout>
+
+<script>
+  // The entrances of the numbers, the waffle and the bars (data-reveal). Imported once, here, so the build inlines
+  // it: a script file would sit on the path to the first paint.
+  import "@/components/project/reveal.ts";
+</script>

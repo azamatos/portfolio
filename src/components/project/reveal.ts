@@ -1,5 +1,7 @@
 // Plays an element's entrance when it scrolls into view: the waffle's squares pop in, the bars grow, the big numbers
 // count up. The HTML always holds the final state, so without JavaScript or with reduced motion nothing moves.
+// The project page imports it once for all of them (src/pages/projects/[id].astro), so the build inlines it: three
+// components importing it would make a shared script file, requested before the first paint.
 //
 //   data-reveal               on the element; the script sets it to "wait" (hidden, below the fold) and then "in"
 //                             (animating), and the component's CSS keys its animation off those two values
