@@ -521,13 +521,14 @@ values:
     means: Boards read in the first run after the fixes (23 Oct 2026).
 
 shots:
+  # Search with no filters, so its header counts every open role, as the numbers do.
   search-full:
-    url: https://visaproof.azamatos.com/?country=GB,DE,NL
+    url: https://visaproof.azamatos.com/
     device: desktop
     theme: dark
     full: true
   search:
-    url: https://visaproof.azamatos.com/?country=GB,DE,NL
+    url: https://visaproof.azamatos.com/
     device: desktop
     theme: dark
   job:
