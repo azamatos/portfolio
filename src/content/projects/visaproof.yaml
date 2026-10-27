@@ -97,11 +97,11 @@ page:
               text: refuse it
               alt: refuse it
             - key: unclear
-              swatch: "#5c5c5c"
+              swatch: var(--waffle-grey)
               text: mention visas or relocation, no clear answer
               alt: mention visas or relocation without a clear answer
             - key: silent
-              swatch: "#1f1f1f"
+              swatch: var(--waffle-empty)
               text: say nothing
               alt: say nothing
     - number: "02"
@@ -115,6 +115,7 @@ page:
               body: Ashby, Greenhouse, Lever, SmartRecruiters, Personio, Recruitee, Workable, Workday. One request per board where the API allows.
               highlight: false
             - tag: every 6 hours
+              accent: true
               title: Pipeline
               body: Keeps software roles in the EU, EEA, UK and Switzerland; marks each new, changed or closed.
               highlight: false

@@ -388,6 +388,7 @@ const parts = {
         path: ["legend"],
       },
     ),
+  /** Steps with arrows between: a step's tag is muted, in the project accent with `accent`, amber with `highlight`. */
   flow: z.strictObject({
     kind: z.literal("flow"),
     items: z
@@ -396,6 +397,7 @@ const parts = {
           tag: text,
           title: text,
           body: text,
+          accent: z.boolean().optional(),
           highlight: z.boolean().optional(),
         }),
       )
