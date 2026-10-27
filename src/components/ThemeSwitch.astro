@@ -1,0 +1,110 @@
+---
+import type { Theme } from "@/lib/theme";
+
+// U+FE0E keeps ☀ as a text glyph rather than an emoji.
+const options: { id: Theme; icon: string }[] = [
+  { id: "system", icon: "◐" },
+  { id: "dark", icon: "☾" },
+  { id: "light", icon: "☀︎" },
+];
+---
+
+<!--
+  Three toggle buttons (aria-pressed) in a labelled group, as the design draws them: each one is a Tab stop that
+  works with Enter or Space. Without JavaScript the group is hidden (data-js-only) and the page follows the system.
+-->
+<div class="theme-switch" role="group" aria-label="Theme" data-js-only>
+  {options.map(({ id, icon }) => (
+    <button
+      type="button"
+      data-theme-pick={id}
+      aria-pressed={id === "system" ? "true" : "false"}
+    >
+      <span aria-hidden="true">{icon}</span>
+      {id}
+    </button>
+  ))}
+</div>
+
+<script>
+  import { onThemeChange, setTheme, THEMES, type Theme } from "@/lib/theme";
+
+  const buttons =
+    document.querySelectorAll<HTMLButtonElement>("[data-theme-pick]");
+  const isTheme = (value: unknown): value is Theme =>
+    THEMES.includes(value as Theme);
+
+  for (const button of buttons) {
+    button.addEventListener("click", () => {
+      const theme = button.dataset.themePick;
+      if (isTheme(theme)) setTheme(theme);
+    });
+  }
+
+  // The ⌘K palette (`theme light|dark|system`) asks through this event, so the switch stays the one place
+  // that applies a theme: document.dispatchEvent(new CustomEvent("theme:set", { detail: "light" })).
+  document.addEventListener("theme:set", (event) => {
+    const theme = (event as CustomEvent<unknown>).detail;
+    if (isTheme(theme)) setTheme(theme);
+  });
+
+  onThemeChange((theme) => {
+    for (const button of buttons) {
+      button.setAttribute(
+        "aria-pressed",
+        String(button.dataset.themePick === theme),
+      );
+    }
+  });
+</script>
+
+<style>
+  .theme-switch {
+    display: inline-flex;
+    padding: 3px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    font-family: var(--font-space-mono);
+    font-size: 12px;
+  }
+
+  button {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 32px;
+    padding: 0 10px;
+    border: 0;
+    border-radius: 7px;
+    background: transparent;
+    color: var(--fg2);
+    font-family: inherit;
+    font-size: inherit;
+    cursor: pointer;
+    transition:
+      color 0.16s ease,
+      background 0.16s ease;
+  }
+
+  button:hover {
+    color: var(--fg);
+  }
+
+  button:focus-visible {
+    outline-offset: 0;
+  }
+
+  /* Drawn from data-theme rather than aria-pressed, so the pressed one is right from the first paint. */
+  :global(:root:not([data-theme])) [data-theme-pick="system"],
+  :global(:root[data-theme="dark"]) [data-theme-pick="dark"],
+  :global(:root[data-theme="light"]) [data-theme-pick="light"] {
+    background: var(--sel);
+    color: var(--fg);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    button {
+      transition: none;
+    }
+  }
+</style>

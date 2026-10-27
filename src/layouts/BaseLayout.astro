@@ -3,6 +3,7 @@ import { Font } from "astro:assets";
 import Header from "@/components/Header.astro";
 import Footer from "@/components/Footer.astro";
 import ogImage from "@/assets/og-image.png";
+import { THEME_COLOR, themeInitScript } from "@/lib/theme";
 import { SITE } from "@/site";
 import "@/styles/global.css";
 
@@ -11,12 +12,15 @@ interface Props {
   description?: string;
   /** Keeps the page out of search results (the 404 page). */
   noindex?: boolean;
+  /** A project page: turns on that project's accent tokens (--acc, --acc2, --on-acc) inside <main>. */
+  project?: string;
 }
 
 const {
   title = SITE.title,
   description = SITE.description,
   noindex = false,
+  project,
 } = Astro.props;
 
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
@@ -60,7 +64,30 @@ const person = {
     ) : (
       <link rel="canonical" href={canonical} />
     )}
-    <meta name="theme-color" content="#010101" />
+    <!-- One colour per scheme; the script below and setTheme() point both at the picked theme. -->
+    <meta
+      name="theme-color"
+      content={THEME_COLOR.dark}
+      media="(prefers-color-scheme: dark)"
+      data-scheme="dark"
+    />
+    <meta
+      name="theme-color"
+      content={THEME_COLOR.light}
+      media="(prefers-color-scheme: light)"
+      data-scheme="light"
+    />
+    <meta name="color-scheme" content="dark light" />
+    <!-- Before first paint: apply the theme the visitor picked, so there is no flash. -->
+    <script is:inline set:html={themeInitScript} />
+    <!-- Controls that only work with JavaScript (the theme switch) stay out of the page without it. -->
+    <noscript>
+      <style is:inline>
+        [data-js-only] {
+          display: none !important;
+        }
+      </style>
+    </noscript>
 
     <!-- Open Graph (LinkedIn / Telegram / Discord) -->
     <meta property="og:type" content="website" />
@@ -98,11 +125,12 @@ const person = {
   <body>
     <div class="page">
       <Header />
-      <main>
+      <main id="main" data-project={project}>
         <slot />
       </main>
       <Footer />
     </div>
+    <!-- The ⌘K command palette goes here (phase 8). -->
   </body>
 </html>
 
@@ -117,5 +145,6 @@ const person = {
   main {
     display: flex;
     flex: 1;
+    flex-direction: column;
   }
 </style>

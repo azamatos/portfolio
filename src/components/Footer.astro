@@ -1,4 +1,5 @@
 ---
+import ThemeSwitch from "@/components/ThemeSwitch.astro";
 import { SITE } from "@/site";
 ---
 
@@ -6,6 +7,7 @@ import { SITE } from "@/site";
   <span class="copy">
     © {new Date().getFullYear()} {SITE.name}
   </span>
+  <ThemeSwitch />
   <nav class="links" aria-label="Social links">
     <a
       href={SITE.links.github}
@@ -43,17 +45,19 @@ import { SITE } from "@/site";
 <style>
   footer {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
-    padding: 0 var(--gutter);
-    height: 64px;
-    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    gap: 12px 24px;
+    min-height: 72px;
+    padding: 14px var(--g);
+    border-top: 1px solid var(--line2);
   }
 
   .copy {
     font-size: 12px;
     letter-spacing: -0.02em;
-    color: var(--color-text-muted);
+    color: var(--muted);
   }
 
   .links {
@@ -68,18 +72,18 @@ import { SITE } from "@/site";
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 36px;
-    height: 36px;
+    width: 40px;
+    height: 40px;
     border-radius: 8px;
-    color: var(--color-text-muted);
+    color: var(--muted);
     transition:
-      color 0.2s ease,
-      background 0.2s ease;
+      color 0.16s ease,
+      background 0.16s ease;
   }
 
   a:hover {
-    color: rgba(255, 255, 255, 0.9);
-    background: var(--color-surface-hover);
+    color: var(--fg);
+    background: var(--sel);
   }
 
   svg {
@@ -88,9 +92,22 @@ import { SITE } from "@/site";
     fill: currentColor;
   }
 
+  @media (prefers-reduced-motion: reduce) {
+    a {
+      transition: none;
+    }
+  }
+
   @media (max-width: 800px) {
     footer {
-      height: 56px;
+      flex-direction: column;
+      justify-content: center;
+      padding-top: 20px;
+      padding-bottom: 20px;
+    }
+
+    .links {
+      margin-right: 0;
     }
   }
 </style>
