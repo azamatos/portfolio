@@ -91,29 +91,10 @@ const LS = "ls -la projects";
                 class="row"
                 href={`#readme-${p.id}`}
                 id={`tab-${p.id}`}
-                aria-labelledby={`tab-${p.id}-name`}
-                aria-describedby={`tab-${p.id}-status tab-${p.id}-commits tab-${p.id}-stack`}
                 data-tab
               >
-                <span class="c-mode mode" aria-hidden="true">
-                  {p.list.mode}
-                </span>
-                <span
-                  class:list={["status", { live }]}
-                  id={`tab-${p.id}-status`}
-                >
-                  <span
-                    class:list={["dot", { pulse: !live }]}
-                    aria-hidden="true"
-                  />
-                  {word}
-                </span>
-                <span id={`tab-${p.id}-commits`}>
-                  {p.list.commits} <span class="sr-only">commits</span>
-                </span>
-                <span class="c-stack stack" id={`tab-${p.id}-stack`}>
-                  {p.list.stack}
-                </span>
+                {/* The name comes first, so the row's name reads "rebuffer/ live 140 commits …" (WCAG 2.5.3: it
+                    holds all of the visible text); the grid areas put each cell in its column. */}
                 <span class="name">
                   <span class="arrow" aria-hidden="true">
                     ➜
@@ -124,6 +105,20 @@ const LS = "ls -la projects";
                   <span class="cursor" aria-hidden="true">
                     ▊
                   </span>
+                </span>
+                <span class:list={["status", { live }]}>
+                  <span
+                    class:list={["dot", { pulse: !live }]}
+                    aria-hidden="true"
+                  />
+                  {word}
+                </span>
+                <span class="commits-n">
+                  {p.list.commits} <span class="sr-only">commits</span>
+                </span>
+                <span class="c-stack stack">{p.list.stack}</span>
+                <span class="c-mode mode" aria-hidden="true">
+                  {p.list.mode}
                 </span>
               </a>
             </li>
@@ -506,7 +501,7 @@ const LS = "ls -la projects";
       // Named by the tab's name ("visaproof/"), not the whole row.
       panel.setAttribute(
         "aria-labelledby",
-        tab.getAttribute("aria-labelledby") ?? tab.id,
+        tab.querySelector(".dir")?.id ?? tab.id,
       );
       panel.tabIndex = 0;
     });
@@ -704,6 +699,7 @@ const LS = "ls -la projects";
   }
 
   .row {
+    grid-template-areas: "mode status commits stack name";
     min-height: 56px;
     padding: 8px 16px;
     border-top: 1px solid rgba(255, 255, 255, 0.06);
@@ -729,7 +725,24 @@ const LS = "ls -la projects";
   }
 
   .mode {
+    grid-area: mode;
     color: var(--muted);
+  }
+
+  .row .status {
+    grid-area: status;
+  }
+
+  .commits-n {
+    grid-area: commits;
+  }
+
+  .stack {
+    grid-area: stack;
+  }
+
+  .row .name {
+    grid-area: name;
   }
 
   .status {
@@ -1000,6 +1013,10 @@ const LS = "ls -la projects";
       grid-template-columns: 150px 90px minmax(0, 1fr) minmax(0, 1.3fr);
     }
 
+    .row {
+      grid-template-areas: "status commits stack name";
+    }
+
     .c-mode {
       display: none;
     }
@@ -1009,6 +1026,10 @@ const LS = "ls -la projects";
     .cols,
     .row {
       grid-template-columns: 150px 90px minmax(0, 1fr);
+    }
+
+    .row {
+      grid-template-areas: "status commits name";
     }
 
     .c-stack {
