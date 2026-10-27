@@ -132,6 +132,28 @@ import { SITE } from "@/site";
     }
   }
 
+  /* Tablets: the whole nav needs ~955px, so from 801 to 1000px the address and the ⌘K key cap go (tablets are
+     mostly touch, and the logo keeps its room). `mail` still opens the mail app, the copy button still copies
+     the address, and screen readers still hear it. */
+  @media (width > 800px) and (max-width: 1000px) {
+    nav :global(.address) {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+
+    .palette {
+      padding: 0 12px;
+    }
+
+    kbd {
+      display: none;
+    }
+  }
+
   @media (max-width: 800px) {
     .palette {
       height: 44px;
