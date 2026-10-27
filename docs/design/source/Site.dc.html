@@ -1,0 +1,1070 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>azamatos.com, chosen design</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500&amp;family=Space+Mono&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div id="site-top" class="{{themeClass}}" style="position: relative; min-height: 100%; background: var(--bg, #010101); color: var(--fg, #ffffff); font-family: 'Geist', system-ui, sans-serif; line-height: 1.5; -webkit-font-smoothing: antialiased; display: flex; flex-direction: column">
+
+  <header class="hdr" style="position: sticky; top: 0; z-index: 30; display: flex; justify-content: space-between; align-items: center; gap: 16px; height: 84px; box-sizing: border-box; padding: 0 var(--g); background: var(--hdr); border-bottom: 1px solid var(--line2); backdrop-filter: blur(14px)">
+    <a href="#site-top" onClick="{{goHome}}" class="logo" style="font-family: 'Space Mono', monospace; font-size: 24px; display: flex; align-items: center; gap: 0.25em; white-space: nowrap; color: var(--logo)">
+      <span aria-hidden="true" style="color: var(--mint)">➜</span>
+      <span aria-hidden="true" style="color: var(--teal)">~</span>
+      <span>azamatos</span>
+      <span class="blink" aria-hidden="true">▊</span>
+    </a>
+    <nav aria-label="Main" style="display: flex; align-items: center; gap: 2px; margin-right: -8px; font-family: 'Space Mono', monospace; font-size: 15px">
+      <a href="#projects" onClick="{{goProjects}}" class="cmd only-desk" style="display: inline-flex; align-items: center; gap: 0.5em; height: 44px; padding: 0 12px; border-radius: 8px; color: var(--fg2)"><span style="color: var(--teal)">ls</span><span class="arg">projects</span></a>
+      <a href="#resume" class="cmd only-desk" style="display: inline-flex; align-items: center; gap: 0.5em; height: 44px; padding: 0 12px; border-radius: 8px; color: var(--fg2)"><span style="color: var(--teal)">cat</span><span class="arg">resume.pdf</span></a>
+      <a href="mailto:hi@azamatos.com" class="cmd only-desk" style="display: inline-flex; align-items: center; gap: 0.5em; height: 44px; padding: 0 4px 0 12px; border-radius: 8px; color: var(--fg)"><span style="color: var(--teal)">mail</span><span class="arg">hi@azamatos.com</span></a>
+      <button type="button" class="cmd only-desk" onClick="{{copy}}" aria-label="{{copyLabel}}" style="position: relative; display: flex; align-items: center; justify-content: center; width: 40px; height: 44px; border: 0; border-radius: 8px; background: transparent; color: {{copyColor}}; cursor: pointer">
+        <sc-if value="{{notCopied}}" hint-placeholder-val="{{true}}">
+          <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" style="fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15V6a2 2 0 0 1 2-2h9"></path></svg>
+        </sc-if>
+        <sc-if value="{{copied}}" hint-placeholder-val="{{false}}">
+          <svg class="pop" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" style="fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>
+          <span class="pop" aria-hidden="true" style="position: absolute; top: 46px; right: 0; padding: 3px 8px; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); font-size: 11px; color: var(--mint); white-space: nowrap">copied</span>
+        </sc-if>
+      </button>
+      <button type="button" class="kbtn" aria-haspopup="dialog" aria-expanded="{{paletteAttr}}" aria-label="Open the command palette" onClick="{{openPalette}}" style="display: inline-flex; align-items: center; gap: 8px; height: 40px; margin-left: 10px; padding: 0 10px 0 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--chip); color: var(--fg2); font-family: 'Space Mono', monospace; font-size: 13px; cursor: pointer">
+        <span aria-hidden="true" style="color: var(--mint)">&gt;_</span>
+        <kbd class="only-desk" style="display: inline-flex; align-items: center; height: 22px; padding: 0 6px; border: 1px solid var(--line); border-radius: 5px; font-family: 'Space Mono', monospace; font-size: 11px; color: var(--fg2)">⌘K</kbd>
+      </button>
+    </nav>
+  </header>
+
+  <sc-if value="{{isHome}}" hint-placeholder-val="{{true}}">
+  <main style="display: flex; flex-direction: column">
+    <section aria-labelledby="hero-title" class="hero" style="position: relative; display: flex; align-items: center; min-height: 816px; box-sizing: border-box; padding: 48px var(--g) 96px; overflow: hidden">
+      <div aria-hidden="true" class="wave wave-left" style="position: absolute; top: 0; left: 0; width: 110%; height: 100%; filter: var(--wave-filter); mix-blend-mode: var(--wave-blend); opacity: var(--wave-opacity); pointer-events: none">
+        <img src="/_blob/aeef419a486af20f74e9429db57e551b" alt="" style="display: block; width: 100%; height: 100%; max-width: none">
+      </div>
+      <div class="bgfig photo">
+        <img src="/_blob/780bea5fa5f508617646b91f0b6aa69d" alt="Azamat Jorayev in glasses and a black hoodie">
+      </div>
+      <div class="hero-grid" style="position: relative; z-index: 1; display: flex; align-items: center; justify-content: space-between; gap: 48px 64px; width: 100%">
+        <div class="hero-copy rise r1" style="flex: 1 1 560px; max-width: 660px; min-width: 0; display: flex; flex-direction: column; gap: 24px">
+          <p style="align-self: flex-start; display: flex; align-items: center; gap: 10px; margin: 0; padding: 7px 16px 7px 14px; border: 1px solid var(--line); border-radius: 999px; background: var(--chip); font-size: 14px; letter-spacing: -0.01em; color: var(--fg2)">
+            <span aria-hidden="true" style="width: 8px; height: 8px; flex: none; border-radius: 50%; background: var(--mint); box-shadow: 0 0 0 4px rgba(104, 237, 192, 0.16)"></span>
+            <span>Open to senior frontend and full-stack roles · relocating to the EU</span>
+          </p>
+          <h1 id="hero-title" class="h1" style="display: flex; flex-direction: column; gap: 0.18em; margin: 0; font-size: 58px; font-weight: 500; letter-spacing: -0.06em; line-height: 1.05">
+            <span><span style="color: var(--fg2)">Hi, I'm</span> Azamat Jorayev.</span>
+            <span><span style="color: var(--fg2)">I'm a</span> senior full-stack engineer.</span>
+          </h1>
+          <p class="lead" style="max-width: 580px; margin: 0; font-size: 18px; line-height: 1.5; letter-spacing: -0.02em; color: var(--fg2)">8+ years with React, TypeScript, and Node.js, owning features end to end, from the PostgreSQL data model and API to a polished UI. I led the frontend of Belet Video (100k+ active users) and was the sole developer of RocketPrep (10k+ users).</p>
+          <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 12px">
+            <a href="#resume" class="btn-primary" style="display: inline-flex; align-items: center; justify-content: center; gap: 10px; height: 48px; padding: 0 20px; border-radius: 10px; background: var(--btn-bg); color: var(--btn-fg); font-size: 16px; font-weight: 500; letter-spacing: -0.02em; white-space: nowrap">
+              <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" style="fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round"><path d="M12 4v11"></path><path d="M7 10.5l5 5 5-5"></path><path d="M5 20h14"></path></svg>
+              Download resume
+            </a>
+            <a href="#resume" class="only-desk" style="display: inline-flex; align-items: center; gap: 10px; height: 48px; padding: 0 20px; border: 1px solid var(--line); border-radius: 10px; background: var(--chip); font-size: 16px; font-weight: 500; letter-spacing: -0.02em; white-space: nowrap">
+              View online
+              <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" style="fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round"><path d="M7 17L17 7"></path><path d="M8 7h9v9"></path></svg>
+            </a>
+            <span class="only-phone" style="align-items: center; justify-content: center; gap: 4px; width: 100%">
+              <a href="mailto:hi@azamatos.com" style="display: inline-flex; align-items: center; height: 44px; font-family: 'Space Mono', monospace; font-size: 14px; text-decoration: underline; text-decoration-color: var(--line); text-underline-offset: 5px"><span style="color: var(--teal); margin-right: 0.5em">mail</span>hi@azamatos.com</a>
+              <button type="button" onClick="{{copy}}" aria-label="{{copyLabel}}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border: 0; background: transparent; color: {{copyColor}}"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" style="fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15V6a2 2 0 0 1 2-2h9"></path></svg></button>
+            </span>
+          </div>
+          <p class="only-desk" style="margin: 2px 0 0; font-family: 'Space Mono', monospace; font-size: 13px; color: var(--muted)">PDF · 2 pages</p>
+        </div>
+      </div>
+      <a href="#projects" onClick="{{goProjects}}" class="cue only-desk" style="position: absolute; left: 50%; bottom: 28px; z-index: 1; transform: translateX(-50%); display: inline-flex; align-items: center; gap: 0.6em; height: 44px; padding: 0 12px; font-family: 'Space Mono', monospace; font-size: 13px; color: var(--muted)"><span aria-hidden="true">↓</span><span style="color: var(--teal)">ls</span>projects</a>
+    </section>
+
+    <section id="projects" aria-labelledby="projects-title" class="projects" style="padding: 112px var(--g) 120px; border-top: 1px solid var(--line2); scroll-margin-top: 84px">
+      <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 12px 24px; margin-bottom: 36px">
+        <div style="display: flex; flex-direction: column; gap: 10px">
+          <h2 id="projects-title" class="h2" style="margin: 0; font-size: 48px; font-weight: 500; letter-spacing: -0.045em; line-height: 1.1">Projects</h2>
+          <p style="margin: 0; font-size: 18px; letter-spacing: -0.02em; color: var(--fg2)">Built and run by me: two live, two in development.</p>
+        </div>
+        <p class="only-desk" style="margin: 0; font-family: 'Space Mono', monospace; font-size: 13px; color: var(--muted)">pick a row to read its README</p>
+      </div>
+
+      <div class="only-desk" style="flex-direction: column; border: 1px solid rgba(255, 255, 255, 0.14); border-radius: 16px; background: #060606; color: #ffffff; overflow: hidden; box-shadow: 0 40px 100px rgba(0, 0, 0, 0.35)">
+        <div style="display: flex; justify-content: space-between; align-items: center; gap: 16px; height: 44px; padding: 0 20px; border-bottom: 1px solid rgba(255, 255, 255, 0.08); font-family: 'Space Mono', monospace; font-size: 12px; color: rgba(255, 255, 255, 0.5)">
+          <span>azamatos@web: ~/projects</span>
+          <span>zsh · 120×40</span>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 20px; padding: 28px 32px 36px; font-family: 'Space Mono', monospace">
+          <p style="display: flex; align-items: center; gap: 0.6em; margin: 0; font-size: 16px; color: #f0f4f3">
+            <span aria-hidden="true" style="color: #68edc0">➜</span><span aria-hidden="true" style="color: #5bc8c0">~</span><span class="type type-0 n15">ls -la projects</span>
+          </p>
+          <div role="list" aria-label="Projects" style="display: flex; flex-direction: column">
+            <div class="print d0" aria-hidden="true" style="display: grid; grid-template-columns: 120px 150px 90px minmax(0, 1fr) minmax(0, 1.3fr); align-items: center; gap: 16px; padding: 0 16px 10px; font-size: 12px; color: rgba(255, 255, 255, 0.5)">
+              <span>mode</span><span>status</span><span>commits</span><span>stack</span><span>name</span>
+            </div>
+            <sc-for list="{{rows}}" as="row" hint-placeholder-count="4">
+              <div role="listitem" class="{{row.printClass}}">
+                <button type="button" class="ls-row" aria-pressed="{{row.pressed}}" onClick="{{row.pick}}" style="display: grid; width: 100%; grid-template-columns: 120px 150px 90px minmax(0, 1fr) minmax(0, 1.3fr); align-items: center; gap: 16px; min-height: 56px; padding: 8px 16px; border: 0; border-top: 1px solid rgba(255, 255, 255, 0.06); border-radius: 8px; background: {{row.bg}}; color: #a6a6a6; font-family: 'Space Mono', monospace; font-size: 13px; text-align: left; cursor: pointer">
+                  <span aria-hidden="true" style="color: rgba(255, 255, 255, 0.5)">{{row.perm}}</span>
+                  <span style="display: inline-flex; align-items: center; gap: 8px; color: {{row.statusColor}}"><span class="{{row.dotClass}}" aria-hidden="true" style="width: 7px; height: 7px; flex: none; border-radius: 50%; background: {{row.statusColor}}"></span>{{row.status}}</span>
+                  <span>{{row.commits}}</span>
+                  <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{row.stack}}</span>
+                  <span style="display: flex; align-items: center; gap: 0.45em; min-width: 0; font-size: 22px; color: {{row.nameColor}}"><span aria-hidden="true" style="color: {{row.arrow}}">➜</span><span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{row.dir}}</span><span class="blink" aria-hidden="true" style="opacity: {{row.cursor}}; font-size: 18px">▊</span></span>
+                </button>
+              </div>
+            </sc-for>
+          </div>
+          <div style="height: 1px; background: rgba(255, 255, 255, 0.08)"></div>
+          <p style="display: flex; align-items: center; gap: 0.6em; margin: 0; font-size: 16px; color: #f0f4f3">
+            <span aria-hidden="true" style="color: #68edc0">➜</span><span aria-hidden="true" style="color: #5bc8c0">~/projects</span><span class="{{catClass}}">{{active.cmd}}</span>
+          </p>
+          <article aria-labelledby="readme-title" class="{{revealClass}}" style="display: flex; flex-wrap: wrap; align-items: flex-start; gap: 40px; font-family: 'Geist', system-ui, sans-serif">
+            <figure style="flex: 1.15 1 440px; min-width: 0; margin: 0; border: 1px solid rgba(255, 255, 255, 0.14); border-radius: 12px; overflow: hidden; background: #0b0c0e">
+              <div style="position: relative; display: flex; align-items: center; justify-content: center; height: 34px; border-bottom: 1px solid rgba(255, 255, 255, 0.08)">
+                <span style="padding: 2px 14px; border-radius: 6px; background: rgba(255, 255, 255, 0.05); font-family: 'Space Mono', monospace; font-size: 11px; color: #a6a6a6">{{active.host}}</span>
+                <sc-if value="{{active.design}}" hint-placeholder-val="{{false}}">
+                  <span style="position: absolute; right: 10px; padding: 2px 8px; border: 1px solid rgba(242, 193, 78, 0.4); border-radius: 999px; font-family: 'Space Mono', monospace; font-size: 10px; color: #f2c14e">design</span>
+                </sc-if>
+              </div>
+              <div style="position: relative; aspect-ratio: 16 / 10; overflow: hidden">
+                <img class="{{active.imgClass}}" src="{{active.img}}" alt="{{active.alt}}" style="display: block; width: 100%; height: 100%; object-fit: cover; object-position: 50% 0%">
+              </div>
+            </figure>
+            <div style="flex: 1 1 380px; min-width: 0; display: flex; flex-direction: column; gap: 18px">
+              <p style="display: flex; align-items: center; gap: 10px; margin: 0; font-family: 'Space Mono', monospace; font-size: 13px; color: #a6a6a6"># {{active.kind}} · <span style="display: inline-flex; align-items: center; gap: 8px; color: {{active.statusColor}}"><span class="{{active.dotClass}}" aria-hidden="true" style="width: 7px; height: 7px; border-radius: 50%; background: {{active.statusColor}}"></span>{{active.status}}</span></p>
+              <h3 id="readme-title" style="margin: 0; font-size: 32px; font-weight: 500; letter-spacing: -0.035em; line-height: 1.15">{{active.headline}}</h3>
+              <p style="margin: 0; font-size: 17px; line-height: 1.55; color: #a6a6a6">{{active.desc}}</p>
+              <sc-if value="{{active.hasSteps}}" hint-placeholder-val="{{false}}">
+                <ol aria-label="Progress" style="display: flex; flex-wrap: wrap; gap: 8px 18px; margin: 0; padding: 0; list-style: none; font-family: 'Space Mono', monospace; font-size: 13px">
+                  <sc-for list="{{active.steps}}" as="s" hint-placeholder-count="5">
+                    <li style="display: inline-flex; align-items: center; gap: 8px; color: {{s.color}}"><span class="{{s.dotClass}}" aria-hidden="true" style="display: inline-flex; align-items: center; justify-content: center; width: {{s.size}}; height: {{s.size}}; border-radius: 50%; background: {{s.dot}}; color: {{s.markColor}}">{{s.mark}}</span>{{s.label}}</li>
+                  </sc-for>
+                </ol>
+              </sc-if>
+              <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px">
+                <span style="margin-right: 4px; font-family: 'Space Mono', monospace; font-size: 12px; color: rgba(255, 255, 255, 0.5)">built with</span>
+                <sc-for list="{{active.tech}}" as="t" hint-placeholder-count="6">
+                  <span style="padding: 3px 10px; border: 1px solid rgba(255, 255, 255, 0.16); border-radius: 999px; font-family: 'Space Mono', monospace; font-size: 12px; color: #d9d9d9">{{t}}</span>
+                </sc-for>
+              </div>
+              <dl style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin: 4px 0 0; padding: 18px 0 0; border-top: 1px solid rgba(255, 255, 255, 0.08)">
+                <sc-for list="{{active.stats}}" as="st" hint-placeholder-count="3">
+                  <div style="display: flex; flex-direction: column-reverse; justify-content: flex-end; gap: 4px">
+                    <dt style="font-size: 13px; line-height: 1.4; color: #a6a6a6">{{st.label}}</dt>
+                    <dd style="margin: 0; font-size: 28px; font-weight: 500; letter-spacing: -0.03em">{{st.value}}</dd>
+                  </div>
+                </sc-for>
+              </dl>
+              <div style="display: flex; flex-wrap: wrap; gap: 12px; padding-top: 6px">
+                <a href="#site-top" onClick="{{active.open}}" style="display: inline-flex; align-items: center; gap: 10px; height: 48px; padding: 0 20px; border-radius: 10px; background: #ffffff; color: #010101; font-size: 16px; font-weight: 500; letter-spacing: -0.02em">
+                  Read the case study
+                  <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" style="fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round"><path d="M5 12h14"></path><path d="M13 6l6 6-6 6"></path></svg>
+                </a>
+                <a href="{{active.siteHref}}" style="display: inline-flex; align-items: center; gap: 10px; height: 48px; padding: 0 20px; border: 1px solid rgba(255, 255, 255, 0.18); border-radius: 10px; background: rgba(255, 255, 255, 0.02); color: #ffffff; font-size: 16px; font-weight: 500; letter-spacing: -0.02em">{{active.siteLabel}}
+                  <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" style="fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round"><path d="M7 17L17 7"></path><path d="M8 7h9v9"></path></svg>
+                </a>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+
+      <div class="only-phone" style="flex-direction: column; border: 1px solid rgba(255, 255, 255, 0.14); border-radius: 14px; background: #060606; color: #ffffff; overflow: hidden">
+        <div style="display: flex; justify-content: space-between; align-items: center; height: 38px; padding: 0 14px; border-bottom: 1px solid rgba(255, 255, 255, 0.08); font-family: 'Space Mono', monospace; font-size: 11px; color: rgba(255, 255, 255, 0.5)"><span>~/projects</span><span>zsh</span></div>
+        <div style="display: flex; flex-direction: column; gap: 12px; padding: 16px 10px 18px; font-family: 'Space Mono', monospace">
+          <p style="display: flex; gap: 0.6em; margin: 0 6px; font-size: 14px; color: #f0f4f3"><span aria-hidden="true" style="color: #68edc0">➜</span><span aria-hidden="true" style="color: #5bc8c0">~</span>ls -l projects</p>
+          <ul style="display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none">
+            <sc-for list="{{rows}}" as="r" hint-placeholder-count="4">
+              <li style="border-top: 1px solid rgba(255, 255, 255, 0.07)">
+                <button type="button" aria-expanded="{{r.expanded}}" onClick="{{r.toggle}}" style="display: grid; width: 100%; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 10px; min-height: 60px; padding: 8px 6px; border: 0; border-radius: 8px; background: {{r.phoneBg}}; color: {{r.phoneName}}; font-family: 'Space Mono', monospace; text-align: left; cursor: pointer">
+                  <span style="display: flex; flex-direction: column; gap: 4px; min-width: 0">
+                    <span style="display: flex; align-items: center; gap: 0.45em; font-size: 18px"><span aria-hidden="true" style="color: {{r.arrow}}">➜</span><span>{{r.dir}}</span></span>
+                    <span style="display: inline-flex; align-items: center; gap: 8px; font-size: 11px; color: {{r.statusColor}}"><span class="{{r.dotClass}}" aria-hidden="true" style="width: 6px; height: 6px; border-radius: 50%; background: {{r.statusColor}}"></span>{{r.status}}<span style="color: rgba(255, 255, 255, 0.5)">· {{r.commits}} commits</span></span>
+                  </span>
+                  <span aria-hidden="true" style="display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border: 1px solid rgba(255, 255, 255, 0.16); border-radius: 50%; color: #a6a6a6; transform: rotate({{r.rot}}); transition: transform .2s ease"><svg viewBox="0 0 24 24" width="14" height="14" style="fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round"><path d="M6 9l6 6 6-6"></path></svg></span>
+                </button>
+                <sc-if value="{{r.isOpen}}" hint-placeholder-val="{{false}}">
+                  <div class="{{openClass}}" style="display: flex; flex-direction: column; gap: 14px; padding: 6px 6px 22px; font-family: 'Geist', system-ui, sans-serif">
+                    <p style="margin: 0; font-family: 'Space Mono', monospace; font-size: 12px; color: rgba(255, 255, 255, 0.5)">$ cat {{r.dir}}README.md</p>
+                    <figure style="margin: 0; border: 1px solid rgba(255, 255, 255, 0.14); border-radius: 10px; overflow: hidden; background: #0b0c0e">
+                      <div style="position: relative; display: flex; align-items: center; justify-content: center; height: 28px; border-bottom: 1px solid rgba(255, 255, 255, 0.08)">
+                        <span style="font-family: 'Space Mono', monospace; font-size: 10px; color: #a6a6a6">{{r.host}}</span>
+                        <sc-if value="{{r.design}}" hint-placeholder-val="{{false}}"><span style="position: absolute; right: 8px; padding: 1px 6px; border: 1px solid rgba(242, 193, 78, 0.4); border-radius: 999px; font-family: 'Space Mono', monospace; font-size: 9px; color: #f2c14e">design</span></sc-if>
+                      </div>
+                      <img src="{{r.img}}" alt="{{r.alt}}" style="display: block; width: 100%; aspect-ratio: 16 / 10; object-fit: cover; object-position: top left">
+                    </figure>
+                    <h3 style="margin: 0; font-size: 22px; font-weight: 500; letter-spacing: -0.03em; line-height: 1.2">{{r.headline}}</h3>
+                    <p style="margin: 0; font-size: 15px; line-height: 1.55; color: #a6a6a6">{{r.short}}</p>
+                    <div style="display: flex; flex-wrap: wrap; gap: 6px">
+                      <sc-for list="{{r.tech}}" as="t" hint-placeholder-count="6">
+                        <span style="padding: 2px 8px; border: 1px solid rgba(255, 255, 255, 0.16); border-radius: 999px; font-family: 'Space Mono', monospace; font-size: 11px; color: #d9d9d9">{{t}}</span>
+                      </sc-for>
+                    </div>
+                    <dl style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin: 0; padding: 14px 0 0; border-top: 1px solid rgba(255, 255, 255, 0.08)">
+                      <sc-for list="{{r.stats}}" as="st" hint-placeholder-count="3">
+                        <div style="display: flex; flex-direction: column-reverse; justify-content: flex-end; gap: 2px"><dt style="font-size: 12px; line-height: 1.35; color: #a6a6a6">{{st.short}}</dt><dd style="margin: 0; font-size: 20px; font-weight: 500; letter-spacing: -0.03em">{{st.value}}</dd></div>
+                      </sc-for>
+                    </dl>
+                    <a href="#site-top" onClick="{{r.open}}" style="display: flex; align-items: center; justify-content: center; gap: 10px; height: 44px; margin-top: 4px; border-radius: 10px; background: #ffffff; color: #010101; font-size: 15px; font-weight: 500">Read the case study</a>
+                  </div>
+                </sc-if>
+              </li>
+            </sc-for>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </main>
+  </sc-if>
+
+  <sc-if value="{{isProject}}" hint-placeholder-val="{{false}}">
+  <main class="{{pj.accClass}}" aria-labelledby="case-title" style="display: flex; flex-direction: column">
+    <section style="display: flex; flex-direction: column; gap: 28px; padding: 40px var(--g) 56px">
+      <a href="#projects" onClick="{{goProjects}}" class="rise r1" style="align-self: flex-start; display: inline-flex; align-items: center; gap: 0.6em; min-height: 44px; font-family: 'Space Mono', monospace; font-size: 14px; color: var(--fg2)">
+        <span aria-hidden="true" style="color: var(--mint)">➜</span><span aria-hidden="true" style="color: var(--teal)">~/projects/{{pj.id}}</span><span>cd ..</span>
+      </a>
+      <div class="rise r2" style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 32px 64px">
+        <div style="flex: 1 1 560px; max-width: 780px; display: flex; flex-direction: column; gap: 20px">
+          <p style="align-self: flex-start; display: inline-flex; align-items: center; gap: 10px; margin: 0; padding: 6px 14px 6px 12px; border: 1px solid {{pj.statusBorder}}; border-radius: 999px; font-family: 'Space Mono', monospace; font-size: 12px; color: {{pj.statusColor}}"><span class="{{pj.dotClass}}" aria-hidden="true" style="width: 7px; height: 7px; border-radius: 50%; background: {{pj.statusColor}}"></span>{{pj.statusLabel}}</p>
+          <h1 id="case-title" class="pj-title" style="margin: 0; font-size: 80px; font-weight: 500; letter-spacing: -0.06em; line-height: 1">{{pj.name}}</h1>
+          <p class="pj-tag" style="margin: 0; font-size: 26px; line-height: 1.3; letter-spacing: -0.03em; color: var(--fg2)"><span style="color: var(--fg)">{{pj.tagStrong}}</span> {{pj.tagRest}}</p>
+        </div>
+        <dl style="flex: 0 1 400px; display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 10px 16px; margin: 0; font-size: 14px; line-height: 1.5">
+          <sc-for list="{{pj.meta}}" as="m" hint-placeholder-count="3">
+            <dt style="font-family: 'Space Mono', monospace; font-size: 12px; color: var(--muted)">{{m.k}}</dt>
+            <dd style="margin: 0; display: flex; flex-wrap: wrap; gap: 4px 16px; color: var(--fg)"><sc-if value="{{m.hasV}}" hint-placeholder-val="{{true}}"><span>{{m.v}}</span></sc-if>
+              <sc-for list="{{m.links}}" as="l" hint-placeholder-count="1"><a href="{{l.href}}" class="pj-link" style="color: var(--acc)">{{l.label}}</a></sc-for>
+            </dd>
+          </sc-for>
+        </dl>
+      </div>
+
+      <div class="pj-media rise r3">
+        <figure class="pj-shot" style="margin: 0; border: 1px solid var(--line); border-radius: 16px; overflow: hidden; background: #0b0c0e; box-shadow: 0 40px 120px rgba(0, 0, 0, 0.35)">
+          <div style="position: relative; display: flex; align-items: center; justify-content: center; height: 38px; border-bottom: 1px solid rgba(255, 255, 255, 0.08); background: #0b0c0e">
+            <span style="padding: 3px 16px; border-radius: 6px; background: rgba(255, 255, 255, 0.05); font-family: 'Space Mono', monospace; font-size: 12px; color: #a6a6a6">{{pj.hero.host}}</span>
+            <sc-if value="{{pj.hero.design}}" hint-placeholder-val="{{false}}">
+              <span style="position: absolute; right: 12px; padding: 2px 9px; border: 1px solid rgba(242, 193, 78, 0.4); border-radius: 999px; font-family: 'Space Mono', monospace; font-size: 11px; color: #f2c14e">design</span>
+            </sc-if>
+          </div>
+          <img class="pj-shot-img" src="{{pj.hero.img}}" alt="{{pj.hero.alt}}" style="display: block; width: 100%">
+        </figure>
+        <figure class="pj-phone" style="max-height: 560px; margin: 0; border: 1px solid var(--line); border-radius: 32px; overflow: hidden; background: #0b0c0e; box-shadow: 0 40px 100px rgba(0, 0, 0, 0.5)">
+          <img src="{{pj.hero.phoneImg}}" alt="{{pj.hero.phoneAlt}}" style="display: block; width: 100%; height: auto">
+        </figure>
+      </div>
+    </section>
+
+    <section aria-label="In numbers" class="pj-numsec" style="padding: 72px var(--g) 40px">
+      <dl class="pj-nums" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr)); gap: 32px; margin: 0; padding: 32px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line)">
+        <sc-for list="{{numbers}}" as="n" hint-placeholder-count="4">
+          <div style="display: flex; flex-direction: column-reverse; justify-content: flex-end; gap: 6px">
+            <dt style="font-size: 14px; line-height: 1.45; color: var(--fg2)">{{n.label}}</dt>
+            <dd class="pj-num" style="margin: 0; font-size: 48px; font-weight: 500; letter-spacing: -0.04em; line-height: 1.05; font-variant-numeric: tabular-nums">{{n.shown}}</dd>
+          </div>
+        </sc-for>
+      </dl>
+      <p style="margin: 14px 0 0; font-family: 'Space Mono', monospace; font-size: 12px; color: var(--muted)">{{pj.numbersNote}}</p>
+    </section>
+
+    <sc-for list="{{pj.sections}}" as="sec" hint-placeholder-count="4">
+      <section class="pj-sec" aria-label="{{sec.title}}">
+        <h2 class="pj-label">{{sec.n}} · {{sec.title}}</h2>
+        <div class="pj-body">
+          <sc-if value="{{sec.hasLead}}" hint-placeholder-val="{{true}}"><p class="pj-lead">{{sec.lead}}</p></sc-if>
+          <sc-if value="{{sec.hasText}}" hint-placeholder-val="{{false}}"><p class="pj-text">{{sec.text}}</p></sc-if>
+          <sc-for list="{{sec.parts}}" as="p" hint-placeholder-count="1">
+            <div style="display: flex; flex-direction: column; gap: 16px; min-width: 0">
+
+              <sc-if value="{{p.isWaffle}}" hint-placeholder-val="{{false}}">
+                <figure class="waffle-fig" style="display: flex; flex-wrap: wrap; align-items: center; gap: 24px 40px; margin: 0; padding: 28px; border: 1px solid var(--line2); border-radius: 14px; background: var(--chip)">
+                  <div role="img" aria-label="{{p.label}}" class="waffle" style="display: grid; grid-template-columns: repeat(20, 16px); gap: 4px">
+                    <sc-for list="{{p.cells}}" as="c" hint-placeholder-count="100">
+                      <span class="cell" aria-hidden="true" style="aspect-ratio: 1; min-width: 0; border-radius: 3px; background: {{c.color}}; box-shadow: {{c.ring}}; animation-delay: {{c.delay}}"></span>
+                    </sc-for>
+                  </div>
+                  <figcaption style="flex: 1 1 240px; display: flex; flex-direction: column; gap: 10px; font-size: 14px; color: var(--fg2)">
+                    <sc-for list="{{p.legend}}" as="lg" hint-placeholder-count="4">
+                      <span style="display: flex; align-items: center; gap: 10px"><span aria-hidden="true" style="flex: none; width: 12px; height: 12px; border-radius: 3px; background: {{lg.color}}; box-shadow: {{lg.ring}}"></span><span><span style="color: var(--fg)">{{lg.strong}}</span> {{lg.text}}</span></span>
+                    </sc-for>
+                    <span style="font-family: 'Space Mono', monospace; font-size: 11px; color: var(--muted)">{{p.note}}</span>
+                  </figcaption>
+                </figure>
+              </sc-if>
+
+              <sc-if value="{{p.isFlow}}" hint-placeholder-val="{{false}}">
+                <div style="display: flex; flex-wrap: wrap; align-items: stretch; gap: 12px">
+                  <sc-for list="{{p.items}}" as="f" hint-placeholder-count="4">
+                    <div style="flex: 1 1 180px; display: flex; align-items: stretch; gap: 12px; min-width: 0">
+                      <div style="flex: 1; display: flex; flex-direction: column; gap: 8px; padding: 18px; border: 1px solid {{f.border}}; border-radius: 12px; background: var(--chip)">
+                        <span style="font-family: 'Space Mono', monospace; font-size: 11px; color: {{f.tagColor}}">{{f.tag}}</span>
+                        <span style="font-size: 17px; font-weight: 500; letter-spacing: -0.02em">{{f.title}}</span>
+                        <span style="font-size: 14px; line-height: 1.5; color: var(--fg2)">{{f.body}}</span>
+                      </div>
+                      <sc-if value="{{f.arrow}}" hint-placeholder-val="{{true}}">
+                        <span class="flow-arrow" aria-hidden="true" style="display: flex; align-items: center; color: var(--muted)"><svg viewBox="0 0 24 24" width="18" height="18" style="fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round"><path d="M5 12h14"></path><path d="M13 6l6 6-6 6"></path></svg></span>
+                      </sc-if>
+                    </div>
+                  </sc-for>
+                </div>
+              </sc-if>
+
+              <sc-if value="{{p.isFeeds}}" hint-placeholder-val="{{false}}">
+                <div style="display: flex; flex-wrap: wrap; gap: 12px">
+                  <sc-for list="{{p.items}}" as="f" hint-placeholder-count="3">
+                    <div style="flex: 1 1 240px; display: flex; gap: 14px; padding: 16px 18px; border: 1px dashed var(--line); border-radius: 12px">
+                      <span aria-hidden="true" style="font-family: 'Space Mono', monospace; font-size: 13px; color: var(--acc)">{{f.when}}</span>
+                      <span style="display: flex; flex-direction: column; gap: 4px"><span style="font-size: 15px; font-weight: 500">{{f.title}}</span><span style="font-size: 14px; line-height: 1.5; color: var(--fg2)">{{f.body}}</span></span>
+                    </div>
+                  </sc-for>
+                </div>
+              </sc-if>
+
+              <sc-if value="{{p.isStates}}" hint-placeholder-val="{{false}}">
+                <div style="display: flex; flex-wrap: wrap; align-items: flex-start; gap: 32px">
+                  <ol style="flex: 1 1 380px; display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--line)">
+                    <sc-for list="{{p.items}}" as="s" hint-placeholder-count="5">
+                      <li class="pj-state" style="display: grid; grid-template-columns: 168px minmax(0, 1fr); align-items: start; gap: 16px; padding: 16px 0; border-bottom: 1px solid var(--line)">
+                        <span style="justify-self: start; display: inline-flex; align-items: center; gap: 6px; height: 30px; padding: 0 11px; box-sizing: border-box; border: 1px {{s.bs}} {{s.border}}; border-radius: {{s.r}}; background: {{s.bg}}; color: {{s.fg}}; font-size: 13px; font-weight: 500; white-space: nowrap">
+                          <span aria-hidden="true" style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: {{s.icon}}"></span>{{s.label}}
+                        </span>
+                        <span style="display: flex; flex-direction: column; gap: 4px"><span style="font-size: 15px; line-height: 1.5; color: var(--fg)">{{s.when}}</span><span style="font-family: 'Space Mono', monospace; font-size: 12px; color: var(--muted)">evidence: {{s.evidence}}</span></span>
+                      </li>
+                    </sc-for>
+                  </ol>
+                  <figure style="flex: 1 1 420px; min-width: 0; margin: 0; display: flex; flex-direction: column; gap: 12px">
+                    <div style="border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: #0b0c0e">
+                      <img src="{{p.img}}" alt="{{p.alt}}" style="display: block; width: 100%">
+                    </div>
+                    <figcaption style="font-family: 'Space Mono', monospace; font-size: 12px; color: var(--fg2)">{{p.caption}}</figcaption>
+                  </figure>
+                </div>
+              </sc-if>
+
+              <sc-if value="{{p.isBars}}" hint-placeholder-val="{{false}}">
+                <div style="display: flex; flex-direction: column; gap: 22px; max-width: 760px">
+                  <p style="margin: 0; font-family: 'Space Mono', monospace; font-size: 12px; color: var(--muted)">{{p.title}}</p>
+                  <sc-for list="{{p.groups}}" as="b" hint-placeholder-count="2">
+                    <div style="display: flex; flex-direction: column; gap: 10px">
+                      <span style="font-size: 15px; font-weight: 500">{{b.who}}</span>
+                      <sc-for list="{{b.rows}}" as="r" hint-placeholder-count="2">
+                        <div style="display: grid; grid-template-columns: 90px minmax(0, 1fr) 56px; align-items: center; gap: 14px; font-size: 14px">
+                          <span style="color: var(--fg2)">{{r.metric}}</span>
+                          <span aria-hidden="true" style="display: block; height: 10px; border-radius: 5px; background: var(--line2); overflow: hidden"><span class="bar" style="display: block; height: 100%; width: {{r.width}}; border-radius: 5px; background: {{r.color}}"></span></span>
+                          <span style="font-family: 'Space Mono', monospace; font-size: 13px; text-align: right; font-variant-numeric: tabular-nums">{{r.value}}</span>
+                        </div>
+                      </sc-for>
+                    </div>
+                  </sc-for>
+                  <p style="margin: 0; font-size: 15px; line-height: 1.6; color: var(--fg2)">{{p.text}}</p>
+                </div>
+              </sc-if>
+
+              <sc-if value="{{p.isCards}}" hint-placeholder-val="{{false}}">
+                <ul style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min({{p.min}}, 100%), 1fr)); gap: 12px; margin: 0; padding: 0; list-style: none">
+                  <sc-for list="{{p.items}}" as="b" hint-placeholder-count="4">
+                    <li style="display: flex; flex-direction: column; gap: 8px; padding: 20px; border: 1px solid var(--line2); border-radius: 12px; background: var(--chip)">
+                      <sc-if value="{{b.hasTag}}" hint-placeholder-val="{{false}}"><span style="font-family: 'Space Mono', monospace; font-size: 11px; color: var(--acc)">{{b.tag}}</span></sc-if>
+                      <span style="font-size: 16px; font-weight: 500; letter-spacing: -0.01em">{{b.title}}</span>
+                      <span style="font-size: 14px; line-height: 1.55; color: var(--fg2)">{{b.body}}</span>
+                    </li>
+                  </sc-for>
+                </ul>
+              </sc-if>
+
+              <sc-if value="{{p.isFigure}}" hint-placeholder-val="{{false}}">
+                <figure style="margin: 0; display: flex; flex-direction: column; gap: 12px; max-width: {{p.maxw}}">
+                  <div style="border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: #0b0c0e">
+                    <sc-if value="{{p.hasHost}}" hint-placeholder-val="{{true}}">
+                      <div style="display: flex; align-items: center; justify-content: center; height: 32px; border-bottom: 1px solid rgba(255, 255, 255, 0.08)"><span style="font-family: 'Space Mono', monospace; font-size: 11px; color: #a6a6a6">{{p.host}}</span></div>
+                    </sc-if>
+                    <img src="{{p.img}}" alt="{{p.alt}}" style="display: block; width: 100%">
+                  </div>
+                  <figcaption style="font-family: 'Space Mono', monospace; font-size: 12px; line-height: 1.5; color: var(--fg2)">{{p.caption}}</figcaption>
+                </figure>
+              </sc-if>
+
+              <sc-if value="{{p.isGallery}}" hint-placeholder-val="{{false}}">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr)); gap: 16px">
+                  <sc-for list="{{p.items}}" as="g" hint-placeholder-count="2">
+                    <figure style="margin: 0; display: flex; flex-direction: column; gap: 10px; min-width: 0">
+                      <div style="border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: #0b0c0e">
+                        <div style="display: flex; align-items: center; justify-content: center; height: 30px; border-bottom: 1px solid rgba(255, 255, 255, 0.08)"><span style="font-family: 'Space Mono', monospace; font-size: 11px; color: #a6a6a6">{{g.host}}</span></div>
+                        <img src="{{g.img}}" alt="{{g.alt}}" style="display: block; width: 100%; aspect-ratio: 16 / 10; object-fit: cover; object-position: top left">
+                      </div>
+                      <figcaption style="font-family: 'Space Mono', monospace; font-size: 12px; line-height: 1.5; color: var(--fg2)">{{g.caption}}</figcaption>
+                    </figure>
+                  </sc-for>
+                </div>
+              </sc-if>
+
+              <sc-if value="{{p.isTable}}" hint-placeholder-val="{{false}}">
+                <div class="pj-table-wrap">
+                  <div role="table" aria-label="{{p.label}}" style="min-width: {{p.minw}}; font-size: 14px">
+                    <div role="row" style="display: grid; grid-template-columns: {{p.cols}}; gap: 16px; padding: 0 0 10px; border-bottom: 1px solid var(--line); font-family: 'Space Mono', monospace; font-size: 12px; color: var(--muted)">
+                      <sc-for list="{{p.head}}" as="h" hint-placeholder-count="4"><span role="columnheader">{{h}}</span></sc-for>
+                    </div>
+                    <sc-for list="{{p.rows}}" as="row" hint-placeholder-count="5">
+                      <div role="row" style="display: grid; grid-template-columns: {{p.cols}}; gap: 16px; align-items: baseline; padding: 12px 0; border-bottom: 1px solid var(--line2)">
+                        <sc-for list="{{row.cells}}" as="c" hint-placeholder-count="4"><span role="cell" style="color: {{c.color}}; font-family: {{c.font}}; font-variant-numeric: tabular-nums">{{c.v}}</span></sc-for>
+                      </div>
+                    </sc-for>
+                  </div>
+                </div>
+                <p style="margin: 0; font-family: 'Space Mono', monospace; font-size: 12px; line-height: 1.5; color: var(--muted)">{{p.note}}</p>
+              </sc-if>
+
+              <sc-if value="{{p.isChips}}" hint-placeholder-val="{{false}}">
+                <ul aria-label="{{p.label}}" style="display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none">
+                  <sc-for list="{{p.items}}" as="t" hint-placeholder-count="8">
+                    <li style="padding: 5px 12px; border: 1px solid var(--line); border-radius: 999px; font-size: 14px; color: var(--fg)">{{t}}</li>
+                  </sc-for>
+                </ul>
+              </sc-if>
+
+              <sc-if value="{{p.isNote}}" hint-placeholder-val="{{false}}">
+                <p style="margin: 0; font-family: 'Space Mono', monospace; font-size: 13px; color: var(--mint)">{{p.text}}</p>
+              </sc-if>
+            </div>
+          </sc-for>
+        </div>
+      </section>
+    </sc-for>
+
+    <section class="pj-sec" aria-labelledby="stack-title">
+      <h2 id="stack-title" class="pj-label">{{pj.stackN}} · built with</h2>
+      <div class="pj-body" style="gap: 0">
+        <sc-for list="{{pj.stack}}" as="g" hint-placeholder-count="5">
+          <div class="pj-stack-row">
+            <span style="font-family: 'Space Mono', monospace; font-size: 13px; color: var(--acc)">{{g.group}}</span>
+            <div style="display: flex; flex-direction: column; gap: 10px; min-width: 0">
+              <ul aria-label="{{g.group}}" style="display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none">
+                <sc-for list="{{g.items}}" as="t" hint-placeholder-count="5">
+                  <li style="display: inline-flex; align-items: baseline; gap: 6px; padding: 5px 12px; border: 1px solid var(--line); border-radius: 999px; font-size: 14px; color: var(--fg)">{{t.name}}<span style="font-family: 'Space Mono', monospace; font-size: 11px; color: var(--muted)">{{t.ver}}</span></li>
+                </sc-for>
+              </ul>
+              <sc-if value="{{g.hasNote}}" hint-placeholder-val="{{true}}"><p style="margin: 0; font-size: 14px; line-height: 1.55; color: var(--fg2)">{{g.note}}</p></sc-if>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </section>
+
+    <section class="pj-sec" aria-labelledby="log-title">
+      <h2 id="log-title" class="pj-label">{{pj.logN}} · {{pj.logTitle}}</h2>
+      <div style="flex: 1 1 560px; display: flex; flex-wrap: wrap; gap: 32px 56px; min-width: 0">
+        <ol aria-label="{{pj.logTitle}}" style="flex: 1 1 420px; display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; font-family: 'Space Mono', monospace; font-size: 14px">
+          <sc-for list="{{pj.log}}" as="l" hint-placeholder-count="5">
+            <li aria-current="{{l.current}}" style="display: grid; grid-template-columns: 20px 130px minmax(0, 1fr); align-items: baseline; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line2); color: {{l.color}}">
+              <span aria-hidden="true" style="display: inline-flex; justify-content: center; color: {{l.markColor}}"><span class="{{l.dotClass}}" style="display: inline-block; width: {{l.dotSize}}; height: {{l.dotSize}}; border-radius: 50%; background: {{l.dot}}">{{l.mark}}</span></span>
+              <span>{{l.label}}</span>
+              <span style="font-family: 'Geist', system-ui, sans-serif; font-size: 15px; color: var(--fg2)">{{l.note}}</span>
+            </li>
+          </sc-for>
+        </ol>
+        <div style="flex: 1 1 280px; display: flex; flex-direction: column; gap: 14px">
+          <h3 style="margin: 0; font-family: 'Space Mono', monospace; font-size: 12px; font-weight: 400; color: var(--muted)">{{pj.rulesTitle}}</h3>
+          <ul style="display: flex; flex-direction: column; gap: 8px; margin: 0; padding: 0 0 0 18px; font-size: 14px; line-height: 1.5; color: var(--fg2)">
+            <sc-for list="{{pj.rules}}" as="r" hint-placeholder-count="3"><li>{{r}}</li></sc-for>
+          </ul>
+          <div style="display: flex; flex-wrap: wrap; gap: 12px; padding-top: 10px">
+            <sc-for list="{{pj.actions}}" as="a" hint-placeholder-count="2">
+              <a href="{{a.href}}" style="display: inline-flex; align-items: center; gap: 10px; height: 46px; padding: 0 18px; border: 1px solid {{a.border}}; border-radius: 10px; background: {{a.bg}}; color: {{a.fg}}; font-size: 15px; font-weight: 500; letter-spacing: -0.02em">{{a.label}}
+                <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" style="fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round"><path d="M7 17L17 7"></path><path d="M8 7h9v9"></path></svg>
+              </a>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section aria-label="Next project" style="padding: 56px var(--g) 120px">
+      <a href="#site-top" onClick="{{pj.next.go}}" class="next-card" style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 24px; padding: 32px 36px; border: 1px solid var(--line); border-radius: 16px; background: var(--chip)">
+        <span style="display: flex; flex-direction: column; gap: 8px; min-width: 0">
+          <span style="font-family: 'Space Mono', monospace; font-size: 12px; color: var(--muted)">next project</span>
+          <span class="next-title" style="display: flex; align-items: center; gap: 0.5em; font-family: 'Space Mono', monospace; font-size: 30px; color: var(--logo)"><span aria-hidden="true" style="color: {{pj.next.arrow}}">➜</span><span aria-hidden="true" style="color: var(--teal)">~</span><span>cd ../{{pj.next.id}}</span></span>
+          <span style="font-size: 16px; color: var(--fg2)">{{pj.next.headline}}</span>
+        </span>
+        <span aria-hidden="true" style="display: flex; align-items: center; justify-content: center; width: 52px; height: 52px; border: 1px solid var(--line); border-radius: 50%; color: var(--fg)">
+          <svg viewBox="0 0 24 24" width="20" height="20" style="fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round"><path d="M5 12h14"></path><path d="M13 6l6 6-6 6"></path></svg>
+        </span>
+      </a>
+    </section>
+  </main>
+  </sc-if>
+
+  <footer class="foot" style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 24px; min-height: 72px; box-sizing: border-box; padding: 14px var(--g); border-top: 1px solid var(--line2); margin-top: auto">
+    <span style="font-size: 12px; letter-spacing: -0.02em; color: var(--muted)">© 2026 Azamat Jorayev</span>
+    <div role="group" aria-label="Theme" style="display: inline-flex; padding: 3px; border: 1px solid var(--line); border-radius: 10px; font-family: 'Space Mono', monospace; font-size: 12px">
+      <sc-for list="{{themes}}" as="t" hint-placeholder-count="3">
+        <button type="button" aria-pressed="{{t.pressed}}" onClick="{{t.pick}}" style="display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 10px; border: 0; border-radius: 7px; background: {{t.bg}}; color: {{t.color}}; font-family: inherit; font-size: inherit; cursor: pointer"><span aria-hidden="true">{{t.icon}}</span>{{t.label}}</button>
+      </sc-for>
+    </div>
+    <nav aria-label="Social links" style="display: flex; align-items: center; gap: 4px; margin-right: -10px">
+      <a href="https://github.com/azamatos" aria-label="GitHub" style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 8px; color: var(--muted)">
+        <svg viewBox="0 0 98 96" width="16" height="16" aria-hidden="true" style="fill: currentColor"><path d="M41.44 69.38C28.81 67.85 19.91 58.76 19.91 46.99c0-4.79 1.72-9.95 4.59-13.4-1.24-3.16-1.05-9.86.38-12.63 3.83-.48 9 1.53 12.06 4.31 3.64-1.15 7.47-1.72 12.16-1.72s8.52.57 11.96 1.63c2.97-2.68 8.23-4.69 12.06-4.21 1.34 2.58 1.53 9.28.29 12.54 3.06 3.64 4.69 8.52 4.69 13.49 0 11.77-8.9 20.67-21.72 22.3 3.25 2.11 5.45 6.7 5.45 11.96v9.95c0 2.87 2.39 4.5 5.26 3.35C84.41 87.95 98 70.63 98 49.19 98 22.11 75.99 0 48.9 0 21.82 0 0 22.11 0 49.19c0 21.25 13.49 38.86 31.68 45.46 2.58.96 5.07-.77 5.07-3.35v-7.66c-1.34.57-3.06.96-4.59.96-6.32 0-10.05-3.45-12.73-9.86-1.05-2.58-2.2-4.11-4.4-4.4-1.15-.1-1.53-.58-1.53-1.15 0-1.15 1.91-2.01 3.83-2.01 2.78 0 5.17 1.72 7.66 5.26 1.91 2.78 3.92 4.02 6.32 4.02 2.39 0 3.92-.86 6.12-3.06 1.63-1.63 2.87-3.06 4.02-4.02z"></path></svg>
+      </a>
+      <a href="https://t.me/eldzhernone" aria-label="Telegram" style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 8px; color: var(--muted)">
+        <svg viewBox="186 298 548 456" width="16" height="16" aria-hidden="true" style="fill: currentColor"><path d="M226.33 494.72c145.76-63.5 242.96-105.37 291.59-125.6 138.86-57.75 167.71-67.79 186.51-68.12 4.14-.07 13.39.96 19.38 5.81 5.06 4.1 6.45 9.65 7.12 13.54.67 3.89 1.5 12.76.84 19.68-7.52 79.06-40.08 270.93-56.65 359.47-7.01 37.47-20.81 50.03-34.17 51.26-29.04 2.67-51.09-19.19-79.21-37.62-44.01-28.85-68.87-46.8-111.58-74.95-49.37-32.53-17.36-50.41 10.77-79.63 7.36-7.65 135.3-124.01 137.77-134.57.31-1.32.6-6.24-2.33-8.84-2.92-2.6-7.24-1.71-10.35-1-4.41 1-74.72 47.47-210.9 139.4-19.96 13.7-38.03 20.38-54.22 20.03-17.85-.39-52.19-10.09-77.72-18.39-31.31-10.18-56.2-15.56-54.03-32.85 1.13-9 13.53-18.21 37.2-27.62z"></path></svg>
+      </a>
+      <a href="https://linkedin.com/in/igwt" aria-label="LinkedIn" style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 8px; color: var(--muted)">
+        <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" style="fill: currentColor"><path d="M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zm1.78 13.02H3.56V9h3.56v11.45zM22.23 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"></path></svg>
+      </a>
+    </nav>
+  </footer>
+
+  <sc-if value="{{paletteOpen}}" hint-placeholder-val="{{false}}">
+    <div class="pal-layer" style="position: fixed; inset: 0; z-index: 60">
+      <button type="button" class="dim" aria-label="Close the command palette" onClick="{{closePalette}}" style="position: absolute; inset: 0; width: 100%; height: 100%; border: 0; background: rgba(0, 0, 0, 0.55); backdrop-filter: blur(3px); cursor: default"></button>
+      <div class="pal" role="dialog" aria-modal="true" aria-label="Command palette" style="position: absolute; top: 108px; left: 50%; width: 640px; margin-left: -320px; border: 1px solid rgba(255, 255, 255, 0.16); border-radius: 16px; background: #0b0b0b; color: #ffffff; box-shadow: 0 40px 120px rgba(0, 0, 0, 0.6); overflow: hidden">
+        <div style="display: flex; align-items: center; gap: 12px; height: 60px; padding: 0 10px 0 18px; border-bottom: 1px solid rgba(255, 255, 255, 0.08); font-family: 'Space Mono', monospace; font-size: 16px">
+          <span aria-hidden="true" style="color: #68edc0">➜</span><span aria-hidden="true" style="color: #5bc8c0">~</span>
+          <label for="pal-q" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap">Command</label>
+          <input id="pal-q" type="text" value="{{q}}" onChange="{{onQuery}}" onKeyDown="{{onKey}}" placeholder="ls, cd, cat, mail, theme…" autocomplete="off" spellcheck="false" style="flex: 1; min-width: 0; height: 44px; border: 0; background: transparent; color: #ffffff; font-family: 'Space Mono', monospace; font-size: 16px; outline: none; caret-color: #68edc0">
+          <button type="button" onClick="{{closePalette}}" aria-label="Close" style="display: inline-flex; align-items: center; justify-content: center; min-width: 44px; height: 44px; border: 0; background: transparent; color: #a6a6a6; font-family: 'Space Mono', monospace; font-size: 11px; cursor: pointer"><kbd style="display: inline-flex; align-items: center; height: 24px; padding: 0 7px; border: 1px solid rgba(255, 255, 255, 0.16); border-radius: 6px; font-family: inherit">esc</kbd></button>
+        </div>
+        <div class="pal-list" style="display: flex; flex-direction: column; gap: 2px; max-height: 480px; padding: 8px; overflow-y: auto">
+          <sc-for list="{{groups}}" as="g" hint-placeholder-count="4">
+            <div style="display: flex; flex-direction: column">
+              <p style="margin: 8px 12px 6px; font-family: 'Space Mono', monospace; font-size: 11px; color: rgba(255, 255, 255, 0.45)">{{g.name}}</p>
+              <sc-for list="{{g.items}}" as="it" hint-placeholder-count="3">
+                <a href="{{it.href}}" onClick="{{it.run}}" onMouseEnter="{{it.hover}}" aria-current="{{it.current}}" style="display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 16px; min-height: 46px; padding: 0 12px; border-radius: 9px; background: {{it.bg}}; color: #ffffff">
+                  <span class="pal-row" style="display: flex; align-items: baseline; gap: 14px; min-width: 0">
+                    <span style="font-family: 'Space Mono', monospace; font-size: 15px; white-space: nowrap"><span style="color: #5bc8c0">{{it.verb}}</span> <span style="color: #f0f4f3">{{it.arg}}</span></span>
+                    <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13px; color: #a6a6a6">{{it.desc}}</span>
+                  </span>
+                  <span aria-hidden="true" style="font-family: 'Space Mono', monospace; font-size: 12px; color: {{it.hintColor}}">{{it.hint}}</span>
+                </a>
+              </sc-for>
+            </div>
+          </sc-for>
+          <sc-if value="{{empty}}" hint-placeholder-val="{{false}}">
+            <p style="margin: 16px 12px; font-family: 'Space Mono', monospace; font-size: 13px; color: #a6a6a6">zsh: command not found: {{q}}</p>
+          </sc-if>
+        </div>
+        <div class="only-desk" style="display: flex; justify-content: space-between; gap: 16px; height: 40px; align-items: center; padding: 0 18px; border-top: 1px solid rgba(255, 255, 255, 0.08); font-family: 'Space Mono', monospace; font-size: 11px; color: rgba(255, 255, 255, 0.45)">
+          <span>↑ ↓ move · ↵ run · esc close</span><span>⌘K anywhere on the site</span>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["dark","light"],"default":"dark"},"view":{"editor":"enum","options":["home","visaproof","yeral","rebuffer","pass"],"default":"home"},"paletteOpen":{"editor":"boolean","default":false},"$preview":{"width":1440,"height":2400}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    var reduce = false;
+    try { reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+    this.reduce = reduce;
+    this.state = { view: null, active: 'visaproof', open: 'visaproof', tick: 0, theme: 'system', palette: null, q: '', sel: 0, copied: false, t: reduce ? 1 : 0 };
+    this.onDocKey = this.onDocKey.bind(this);
+  }
+  componentDidMount() {
+    try { document.addEventListener('keydown', this.onDocKey); } catch (e) {}
+    this.count();
+  }
+  componentWillUnmount() {
+    clearTimeout(this.t); clearInterval(this.timer);
+    try { document.removeEventListener('keydown', this.onDocKey); } catch (e) {}
+  }
+  onDocKey(e) {
+    if ((e.metaKey || e.ctrlKey) && (e.key === 'k' || e.key === 'K')) { e.preventDefault(); this.setState({ palette: true }); }
+  }
+  count() {
+    clearInterval(this.timer);
+    if (this.reduce) { this.setState({ t: 1 }); return; }
+    var self = this, start = Date.now();
+    this.setState({ t: 0 });
+    this.timer = setInterval(function () {
+      var t = Math.min(1, (Date.now() - start - 500) / 1100);
+      if (t >= 1) { clearInterval(self.timer); t = 1; }
+      if (t > 0) self.setState({ t: t });
+    }, 40);
+  }
+  go(view, anchor) {
+    var self = this;
+    var next = { view: view, palette: false, q: '', sel: 0 };
+    if (view !== 'home') next.active = view;
+    this.setState(next);
+    if (view !== 'home') this.count();
+    setTimeout(function () {
+      try {
+        var el = document.getElementById(anchor || 'site-top');
+        if (el) el.scrollIntoView({ block: 'start' });
+      } catch (e) {}
+    }, 30);
+  }
+  doCopy() {
+    var self = this;
+    try { navigator.clipboard && navigator.clipboard.writeText('hi@azamatos.com'); } catch (e) {}
+    this.setState({ copied: true });
+    clearTimeout(this.t);
+    this.t = setTimeout(function () { self.setState({ copied: false }); }, 1600);
+  }
+  pick(id) {
+    if (this.state.active !== id) this.setState({ active: id, open: id, tick: this.state.tick + 1 });
+  }
+  renderVals() {
+    var self = this;
+    var MINT = '#68edc0', AMBER = '#f2c14e';
+    var device = this.props.theme || 'dark';
+    var themeName = this.state.theme === 'system' ? device : this.state.theme;
+    var light = themeName === 'light';
+    var view = this.state.view || this.props.view || 'home';
+    var paletteOpen = this.state.palette === null ? !!this.props.paletteOpen : this.state.palette;
+    function prevent(e) { if (e && e.preventDefault) e.preventDefault(); }
+    function steps(list, current) {
+      return list.map(function (label, i) {
+        var done = i < current, now = i === current;
+        return { label: label, mark: done ? '✓' : (now ? '' : '○'), size: now ? '7px' : 'auto', dot: now ? AMBER : 'transparent', dotClass: now ? 'dot-building' : '', markColor: done ? MINT : 'rgba(255,255,255,.5)', color: done ? '#a6a6a6' : (now ? '#ffffff' : 'rgba(255,255,255,.5)') };
+      });
+    }
+    function log(list, current) {
+      return list.map(function (it, i) {
+        var done = current < 0 || i < current, now = i === current;
+        return {
+          label: it[0], note: it[1],
+          mark: done ? '✓' : (now ? '' : '○'),
+          dot: now ? 'var(--amber)' : 'transparent', dotSize: now ? '8px' : 'auto', dotClass: now ? 'dot-building' : '',
+          markColor: done ? 'var(--mint)' : 'var(--muted)',
+          color: done ? 'var(--fg2)' : (now ? 'var(--fg)' : 'var(--muted)'),
+          current: now ? 'step' : 'false'
+        };
+      });
+    }
+    function st(group, items, note) {
+      return { group: group, note: note || '', hasNote: !!note, items: items.map(function (t) { var p = t.split('|'); return { name: p[0], ver: p[1] || '' }; }) };
+    }
+    function part(kind, data) { var o = Object.assign({ isWaffle: false, isFlow: false, isFeeds: false, isStates: false, isBars: false, isCards: false, isFigure: false, isGallery: false, isTable: false, isChips: false, isNote: false }, data); o['is' + kind] = true; return o; }
+    function sec(n, title, lead, text, parts) { return { n: n, title: title, lead: lead || '', hasLead: !!lead, text: text || '', hasText: !!text, parts: parts || [] }; }
+    function cards(items, min) { return part('Cards', { min: min || '300px', items: items.map(function (c) { return { tag: c[2] || '', hasTag: !!c[2], title: c[0], body: c[1] }; }) }); }
+    function table(label, head, cols, minw, rows, note) {
+      return part('Table', { label: label, head: head, cols: cols, minw: minw, note: note || '', rows: rows.map(function (r) {
+        return { cells: r.map(function (v, i) { return { v: v, color: i === 0 ? 'var(--fg)' : 'var(--fg2)', font: i === 0 ? "'Geist', system-ui, sans-serif" : "'Space Mono', monospace" }; }) };
+      }) });
+    }
+
+    // ---------- the four projects ----------
+    var P = [
+      { id: 'visaproof', name: 'Visaproof', dir: 'visaproof/', perm: 'drwxr-x---', commits: '56', live: false, arrow: '#76beff', stack: 'nuxt · postgres · claude · node', kind: 'job finder',
+        cmd: 'cat visaproof/README.md', n: 'n23', host: 'visaproof.azamatos.com', design: true, img: '/_blob/d435b84978079527345ce624e6af126d', phoneImg: '/_blob/f3746ad8e390f70b5cee3628b28f0dce', imgClass: 'pan',
+        alt: 'Visaproof search design: roles grouped by visa answer, with filters for visa, relocation, language and country',
+        headline: 'Developer jobs in Europe, with the visa answer first.',
+        desc: "It reads open roles straight from companies' own job boards and answers what a relocating developer asks first: will they sponsor a visa, and will they help me move. Every answer quotes the posting or an official sponsor register.",
+        short: 'Reads open roles from companies’ own job boards. Every visa answer quotes the posting or an official sponsor register.',
+        steps: steps(['pipeline', 'evidence', 'design', 'website', 'launch'], 4),
+        tech: ['Nuxt 4', 'Vue 3.5', 'Tailwind CSS 4', 'Postgres 18', 'Claude', 'DuckDB', 'Docker'],
+        stats: [{ value: '15,342', label: 'open roles, read from companies’ own boards', short: 'open roles' }, { value: '2,553', label: 'companies across 31 countries', short: 'companies' }, { value: '100%', label: 'precise on “sponsors”, against 33% for keyword rules', short: 'precise on “sponsors”' }],
+        siteLabel: 'Source on GitHub', siteHref: 'https://github.com/azamatos/visaproof' },
+      { id: 'yeral', name: 'Ýeral', dir: 'yeral/', perm: 'drwxr-x---', commits: '251', live: false, arrow: '#8a73ff', stack: 'react · tanstack · hono · postgres', kind: 'booking platform',
+        cmd: 'cat yeral/README.md', n: 'n19', host: 'business.yeral.app', design: true, img: '/_blob/91758644376378572b2ec6bd2e514bfe', phoneImg: '/_blob/91758644376378572b2ec6bd2e514bfe', imgClass: '',
+        alt: 'Ýeral business workspace design: the team’s day calendar with bookings and requests',
+        headline: 'Booking for any business that sells its time.',
+        desc: 'Clients book a chair, a table or a class without calling. The business gets a free workspace for its calendar, requests, clients and team. One monorepo holds the marketplace, the workspace, the CMS and the API.',
+        short: 'Clients book without calling; the business runs its calendar, requests, clients and team.',
+        steps: steps(['product book', 'api', 'design system', 'business app', 'client site', 'launch'], 4),
+        tech: ['React 19', 'TanStack Start', 'Hono', 'Drizzle', 'Postgres 18', 'Tailwind CSS 4', 'Storybook'],
+        stats: [{ value: '125', label: 'product questions answered before the code', short: 'product questions' }, { value: '79', label: 'UI components, each with Storybook stories', short: 'UI components' }, { value: '1,000+', label: 'unit, API and component tests', short: 'tests' }],
+        siteLabel: 'Open the design system', siteHref: 'https://storybook.yeral.app' },
+      { id: 'rebuffer', name: 'Rebuffer', dir: 'rebuffer/', perm: 'drwxr-xr-x', commits: '138', live: true, arrow: '#68edc0', stack: 'react · hls.js · service worker', kind: 'hls network lab',
+        cmd: 'cat rebuffer/README.md', n: 'n22', host: 'rebuffer.azamatos.com', design: false, img: '/_blob/2b291ddf3d2d110be7deef23cbda1246', phoneImg: '/_blob/2b291ddf3d2d110be7deef23cbda1246', imgClass: '',
+        alt: 'A recorded Rebuffer run through a tunnel: the network drops, the player switches down, the buffer drains',
+        headline: 'See how a video player survives a bad network.',
+        desc: 'A real hls.js player streams through a network simulated in a Service Worker. Live charts show every quality switch and stall, and a report scores the run.',
+        short: 'A real hls.js player streams through a simulated network, with live charts and a scored report.',
+        steps: [],
+        tech: ['React 19', 'hls.js 1.7', 'Service Worker', 'Canvas', 'Zustand', 'Vite 8'],
+        stats: [{ value: '554', label: 'unit tests', short: 'unit tests' }, { value: '180', label: 'Playwright checks in Chromium, Firefox and WebKit', short: 'Playwright checks' }, { value: '96.7 KB', label: 'of JavaScript on Home, budget 100 KB', short: 'JavaScript on Home' }],
+        siteLabel: 'Open rebuffer.azamatos.com', siteHref: 'https://rebuffer.azamatos.com' },
+      { id: 'pass', name: 'pass', dir: 'pass/', perm: 'drwxr-xr-x', commits: '37', live: true, arrow: '#ff6b4d', stack: 'astro · typescript · web worker', kind: 'password generator',
+        cmd: 'cat pass/README.md', n: 'n18', host: 'pass.azamatos.com/github', design: false, img: '/_blob/a95e8529dfb2185d6a69819d3eec5682', phoneImg: '/_blob/a95e8529dfb2185d6a69819d3eec5682', imgClass: '',
+        alt: 'pass.azamatos.com with the GitHub preset: a generated password, its strength, and GitHub’s rules',
+        headline: 'Passwords that pass each site’s real rules.',
+        desc: 'Pick a site and get a password its sign-up form accepts, or a passphrase you can type. The strength and leak check runs in your browser, and the password never leaves it.',
+        short: 'Pick a site and get a password its sign-up form accepts. It never leaves your browser.',
+        steps: [],
+        tech: ['Astro 7', 'TypeScript', 'Web Worker', 'zxcvbn-ts', 'Web Crypto'],
+        stats: [{ value: '16', label: 'site presets, each rule with its source', short: 'site presets' }, { value: '5 of 40', label: 'hash characters the leak check sends', short: 'hash characters sent' }, { value: '0', label: 'passwords stored, ever', short: 'passwords stored' }],
+        siteLabel: 'Open pass.azamatos.com', siteHref: 'https://pass.azamatos.com' }
+    ];
+
+    // ---------- the project pages ----------
+    var grey = light ? '#b3b3b3' : '#5c5c5c', empty = light ? '#ececea' : '#1f1f1f', ring = light ? 'inset 0 0 0 1px rgba(0,0,0,.1)' : 'inset 0 0 0 1px rgba(255,255,255,.12)';
+    var cells = [];
+    for (var i = 0; i < 100; i++) {
+      cells.push({ color: i < 3 ? 'var(--acc)' : i < 11 ? 'var(--acc2)' : i < 22 ? grey : empty, ring: i < 22 ? 'none' : ring, delay: (0.15 + i * 0.008).toFixed(3) + 's' });
+    }
+    var tint = function (c, pct) { return 'color-mix(in srgb, ' + c + ' ' + pct + '%, transparent)'; };
+    var CASE = {
+      visaproof: {
+        statusLabel: 'in development · the site is up as a preview, launch next',
+        tagStrong: 'Developer jobs in Europe, with the visa answer first,', tagRest: 'and the evidence for every answer.',
+        meta: [
+          { k: 'role', v: 'Everything, alone: the idea, the pipeline, the evaluation, the design and the site', links: [] },
+          { k: 'stack', v: 'Nuxt · Vue · Postgres · Claude · Node', links: [] },
+          { k: 'links', v: '', links: [{ label: 'Source on GitHub', href: 'https://github.com/azamatos/visaproof' }, { label: 'visaproof.azamatos.com', href: 'https://visaproof.azamatos.com' }] }
+        ],
+        hero: { host: 'visaproof.azamatos.com', design: true, img: '/_blob/f3746ad8e390f70b5cee3628b28f0dce', alt: 'Visaproof search design: developer jobs in Europe grouped by visa answer, with filters for visa, relocation, language and country', phoneImg: '/_blob/cdc3dad829af1fb81aa5888555ade369', phoneAlt: 'Visaproof job page on a phone: Sponsors visa, Helps you move, English only, and the pay' },
+        numbers: [{ to: 15342, label: 'open software roles in Europe, read from companies’ own boards' }, { to: 2553, label: 'companies hiring engineers, in 31 countries' }, { to: 16098, label: 'job boards found on 8 board types, almost all through Common Crawl' }, { to: 250, pre: '~', label: 'new roles a day' }],
+        numbersNote: 'From the first full sweep of every board Common Crawl knows, in the EU, EEA, UK and Switzerland.',
+        sections: [
+          sec('01', 'the problem', 'A developer who needs a visa opens fifty postings and searches each one for “visa”. Most never say.', 'Only 22% of open roles mention visas, relocation, permits or the right to work at all. About 2.6 in 100 clearly offer sponsorship, and three times as many refuse it. So for most roles the answer can’t come from the posting: it has to come from the law and the sponsor registers.', [
+            part('Waffle', { label: '100 squares, one per 1% of open roles: 3 offer sponsorship, 8 refuse it, 11 mention visas or relocation without a clear answer, 78 say nothing', cells: cells, note: 'One square = 1% of open roles', legend: [
+              { color: 'var(--acc)', ring: 'none', strong: '2.6%', text: 'offer visa sponsorship, about 350 roles' },
+              { color: 'var(--acc2)', ring: 'none', strong: '8%', text: 'refuse it' },
+              { color: grey, ring: 'none', strong: '11%', text: 'mention visas or relocation, no clear answer' },
+              { color: empty, ring: ring, strong: '78%', text: 'say nothing' }
+            ] })
+          ]),
+          sec('02', 'how it works', 'Read every company’s own job board, keep the engineering roles in Europe, and check each one against the law.', '', [
+            part('Flow', { items: [
+              { tag: 'sources', title: 'Company job boards', body: 'Ashby, Greenhouse, Lever, SmartRecruiters, Personio, Recruitee, Workable, Workday. One request per board where the API allows.', border: 'var(--line)', tagColor: 'var(--muted)', arrow: true },
+              { tag: 'every 6 hours', title: 'Pipeline', body: 'Keeps software roles in the EU, EEA, UK and Switzerland; marks each new, changed or closed.', border: 'var(--line)', tagColor: 'var(--acc)', arrow: true },
+              { tag: 'postgres', title: 'Roles and evidence', body: 'Every fact stored with its quote or register entry, and when it was checked.', border: 'var(--line)', tagColor: 'var(--muted)', arrow: true },
+              { tag: 'preview', title: 'Website', body: 'Search with the visa answer first, job, company and country pages, the method and its accuracy.', border: tint('var(--amber)', 45), tagColor: 'var(--amber)', arrow: false }
+            ] }),
+            part('Feeds', { items: [
+              { when: 'weekly', title: 'Discovery', body: 'Common Crawl’s index finds new company boards.' },
+              { when: 'daily', title: 'Sponsor registers', body: 'The Dutch IND (13,024 sponsors) and the UK register (122,353).' },
+              { when: 'nightly', title: 'Language model', body: 'Reads postings that mention visas and returns facts with exact quotes.' }
+            ] })
+          ]),
+          sec('03', 'the answer', 'Yes or no isn’t honest. The visa answer has five levels, and each shows where it came from.', '', [
+            part('States', { img: '/_blob/f2805cbb8e64aa71d80ee52045e90a66', alt: 'A job page design: the visa, moving, language and pay answers, then the quote from the posting and the sponsor-register check behind them', caption: 'The job page: every answer with its quote, its source and when it was checked.', items: [
+              { label: 'Sponsors visa', when: 'The posting says it sponsors visas for this role.', evidence: 'the sentence', bg: 'var(--acc)', fg: 'var(--on-acc)', icon: 'var(--on-acc)', border: 'var(--acc)', bs: 'solid', r: '999px' },
+              { label: 'May sponsor', when: 'The posting hedges: “for certain roles”, “case by case”.', evidence: 'the sentence', bg: tint('var(--acc)', 12), fg: 'var(--acc)', icon: 'var(--acc)', border: tint('var(--acc)', 45), bs: 'solid', r: '999px' },
+              { label: 'Can sponsor', when: 'The posting doesn’t refuse, and the law lets this employer hire on a visa: a registered sponsor, or a salary above the Blue Card line.', evidence: 'the register entry or the salary rule', bg: 'transparent', fg: 'var(--fg)', icon: 'var(--acc)', border: tint('var(--acc)', 45), bs: 'solid', r: '4px' },
+              { label: 'Visa unknown', when: 'The posting says nothing, and no register or salary check applies.', evidence: 'a short note on the country’s rules', bg: 'transparent', fg: 'var(--fg2)', icon: 'var(--fg2)', border: 'var(--line)', bs: 'dashed', r: '999px' },
+              { label: 'Won’t sponsor', when: 'The posting refuses: “visa sponsorship is not available”.', evidence: 'the sentence', bg: tint('var(--acc2)', 12), fg: 'var(--acc2)', icon: 'var(--acc2)', border: tint('var(--acc2)', 45), bs: 'solid', r: '999px' }
+            ] })
+          ]),
+          sec('04', 'measured', 'Keyword rules were wrong two times in three. So they never show an answer; a language model does, checked against 200 postings labelled by hand.', '', [
+            part('Bars', { title: '“offers visa sponsorship”, on the labelled set', text: 'Precision: of the roles marked “offers”, how many really offer. Recall: of the roles that really offer, how many were found. The rules now only pick which postings the model reads: the 22% that mention visas or relocation. Every quote it returns must be an exact substring of the posting, or it’s dropped.', groups: [
+              { who: 'Keyword rules', rows: [{ metric: 'precision', value: '33%', width: '33%', color: 'var(--acc2)' }, { metric: 'recall', value: '90%', width: '90%', color: grey }] },
+              { who: 'Language model (Claude)', rows: [{ metric: 'precision', value: '100%', width: '100%', color: 'var(--acc)' }, { metric: 'recall', value: '100%', width: '100%', color: 'var(--acc)' }] }
+            ] })
+          ]),
+          sec('05', 'what the first sweep broke', '', '', [
+            cards([
+              ['255 boards counted twice', 'Case-insensitive slugs and boards served on two domains held 1,050 duplicate roles. One migration merged them.'],
+              ['Every EU-hosted Greenhouse board failed', 'All 403 of them: the EU API host doesn’t exist. The main API serves them.'],
+              ['Rate limits from Workable and Recruitee', 'Each Recruitee company has its own subdomain, so requests now queue per site, not per host.'],
+              ['850 roles “changed” on every run', 'Workable lists a job once per location under one id. Now it’s one posting with all its locations.']
+            ], '320px'),
+            part('Note', { text: '✓ after the fixes, 8 of 2,915 boards failed in the next run, all on the boards’ side' })
+          ])
+        ],
+        stack: [
+          st('website', ['Nuxt|4', 'Vue|3.5', 'TypeScript', 'Tailwind CSS|4', 'Reka UI'], 'Pages render on the server, and the filters are a plain form, so the search lives in the URL. Own components, with Reka UI for the hard widgets like the phone filter drawer.'),
+          st('server and data', ['Nitro server routes', 'Postgres|18', 'postgres.js', 'plain SQL migrations', 'LRU cache'], 'The site reads Postgres as a read-only user on the same server; answers are cached for 5 minutes, because the data changes every 6 hours at most.'),
+          st('pipeline and AI', ['Node|22', 'Claude', 'DuckDB', 'Common Crawl', 'IND and UK registers'], 'Node runs the TypeScript directly, with no build step. Claude reads the postings that mention visas and must quote them exactly.'),
+          st('running it', ['Docker Compose', 'Caddy', 'Cloudflare', 'systemd timers', 'Telegram alerts'], 'On my own server: a missed run starts at boot, and a broken run sends a message.'),
+          st('quality', ['Vitest', 'Playwright', 'axe', 'ESLint strict', 'GitHub Actions'], 'Precision has to stay at 95% or more on “offers” before a prompt or model change ships.')
+        ],
+        logTitle: 'git log',
+        log: log([['pipeline', 'reads the boards every 6 hours, alerts in Telegram'], ['evidence', 'labelled set, scorer, extractor, sponsor registers'], ['design', 'six screens on phone and desktop, with every state'], ['website', 'built straight from the design, up as a preview'], ['launch', 'shared where relocating developers look']], 4),
+        rulesTitle: 'rules it keeps',
+        rules: ['Only official public feeds: company job-board APIs, Common Crawl’s index, government registers.', 'Doesn’t republish postings: short quotes and facts, then a link to apply on the original.', '“Unknown” is a valid answer. Sponsorship is never guessed from a company’s size, reputation or another posting.'],
+        actions: [{ label: 'Source on GitHub', href: 'https://github.com/azamatos/visaproof', primary: true }, { label: 'Open the preview', href: 'https://visaproof.azamatos.com' }]
+      },
+      yeral: {
+        statusLabel: 'in development · the business app runs on test data',
+        tagStrong: 'Booking for any business that sells its time,', tagRest: 'from a barber’s chair to a restaurant table. “Ýer al” is Turkmen for “take a place”.',
+        meta: [
+          { k: 'role', v: 'Owner and engineer: the product book, the architecture, the API and both apps', links: [] },
+          { k: 'stack', v: 'React · TanStack · Hono · Postgres', links: [] },
+          { k: 'links', v: '', links: [{ label: 'yeral.app', href: 'https://yeral.app' }, { label: 'Design system', href: 'https://storybook.yeral.app' }, { label: 'Source on GitHub', href: 'https://github.com/azamatos/yeral' }] }
+        ],
+        hero: { host: 'business.yeral.app', design: true, img: '/_blob/91758644376378572b2ec6bd2e514bfe', alt: 'Ýeral business workspace design: the day calendar with each specialist’s bookings and requests', phoneImg: '/_blob/49c968393fea3044923b9c73b1cb97a9', phoneAlt: 'Ýeral business calendar on a phone: one specialist’s day with confirmed visits, a pending request and a break' },
+        numbers: [{ to: 125, label: 'product questions answered in a product book before the code' }, { to: 79, label: 'UI components in Storybook, each with stories' }, { to: 1000, post: '+', label: 'unit, API and component tests' }, { to: 28, label: 'architecture decisions, each written down' }],
+        numbersNote: 'Counted in the repository today. Launch market: Turkmenistan, Ashgabat first.',
+        sections: [
+          sec('01', 'the idea', 'A barber, a dentist or a café takes bookings by phone. Ýeral lets clients book a place without calling, and gives the business a free workspace to run its day.', 'Every booking is a place: a chair, a table, a mat, a court. The category decides how a business is found and booked: by appointment, by table or by class. It launches in Turkmenistan first, in Turkmen, Russian and English, with prices in manats.', [
+            part('Gallery', { items: [
+              { host: 'yeral.app', img: '/_blob/9e3bf695de93b3a5576b5fec0d221ec4', alt: 'Ýeral client site design: the home page with a search for a service near you and photos of places', caption: 'The client site: find a place near you and book it.' },
+              { host: 'yeral.app/glow-studio', img: '/_blob/8e66f449afb6d5cfe88c2e699b14f186', alt: 'Ýeral business page design for Glow Studio: photos, rating, services and the next free time', caption: 'A business page: photos, services and the next free time.' }
+            ] })
+          ]),
+          sec('02', 'one monorepo, five sites', 'Four apps and an API share one contract, so a change in the booking rules reaches every screen at once.', '', [
+            cards([
+              ['The marketplace', 'Home, search with a map, category and business pages, booking for an appointment, a table or a class, and the client’s account.', 'yeral.app'],
+              ['The business workspace', 'A calendar for every specialist, requests to confirm or decline, clients, services, the team and settings.', 'business.yeral.app'],
+              ['The CMS', 'For the Ýeral team: businesses, users, complaints and the category catalogue in three languages.', 'cms.yeral.app'],
+              ['The API', 'REST on Postgres for all of them, with its schema and documentation generated from one contract.', 'api.yeral.app'],
+              ['The design system', 'Every component with its stories; the stories run as browser tests with axe.', 'storybook.yeral.app']
+            ], '260px')
+          ]),
+          sec('03', 'rules that never break', '125 product questions were answered in a product book before the code, so every screen follows the same rules.', '', [
+            cards([
+              ['The business confirms', 'By default a client never sees “booked” until the business confirms; until then the request is “sent”. A business can switch on instant confirmation.'],
+              ['Five statuses, one meaning', 'Pending, Confirmed, Completed, Cancelled and No-show mean the same on the web, in the workspace and in the CMS.'],
+              ['A phone booking is not a new status', 'When the business enters a booking by phone, it’s Confirmed with a phone icon.'],
+              ['No city names in the copy', 'Everything is relative to where you are: “near me”, not a city.'],
+              ['Pay at the place', 'No online payment yet; a deposit row is already reserved in every summary.']
+            ], '260px')
+          ]),
+          sec('04', 'the business day', '', '', [
+            part('Figure', { host: 'business.yeral.app/bookings', hasHost: true, maxw: '100%', img: '/_blob/4faa5ca164b07612c8954ebcdb8729a3', alt: 'Ýeral bookings design: a table of the business’s bookings with client, service, time, source and status', caption: 'Bookings in the business workspace: every request and visit with its status, in one list.' })
+          ])
+        ],
+        stack: [
+          st('frontend', ['React|19', 'TanStack Start', 'TanStack Router', 'TanStack Query', 'Vite|8', 'Tailwind CSS|4', 'Radix UI', 'MapLibre GL', 'use-intl'], 'The client site renders on the server for search engines; the workspace is a single-page app. Turkmen, Russian and English from one set of messages.'),
+          st('backend', ['Hono|4', 'Zod|4', 'OpenAPI', 'Drizzle ORM', 'Postgres|18'], 'Own phone sign-in with SMS codes and sessions; live updates to the calendar over server-sent events.'),
+          st('architecture', ['Turborepo', 'pnpm workspaces', 'Feature-Sliced Design', 'shared contract and SDK', 'React Compiler'], 'The booking engine is plain TypeScript in its own package, with no framework, so it is tested on its own.'),
+          st('running it', ['Docker Compose', 'Caddy', 'own server'], 'One deployment per market: the same Docker stack moves to servers in Turkmenistan for the launch there.'),
+          st('quality', ['Vitest', 'Storybook|10', 'axe', 'Playwright', 'Changesets', 'GitHub Actions'], '28 architecture decisions are written down, and every pull request is reviewed before it merges.')
+        ],
+        logTitle: 'git log',
+        log: log([['product book', '125 questions answered before the code'], ['api', 'REST on Hono and Postgres, one contract for every app'], ['design system', '79 components in Storybook'], ['business app', 'calendar, requests, clients and team, on test data'], ['client site', 'search, business pages and booking, end to end'], ['launch', 'Ashgabat first']], 4),
+        rulesTitle: 'how it’s run',
+        rules: ['A product book first: every rule is decided and written down before a screen is built.', 'A library before our own code, and nothing more complicated than the product needs.', 'Never a secret, a key or a server address in the public repository.'],
+        actions: [{ label: 'Open the design system', href: 'https://storybook.yeral.app', primary: true }, { label: 'Source on GitHub', href: 'https://github.com/azamatos/yeral' }]
+      },
+      rebuffer: {
+        statusLabel: 'live · rebuffer.azamatos.com',
+        tagStrong: 'See how a video player survives a bad network,', tagRest: 'in your browser, with the numbers viewers feel.',
+        meta: [
+          { k: 'role', v: 'Idea, design and code, from years of building HLS players and Smart TV apps', links: [] },
+          { k: 'stack', v: 'React · hls.js · Service Worker · Canvas', links: [] },
+          { k: 'links', v: '', links: [{ label: 'rebuffer.azamatos.com', href: 'https://rebuffer.azamatos.com' }, { label: 'Source on GitHub', href: 'https://github.com/azamatos/rebuffer' }] }
+        ],
+        hero: { host: 'rebuffer.azamatos.com', design: false, img: '/_blob/2f29e8c5fcc466cd1612e2e8f5cfc11c', alt: 'Rebuffer’s Run page: pick a stream, a network and a player setup, then run it', phoneImg: '/_blob/1c1d456d30d94fa7056d830bda1b3b76', phoneAlt: 'Rebuffer on a phone: See how a video player survives a bad network, with Try the tunnel' },
+        numbers: [{ to: 554, label: 'unit tests for the framework-free core' }, { to: 180, label: 'Playwright checks in Chromium, Firefox and WebKit, axe on every screen' }, { text: '3–24 ms', label: 'how far downloads land behind the network curve, never ahead' }, { text: '96.7 KB', label: 'of JavaScript on Home, against a 100 KB budget' }],
+        numbersNote: 'Measured locally and in CI; the repeatability job runs every week.',
+        sections: [
+          sec('01', 'what it does', 'Pick a stream and a network, press Run, and watch a real hls.js player fight it.', 'The bandwidth it gets, what it thinks it gets, the quality it picks, the buffer draining, every stall. Then a report with the numbers viewers feel, and what to try next.', [
+            part('Figure', { host: 'rebuffer.azamatos.com/run', hasHost: true, maxw: '820px', img: '/_blob/2b291ddf3d2d110be7deef23cbda1246', alt: 'A recorded run through a tunnel: the network drops, the player switches down, the buffer drains and stalls', caption: 'A recorded run: Try the tunnel, the network drops, hls.js switches down, the buffer drains, then the report.' }),
+            cards([
+              ['Run', 'Any HLS stream through a simulated network, with three live charts on one time axis and an event log.'],
+              ['Draw a network', 'A bandwidth curve with the stream’s qualities drawn over it. Seven presets, four recorded 4G journeys, or your own.'],
+              ['Read the report', 'A score from a published QoE model, numbered notes on what happened when, and ideas to try next.'],
+              ['Change one thing and compare', 'Run B with another player setup or network: what changed, a verdict, and the charts overlaid.'],
+              ['Inspect a playlist', 'The ladder by codec, each segment’s bitrate against what’s declared, and findings with the spec they break.'],
+              ['Tune the player', 'hls.js defaults, a low-memory TV preset, quality first, fast start, or one setting changed.']
+            ], '240px')
+          ]),
+          sec('02', 'how it works', 'The player is the real one. The network is simulated where the player can’t tell.', '', [
+            part('Flow', { items: [
+              { tag: 'react', title: 'Screens', body: 'Setup, run, report, compare and inspect.', border: 'var(--line)', tagColor: 'var(--muted)', arrow: true },
+              { tag: 'unmodified', title: 'hls.js', body: 'Keeps its own loader, bandwidth estimator and abandon rules.', border: 'var(--line)', tagColor: 'var(--acc)', arrow: true },
+              { tag: 'service worker', title: 'Network shaper', body: 'Fetches the real bytes and releases them on the curve’s schedule.', border: 'var(--line)', tagColor: 'var(--acc)', arrow: true },
+              { tag: 'canvas', title: 'Log, charts, report', body: 'Charts draw from the event log every frame, never through React state.', border: 'var(--line)', tagColor: 'var(--muted)', arrow: false }
+            ] }),
+            cards([
+              ['Honest numbers', 'The simulation can slow a download down, never speed it up. A run says how many downloads were late because the visitor’s own network was slower.'],
+              ['Repeatable', 'Repeat runs take their bytes from a copy saved in the browser, so they don’t depend on the visitor’s connection.'],
+              ['A framework-free core', 'The playlist parser, network simulator, metrics and report text import no React, and the link scheduler is tested with a fake clock.']
+            ], '260px')
+          ]),
+          sec('03', 'draw a network', 'A network is a curve of bandwidth over time plus a latency. Draw one with the keyboard or a pointer, or import it.', '', [
+            part('Figure', { host: 'rebuffer.azamatos.com/networks', hasHost: true, maxw: '100%', img: '/_blob/82edc6a4b3c304b548d0983e48c1854e', alt: 'Rebuffer network editor: Train through a tunnel, a bandwidth curve with the qualities of Tears of Steel drawn as dashed lines', caption: 'Where the curve dips below a dashed line, that quality downloads slower than it plays. Import JSON, CSV or a HAR file.' })
+          ]),
+          sec('04', 'measured', 'Each of the seven networks, run five times: scores within 2 points of each other, with the same stalls and switches.', '', [
+            table('Repeatability, 7 networks × 5 runs', ['network', 'score', 'first frame', 'stalls', 'switches'], 'minmax(170px, 1.6fr) 80px 150px 70px 80px', '600px', [
+              ['Home fibre', '89–91', '0.36–0.62 s', '0', '1'],
+              ['Busy café Wi-Fi', '86', '2.99–3.02 s', '0', '0'],
+              ['4G commute', '100', '1.71–1.73 s', '0', '3'],
+              ['Train through a tunnel', '37–38', '2.23–2.26 s', '1', '4'],
+              ['Rural 3G', '0', '11.56–11.66 s', '0', '1'],
+              ['Lift', '41–42', '1.59–1.69 s', '0', '0'],
+              ['Evening congestion', '88–89', '1.20–1.22 s', '0', '2']
+            ], 'Chromium, hls.js 1.7.3, a synthetic 2-minute stream with five qualities from 240p to 1080p. Rural 3G scores 0: its 11.7 s wait for the first frame costs more than its picture earns.')
+          ])
+        ],
+        stack: [
+          st('app', ['React|19', 'TanStack Router', 'Zustand|5', 'Zod|4', 'Tailwind CSS|4', 'Vite|8', 'TypeScript|6'], 'Home is rendered at build time, so the first screen needs no JavaScript to show.'),
+          st('video', ['hls.js|1.7.3', 'Service Worker', 'IndexedDB'], 'hls.js runs unmodified. The Service Worker shapes every request it makes, and saved runs and their bytes stay in the browser.'),
+          st('charts', ['Canvas 2D', 'own scales and drawing'], '0.1 ms per frame at the median, 1.8 ms at most, with the CPU throttled four times.'),
+          st('hosting', ['Cloudflare', 'static files'], 'No backend and no accounts: runs and networks stay in the browser that made them.'),
+          st('quality', ['Vitest', 'Playwright', 'axe', 'size-limit', 'Lighthouse CI', 'GitHub Actions'], 'CI fails on a bundle over budget or a Lighthouse score under 0.95; a repeatability job runs every preset five times each week.')
+        ],
+        logTitle: 'what shipped',
+        log: log([['run', 'live charts and an event log on one time axis'], ['report', 'a QoE score, notes and ideas to try next'], ['networks', 'presets, recorded 4G journeys and an editor'], ['compare', 'change one thing, run B, see what changed'], ['inspect', 'the ladder, codecs and findings for any playlist'], ['themes', 'system, light and dark, axe on every screen']], -1),
+        rulesTitle: 'credits',
+        rules: ['Sample film: Tears of Steel, (CC) Blender Foundation, used under CC BY 3.0, re-encoded for streaming.', 'Recorded networks: excerpts of the Irish 4G dataset (Raca et al., ACM MMSys 2018, CC BY 4.0).', 'Score: the linear QoE model from Yin et al., SIGCOMM 2015.'],
+        actions: [{ label: 'Open rebuffer.azamatos.com', href: 'https://rebuffer.azamatos.com', primary: true }, { label: 'Source on GitHub', href: 'https://github.com/azamatos/rebuffer' }]
+      },
+      pass: {
+        statusLabel: 'live · pass.azamatos.com',
+        tagStrong: 'Passwords that pass a site’s real password rules,', tagRest: 'made and checked in your browser.',
+        meta: [
+          { k: 'role', v: 'Idea, design and code', links: [] },
+          { k: 'stack', v: 'Astro · TypeScript · Web Worker', links: [] },
+          { k: 'links', v: '', links: [{ label: 'pass.azamatos.com', href: 'https://pass.azamatos.com' }] }
+        ],
+        hero: { host: 'pass.azamatos.com/github', design: false, img: '/_blob/a95e8529dfb2185d6a69819d3eec5682', alt: 'pass.azamatos.com with the GitHub preset: a generated password that meets GitHub’s rules, its strength, and the rules', phoneImg: '/_blob/3ffa589d07c35b172d87fac76c3d1a7c', phoneAlt: 'pass on a phone: a GitHub password, Very strong, with Copy' },
+        numbers: [{ to: 16, label: 'site presets, every rule with the page it was read from' }, { text: '5 of 40', label: 'characters of the password’s hash the leak check sends' }, { text: '13.5 kB', label: 'of JavaScript on a site’s page, against a 14 kB budget' }, { to: 0, label: 'passwords stored, ever' }],
+        numbersNote: 'Measured locally; CI runs on every push and once a month.',
+        sections: [
+          sec('01', 'what it does', 'Pick a site, and get a password its sign-up form accepts.', 'The right length, the character types it requires, only the symbols it allows, no more repeats than it permits. Passphrases for things you type by hand, and a check of how long a password would take to guess and whether it has leaked.', [
+            part('Chips', { label: 'Sites with their own rules', items: ['Instagram', 'Google', 'Apple', 'Microsoft', 'GitHub', 'Amazon', 'X (Twitter)', 'LinkedIn', 'Spotify', 'TikTok', 'PayPal', 'Facebook', 'Netflix', 'Shopify', 'Steam', 'Twitch', 'Any site'] })
+          ]),
+          sec('02', 'how it works', 'Everything runs in the browser. There is no backend and no account, and nothing is stored.', '', [
+            cards([
+              ['Random the right way', 'Characters come from crypto.getRandomValues with rejection sampling. Whole passwords are redrawn until they meet the rules, so no password is likelier than another.'],
+              ['Rules with sources', 'Each site’s rules come with the pages they were read from and the month they were checked. CI fails when a site’s rules are more than six months old.'],
+              ['The leak check sends 5 characters', 'Have I Been Pwned is asked with k-anonymity: only the first 5 hex characters of the SHA-1 hash leave the browser, padded so the answer’s size gives nothing away.'],
+              ['A strict Content Security Policy', 'Pages may connect only to the site, Have I Been Pwned and the analytics. The build fails on an inline script the policy would block.'],
+              ['No UI framework', 'Astro renders static HTML and plain TypeScript makes it interactive. The rules logic is framework-free and unit-tested.']
+            ], '260px')
+          ]),
+          sec('03', 'the health check', 'How long a password would take to guess, online and from a leaked database, and whether it has leaked.', '', [
+            part('Figure', { host: 'pass.azamatos.com/health', hasHost: true, maxw: '100%', img: '/_blob/1be319f0dd744dfde2936ce115fa52f6', alt: 'pass health page: a typed password rated Very strong, about 3 billion years to guess online, with the leak check turned off', caption: 'The strength estimate runs zxcvbn-ts in a Web Worker. With the leak check off, nothing is sent at all.' })
+          ]),
+          sec('04', 'measured', 'Small enough to feel instant on a phone.', '', [
+            table('Measured', ['what', 'result'], 'minmax(220px, 1.2fr) minmax(200px, 1fr)', '480px', [
+              ['JavaScript on a site’s page', '13.5 kB of 14 kB'],
+              ['JavaScript on /health', '10.8 kB of 11.5 kB'],
+              ['Lighthouse on a phone', 'performance 99–100, the rest 100'],
+              ['Layout shift while a page loads', '0'],
+              ['Switching pages, 200 ms network delay', 'on screen 15–70 ms after the click'],
+              ['Tests', '89 unit, 47 Playwright in 3 browsers']
+            ], 'gzip sizes, measured locally; the word list and the strength worker load only when first needed.')
+          ])
+        ],
+        stack: [
+          st('site', ['Astro|7', 'TypeScript', 'Astro client router', 'Astro sitemap'], 'Static HTML for every site’s page, with plain TypeScript for the generator and the check.'),
+          st('security', ['Web Crypto', 'zxcvbn-ts', 'Web Worker', 'Have I Been Pwned', 'strict CSP'], 'The password never leaves the browser; the strength worker loads on the first check.'),
+          st('build', ['Satori', 'resvg', 'Cloudflare'], 'A share image is made for every page at build time.'),
+          st('quality', ['Vitest', 'Playwright', 'axe', 'Lighthouse CI', 'GitHub Actions'], 'Tests make 1,000 passwords per site and check each against its rules; CI also runs once a month.')
+        ],
+        logTitle: 'what shipped',
+        log: log([['generator', 'a password each site’s form accepts'], ['passphrases', 'for things you type by hand'], ['health', 'time to guess, online and offline'], ['leak check', '5 characters of the hash, or nothing'], ['themes', 'system, light and dark, axe in both']], -1),
+        rulesTitle: 'rules it keeps',
+        rules: ['No backend and no account: the list of copied passwords lives in the open tab and is gone on reload.', 'Every site rule has a source and the month it was checked.', 'The leak check can be turned off, and then nothing is sent.'],
+        actions: [{ label: 'Open pass.azamatos.com', href: 'https://pass.azamatos.com', primary: true }]
+      }
+    };
+
+    // ---------- home ----------
+    var activeId = this.state.active;
+    var rows = P.map(function (p, i) {
+      var on = p.id === activeId, isOpen = self.state.open === p.id;
+      return Object.assign({}, p, {
+        img: p.phoneImg,
+        status: p.live ? 'live' : 'building', statusColor: p.live ? MINT : AMBER, dotClass: p.live ? '' : 'dot-building',
+        nameColor: on ? '#ffffff' : '#a6a6a6', cursor: on ? 1 : 0, bg: on ? 'rgba(255, 255, 255, 0.06)' : 'transparent', pressed: on ? 'true' : 'false',
+        printClass: 'print d' + (i + 1),
+        pick: function () { self.pick(p.id); },
+        open: function (e) { prevent(e); self.go(p.id); },
+        isOpen: isOpen, expanded: isOpen ? 'true' : 'false', rot: isOpen ? '180deg' : '0deg',
+        phoneBg: isOpen ? 'rgba(255,255,255,.05)' : 'transparent', phoneName: isOpen ? '#ffffff' : '#a6a6a6',
+        toggle: function () { self.setState({ open: isOpen ? '' : p.id, tick: self.state.tick + 1 }); }
+      });
+    });
+    var a = P.filter(function (p) { return p.id === activeId; })[0] || P[0];
+    var first = this.state.tick === 0, odd = this.state.tick % 2 === 1;
+    var active = Object.assign({}, a, {
+      status: a.live ? 'live' : 'in development', statusColor: a.live ? MINT : AMBER, dotClass: a.live ? '' : 'dot-building',
+      hasSteps: a.steps.length > 0,
+      open: function (e) { prevent(e); self.go(a.id); }
+    });
+
+    // ---------- project page ----------
+    var isProject = view !== 'home' && !!CASE[view];
+    var pj = { id: '', accClass: '', name: '', meta: [], hero: {}, sections: [], stack: [], log: [], rules: [], actions: [], next: { go: function () {} } };
+    var numbers = [];
+    if (isProject) {
+      var base = P.filter(function (p) { return p.id === view; })[0];
+      var c = CASE[view];
+      var idx = P.indexOf(base), nx = P[(idx + 1) % P.length];
+      var e = 1 - Math.pow(1 - this.state.t, 3);
+      numbers = c.numbers.map(function (n) {
+        var shown = n.text ? n.text : (n.pre || '') + Math.round(n.to * e).toLocaleString('en-US') + (n.post || '');
+        return { shown: shown, label: n.label };
+      });
+      pj = Object.assign({}, c, {
+        meta: c.meta.map(function (m) { return Object.assign({ hasV: !!m.v }, m); }),
+        id: base.id, name: base.name, accClass: 'acc-' + base.id,
+        statusColor: base.live ? 'var(--mint)' : 'var(--amber)', statusBorder: tint(base.live ? 'var(--mint)' : 'var(--amber)', 40), dotClass: base.live ? '' : 'dot-building',
+        stackN: ('0' + (c.sections.length + 1)).slice(-2), logN: ('0' + (c.sections.length + 2)).slice(-2),
+        actions: c.actions.map(function (x) { return { label: x.label, href: x.href, bg: x.primary ? 'var(--btn-bg)' : 'var(--chip)', fg: x.primary ? 'var(--btn-fg)' : 'var(--fg)', border: x.primary ? 'var(--btn-bg)' : 'var(--line)' }; }),
+        next: { id: nx.id, arrow: nx.arrow, headline: nx.headline, go: function (ev) { prevent(ev); self.go(nx.id); } }
+      });
+    }
+
+    // ---------- palette ----------
+    var close = function () { self.setState({ palette: false, q: '', sel: 0 }); };
+    var setTheme = function (t) { self.setState({ theme: t }); };
+    var all = [
+      { group: 'go', verb: 'ls', arg: 'projects', desc: 'all four projects', href: '#projects', go: ['home', 'projects'] },
+      { group: 'go', verb: 'cd', arg: 'visaproof', desc: 'visa-friendly developer jobs · in development', href: '#site-top', go: ['visaproof'] },
+      { group: 'go', verb: 'cd', arg: 'yeral', desc: 'booking for any business · in development', href: '#site-top', go: ['yeral'] },
+      { group: 'go', verb: 'cd', arg: 'rebuffer', desc: 'a video player on a bad network · live', href: '#site-top', go: ['rebuffer'] },
+      { group: 'go', verb: 'cd', arg: 'pass', desc: 'passwords that pass real rules · live', href: '#site-top', go: ['pass'] },
+      { group: 'go', verb: 'cd', arg: '~', desc: 'back to the top of the home page', href: '#site-top', go: ['home'] },
+      { group: 'do', verb: 'cat', arg: 'resume.pdf', desc: 'download my resume, 2 pages', href: '#resume' },
+      { group: 'do', verb: 'mail', arg: 'hi@azamatos.com', desc: this.state.copied ? 'copied' : 'copy the address', href: '#', copy: true },
+      { group: 'set', verb: 'theme', arg: 'light', desc: themeName === 'light' ? 'on now' : 'a light page', href: '#', theme: 'light' },
+      { group: 'set', verb: 'theme', arg: 'dark', desc: themeName === 'dark' ? 'on now' : 'a dark page', href: '#', theme: 'dark' },
+      { group: 'set', verb: 'theme', arg: 'system', desc: 'follow this device', href: '#', theme: 'system' },
+      { group: 'open', verb: 'open', arg: 'github', desc: 'github.com/azamatos', href: 'https://github.com/azamatos' },
+      { group: 'open', verb: 'open', arg: 'linkedin', desc: 'in/igwt', href: 'https://linkedin.com/in/igwt' },
+      { group: 'open', verb: 'open', arg: 'telegram', desc: '@eldzhernone', href: 'https://t.me/eldzhernone' }
+    ];
+    var q = this.state.q.trim().toLowerCase();
+    var list = all.filter(function (it) { return !q || (it.verb + ' ' + it.arg + ' ' + it.desc).toLowerCase().indexOf(q) !== -1; });
+    var sel = Math.min(this.state.sel, Math.max(0, list.length - 1));
+    function runItem(it, ev) {
+      if (it.copy || it.theme || it.go) prevent(ev);
+      if (it.copy) { self.doCopy(); return; }
+      if (it.theme) { setTheme(it.theme); return; }
+      if (it.go) { self.go(it.go[0], it.go[1]); return; }
+      close();
+    }
+    var groups = ['go', 'do', 'set', 'open'].map(function (name) {
+      return {
+        name: name,
+        items: list.filter(function (it) { return it.group === name; }).map(function (it) {
+          var k = list.indexOf(it), on = k === sel;
+          return Object.assign({}, it, {
+            bg: on ? 'rgba(255, 255, 255, 0.07)' : 'transparent', current: on ? 'true' : 'false',
+            hint: on ? (it.copy && self.state.copied ? '✓' : '↵') : '', hintColor: it.copy && self.state.copied ? MINT : '#a6a6a6',
+            hover: function () { if (self.state.sel !== k) self.setState({ sel: k }); },
+            run: function (ev) { runItem(it, ev); }
+          });
+        })
+      };
+    }).filter(function (g) { return g.items.length > 0; });
+
+    var themes = [
+      { id: 'system', label: 'system', icon: '◐' },
+      { id: 'dark', label: 'dark', icon: '☾' },
+      { id: 'light', label: 'light', icon: '☀' }
+    ].map(function (t) {
+      var on = self.state.theme === t.id;
+      return { label: t.label, icon: t.icon, pressed: on ? 'true' : 'false', bg: on ? 'var(--sel)' : 'transparent', color: on ? 'var(--fg)' : 'var(--fg2)', pick: function () { setTheme(t.id); } };
+    });
+
+    return {
+      themeClass: 't-' + themeName,
+      isHome: !isProject, isProject: isProject, pj: pj, numbers: numbers,
+      goHome: function (ev) { prevent(ev); self.go('home'); },
+      goProjects: function (ev) { prevent(ev); self.go('home', 'projects'); },
+      rows: rows, active: active,
+      catClass: 'type ' + a.n + ' ' + (first ? 'type-first' : (odd ? 'type-b' : 'type-a')),
+      revealClass: first ? 'reveal-first' : (odd ? 'reveal-b' : 'reveal-a'),
+      openClass: odd ? 'open-b' : 'open-a',
+      copied: this.state.copied, notCopied: !this.state.copied,
+      copyColor: this.state.copied ? 'var(--mint)' : 'var(--fg2)',
+      copyLabel: this.state.copied ? 'Email address copied' : 'Copy email address',
+      copy: function () { self.doCopy(); },
+      themes: themes,
+      paletteOpen: paletteOpen, paletteAttr: paletteOpen ? 'true' : 'false',
+      openPalette: function () { self.setState({ palette: true }); },
+      closePalette: close,
+      q: this.state.q, empty: list.length === 0, groups: groups,
+      onQuery: function (ev) { self.setState({ q: ev.target.value, sel: 0 }); },
+      onKey: function (ev) {
+        if (ev.key === 'ArrowDown') { ev.preventDefault(); self.setState({ sel: Math.min(list.length - 1, sel + 1) }); }
+        else if (ev.key === 'ArrowUp') { ev.preventDefault(); self.setState({ sel: Math.max(0, sel - 1) }); }
+        else if (ev.key === 'Enter') { ev.preventDefault(); if (list[sel]) runItem(list[sel]); }
+        else if (ev.key === 'Escape') { close(); }
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>

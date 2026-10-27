@@ -1,0 +1,1892 @@
+{
+  "$comment": "Content for the home page projects terminal, the four project pages and the command palette. Exported from the Chosen design on 27 Oct 2026. Image paths are relative to docs/design/; /hero.svg is the existing public/hero.svg.",
+  "projectsIntro": {
+    "title": "Projects",
+    "subtitle": "Built and run by me: two live, two in development.",
+    "hint": "pick a row to read its README"
+  },
+  "projects": [
+    {
+      "id": "visaproof",
+      "name": "Visaproof",
+      "accent": {
+        "dark": "#76beff",
+        "light": "#0863a9"
+      },
+      "status": "in-development",
+      "list": {
+        "dir": "visaproof/",
+        "mode": "drwxr-x---",
+        "commits": 56,
+        "stack": "nuxt · postgres · claude · node"
+      },
+      "readme": {
+        "kind": "job finder",
+        "host": "visaproof.azamatos.com",
+        "isDesign": true,
+        "image": "assets/visaproof-search-full.webp",
+        "phoneImage": "assets/visaproof-search.webp",
+        "alt": "Visaproof search design: roles grouped by visa answer, with filters for visa, relocation, language and country",
+        "panImage": true,
+        "headline": "Developer jobs in Europe, with the visa answer first.",
+        "description": "It reads open roles straight from companies' own job boards and answers what a relocating developer asks first: will they sponsor a visa, and will they help me move. Every answer quotes the posting or an official sponsor register.",
+        "short": "Reads open roles from companies’ own job boards. Every visa answer quotes the posting or an official sponsor register.",
+        "progress": {
+          "steps": [
+            "pipeline",
+            "evidence",
+            "design",
+            "website",
+            "launch"
+          ],
+          "current": 4
+        },
+        "tech": [
+          "Nuxt 4",
+          "Vue 3.5",
+          "Tailwind CSS 4",
+          "Postgres 18",
+          "Claude",
+          "DuckDB",
+          "Docker"
+        ],
+        "stats": [
+          {
+            "value": "15,342",
+            "label": "open roles, read from companies’ own boards",
+            "short": "open roles"
+          },
+          {
+            "value": "2,553",
+            "label": "companies across 31 countries",
+            "short": "companies"
+          },
+          {
+            "value": "100%",
+            "label": "precise on “sponsors”, against 33% for keyword rules",
+            "short": "precise on “sponsors”"
+          }
+        ],
+        "secondaryLink": {
+          "label": "Source on GitHub",
+          "href": "https://github.com/azamatos/visaproof"
+        }
+      },
+      "page": {
+        "path": "/projects/visaproof",
+        "statusLabel": "in development · the site is up as a preview, launch next",
+        "tagline": {
+          "strong": "Developer jobs in Europe, with the visa answer first,",
+          "rest": "and the evidence for every answer."
+        },
+        "meta": [
+          {
+            "label": "role",
+            "text": "Everything, alone: the idea, the pipeline, the evaluation, the design and the site"
+          },
+          {
+            "label": "stack",
+            "text": "Nuxt · Vue · Postgres · Claude · Node"
+          },
+          {
+            "label": "links",
+            "links": [
+              {
+                "label": "Source on GitHub",
+                "href": "https://github.com/azamatos/visaproof"
+              },
+              {
+                "label": "visaproof.azamatos.com",
+                "href": "https://visaproof.azamatos.com"
+              }
+            ]
+          }
+        ],
+        "hero": {
+          "host": "visaproof.azamatos.com",
+          "isDesign": true,
+          "image": "assets/visaproof-search.webp",
+          "alt": "Visaproof search design: developer jobs in Europe grouped by visa answer, with filters for visa, relocation, language and country",
+          "phoneImage": "assets/visaproof-job-phone.webp",
+          "phoneAlt": "Visaproof job page on a phone: Sponsors visa, Helps you move, English only, and the pay"
+        },
+        "numbers": [
+          {
+            "value": 15342,
+            "label": "open software roles in Europe, read from companies’ own boards"
+          },
+          {
+            "value": 2553,
+            "label": "companies hiring engineers, in 31 countries"
+          },
+          {
+            "value": 16098,
+            "label": "job boards found on 8 board types, almost all through Common Crawl"
+          },
+          {
+            "value": 250,
+            "prefix": "~",
+            "label": "new roles a day"
+          }
+        ],
+        "numbersNote": "From the first full sweep of every board Common Crawl knows, in the EU, EEA, UK and Switzerland.",
+        "sections": [
+          {
+            "number": "01",
+            "title": "the problem",
+            "lead": "A developer who needs a visa opens fifty postings and searches each one for “visa”. Most never say.",
+            "text": "Only 22% of open roles mention visas, relocation, permits or the right to work at all. About 2.6 in 100 clearly offer sponsorship, and three times as many refuse it. So for most roles the answer can’t come from the posting: it has to come from the law and the sponsor registers.",
+            "parts": [
+              {
+                "kind": "waffle",
+                "label": "100 squares, one per 1% of open roles: 3 offer sponsorship, 8 refuse it, 11 mention visas or relocation without a clear answer, 78 say nothing",
+                "note": "One square = 1% of open roles",
+                "legend": [
+                  {
+                    "swatch": "var(--acc)",
+                    "strong": "2.6%",
+                    "text": "offer visa sponsorship, about 350 roles"
+                  },
+                  {
+                    "swatch": "var(--acc2)",
+                    "strong": "8%",
+                    "text": "refuse it"
+                  },
+                  {
+                    "swatch": "#5c5c5c",
+                    "strong": "11%",
+                    "text": "mention visas or relocation, no clear answer"
+                  },
+                  {
+                    "swatch": "#1f1f1f",
+                    "strong": "78%",
+                    "text": "say nothing"
+                  }
+                ],
+                "squares": {
+                  "offers": 3,
+                  "refuses": 8,
+                  "unclear": 11,
+                  "silent": 78
+                }
+              }
+            ]
+          },
+          {
+            "number": "02",
+            "title": "how it works",
+            "lead": "Read every company’s own job board, keep the engineering roles in Europe, and check each one against the law.",
+            "parts": [
+              {
+                "kind": "flow",
+                "items": [
+                  {
+                    "tag": "sources",
+                    "title": "Company job boards",
+                    "body": "Ashby, Greenhouse, Lever, SmartRecruiters, Personio, Recruitee, Workable, Workday. One request per board where the API allows.",
+                    "highlight": false
+                  },
+                  {
+                    "tag": "every 6 hours",
+                    "title": "Pipeline",
+                    "body": "Keeps software roles in the EU, EEA, UK and Switzerland; marks each new, changed or closed.",
+                    "highlight": false
+                  },
+                  {
+                    "tag": "postgres",
+                    "title": "Roles and evidence",
+                    "body": "Every fact stored with its quote or register entry, and when it was checked.",
+                    "highlight": false
+                  },
+                  {
+                    "tag": "preview",
+                    "title": "Website",
+                    "body": "Search with the visa answer first, job, company and country pages, the method and its accuracy.",
+                    "highlight": true
+                  }
+                ]
+              },
+              {
+                "kind": "feeds",
+                "items": [
+                  {
+                    "when": "weekly",
+                    "title": "Discovery",
+                    "body": "Common Crawl’s index finds new company boards."
+                  },
+                  {
+                    "when": "daily",
+                    "title": "Sponsor registers",
+                    "body": "The Dutch IND (13,024 sponsors) and the UK register (122,353)."
+                  },
+                  {
+                    "when": "nightly",
+                    "title": "Language model",
+                    "body": "Reads postings that mention visas and returns facts with exact quotes."
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "number": "03",
+            "title": "the answer",
+            "lead": "Yes or no isn’t honest. The visa answer has five levels, and each shows where it came from.",
+            "parts": [
+              {
+                "kind": "states",
+                "img": "assets/visaproof-job.webp",
+                "alt": "A job page design: the visa, moving, language and pay answers, then the quote from the posting and the sponsor-register check behind them",
+                "caption": "The job page: every answer with its quote, its source and when it was checked.",
+                "items": [
+                  {
+                    "label": "Sponsors visa",
+                    "when": "The posting says it sponsors visas for this role.",
+                    "evidence": "the sentence",
+                    "bg": "var(--acc)",
+                    "fg": "var(--on-acc)",
+                    "icon": "var(--on-acc)",
+                    "border": "var(--acc)",
+                    "bs": "solid",
+                    "r": "999px"
+                  },
+                  {
+                    "label": "May sponsor",
+                    "when": "The posting hedges: “for certain roles”, “case by case”.",
+                    "evidence": "the sentence",
+                    "bg": "color-mix(in srgb, var(--acc) 12%, transparent)",
+                    "fg": "var(--acc)",
+                    "icon": "var(--acc)",
+                    "border": "color-mix(in srgb, var(--acc) 45%, transparent)",
+                    "bs": "solid",
+                    "r": "999px"
+                  },
+                  {
+                    "label": "Can sponsor",
+                    "when": "The posting doesn’t refuse, and the law lets this employer hire on a visa: a registered sponsor, or a salary above the Blue Card line.",
+                    "evidence": "the register entry or the salary rule",
+                    "bg": "transparent",
+                    "fg": "var(--fg)",
+                    "icon": "var(--acc)",
+                    "border": "color-mix(in srgb, var(--acc) 45%, transparent)",
+                    "bs": "solid",
+                    "r": "4px"
+                  },
+                  {
+                    "label": "Visa unknown",
+                    "when": "The posting says nothing, and no register or salary check applies.",
+                    "evidence": "a short note on the country’s rules",
+                    "bg": "transparent",
+                    "fg": "var(--fg2)",
+                    "icon": "var(--fg2)",
+                    "border": "var(--line)",
+                    "bs": "dashed",
+                    "r": "999px"
+                  },
+                  {
+                    "label": "Won’t sponsor",
+                    "when": "The posting refuses: “visa sponsorship is not available”.",
+                    "evidence": "the sentence",
+                    "bg": "color-mix(in srgb, var(--acc2) 12%, transparent)",
+                    "fg": "var(--acc2)",
+                    "icon": "var(--acc2)",
+                    "border": "color-mix(in srgb, var(--acc2) 45%, transparent)",
+                    "bs": "solid",
+                    "r": "999px"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "number": "04",
+            "title": "measured",
+            "lead": "Keyword rules were wrong two times in three. So they never show an answer; a language model does, checked against 200 postings labelled by hand.",
+            "parts": [
+              {
+                "kind": "bars",
+                "title": "“offers visa sponsorship”, on the labelled set",
+                "text": "Precision: of the roles marked “offers”, how many really offer. Recall: of the roles that really offer, how many were found. The rules now only pick which postings the model reads: the 22% that mention visas or relocation. Every quote it returns must be an exact substring of the posting, or it’s dropped.",
+                "groups": [
+                  {
+                    "who": "Keyword rules",
+                    "rows": [
+                      {
+                        "metric": "precision",
+                        "value": "33%",
+                        "width": "33%",
+                        "color": "var(--acc2)"
+                      },
+                      {
+                        "metric": "recall",
+                        "value": "90%",
+                        "width": "90%",
+                        "color": "#5c5c5c"
+                      }
+                    ]
+                  },
+                  {
+                    "who": "Language model (Claude)",
+                    "rows": [
+                      {
+                        "metric": "precision",
+                        "value": "100%",
+                        "width": "100%",
+                        "color": "var(--acc)"
+                      },
+                      {
+                        "metric": "recall",
+                        "value": "100%",
+                        "width": "100%",
+                        "color": "var(--acc)"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "number": "05",
+            "title": "what the first sweep broke",
+            "parts": [
+              {
+                "kind": "cards",
+                "min": "320px",
+                "items": [
+                  {
+                    "title": "255 boards counted twice",
+                    "body": "Case-insensitive slugs and boards served on two domains held 1,050 duplicate roles. One migration merged them."
+                  },
+                  {
+                    "title": "Every EU-hosted Greenhouse board failed",
+                    "body": "All 403 of them: the EU API host doesn’t exist. The main API serves them."
+                  },
+                  {
+                    "title": "Rate limits from Workable and Recruitee",
+                    "body": "Each Recruitee company has its own subdomain, so requests now queue per site, not per host."
+                  },
+                  {
+                    "title": "850 roles “changed” on every run",
+                    "body": "Workable lists a job once per location under one id. Now it’s one posting with all its locations."
+                  }
+                ]
+              },
+              {
+                "kind": "note",
+                "text": "✓ after the fixes, 8 of 2,915 boards failed in the next run, all on the boards’ side"
+              }
+            ]
+          }
+        ],
+        "builtWith": [
+          {
+            "group": "website",
+            "items": [
+              {
+                "name": "Nuxt",
+                "version": "4"
+              },
+              {
+                "name": "Vue",
+                "version": "3.5"
+              },
+              {
+                "name": "TypeScript"
+              },
+              {
+                "name": "Tailwind CSS",
+                "version": "4"
+              },
+              {
+                "name": "Reka UI"
+              }
+            ],
+            "note": "Pages render on the server, and the filters are a plain form, so the search lives in the URL. Own components, with Reka UI for the hard widgets like the phone filter drawer."
+          },
+          {
+            "group": "server and data",
+            "items": [
+              {
+                "name": "Nitro server routes"
+              },
+              {
+                "name": "Postgres",
+                "version": "18"
+              },
+              {
+                "name": "postgres.js"
+              },
+              {
+                "name": "plain SQL migrations"
+              },
+              {
+                "name": "LRU cache"
+              }
+            ],
+            "note": "The site reads Postgres as a read-only user on the same server; answers are cached for 5 minutes, because the data changes every 6 hours at most."
+          },
+          {
+            "group": "pipeline and AI",
+            "items": [
+              {
+                "name": "Node",
+                "version": "22"
+              },
+              {
+                "name": "Claude"
+              },
+              {
+                "name": "DuckDB"
+              },
+              {
+                "name": "Common Crawl"
+              },
+              {
+                "name": "IND and UK registers"
+              }
+            ],
+            "note": "Node runs the TypeScript directly, with no build step. Claude reads the postings that mention visas and must quote them exactly."
+          },
+          {
+            "group": "running it",
+            "items": [
+              {
+                "name": "Docker Compose"
+              },
+              {
+                "name": "Caddy"
+              },
+              {
+                "name": "Cloudflare"
+              },
+              {
+                "name": "systemd timers"
+              },
+              {
+                "name": "Telegram alerts"
+              }
+            ],
+            "note": "On my own server: a missed run starts at boot, and a broken run sends a message."
+          },
+          {
+            "group": "quality",
+            "items": [
+              {
+                "name": "Vitest"
+              },
+              {
+                "name": "Playwright"
+              },
+              {
+                "name": "axe"
+              },
+              {
+                "name": "ESLint strict"
+              },
+              {
+                "name": "GitHub Actions"
+              }
+            ],
+            "note": "Precision has to stay at 95% or more on “offers” before a prompt or model change ships."
+          }
+        ],
+        "log": {
+          "title": "git log",
+          "items": [
+            {
+              "label": "pipeline",
+              "note": "reads the boards every 6 hours, alerts in Telegram",
+              "state": "done"
+            },
+            {
+              "label": "evidence",
+              "note": "labelled set, scorer, extractor, sponsor registers",
+              "state": "done"
+            },
+            {
+              "label": "design",
+              "note": "six screens on phone and desktop, with every state",
+              "state": "done"
+            },
+            {
+              "label": "website",
+              "note": "built straight from the design, up as a preview",
+              "state": "done"
+            },
+            {
+              "label": "launch",
+              "note": "shared where relocating developers look",
+              "state": "current"
+            }
+          ]
+        },
+        "aside": {
+          "title": "rules it keeps",
+          "items": [
+            "Only official public feeds: company job-board APIs, Common Crawl’s index, government registers.",
+            "Doesn’t republish postings: short quotes and facts, then a link to apply on the original.",
+            "“Unknown” is a valid answer. Sponsorship is never guessed from a company’s size, reputation or another posting."
+          ]
+        },
+        "actions": [
+          {
+            "label": "Source on GitHub",
+            "href": "https://github.com/azamatos/visaproof",
+            "primary": true
+          },
+          {
+            "label": "Open the preview",
+            "href": "https://visaproof.azamatos.com",
+            "primary": false
+          }
+        ],
+        "next": "yeral"
+      }
+    },
+    {
+      "id": "yeral",
+      "name": "Ýeral",
+      "accent": {
+        "dark": "#9a85ff",
+        "light": "#5a3fe0"
+      },
+      "status": "in-development",
+      "list": {
+        "dir": "yeral/",
+        "mode": "drwxr-x---",
+        "commits": 251,
+        "stack": "react · tanstack · hono · postgres"
+      },
+      "readme": {
+        "kind": "booking platform",
+        "host": "business.yeral.app",
+        "isDesign": true,
+        "image": "assets/yeral-calendar.webp",
+        "phoneImage": "assets/yeral-calendar.webp",
+        "alt": "Ýeral business workspace design: the team’s day calendar with bookings and requests",
+        "panImage": false,
+        "headline": "Booking for any business that sells its time.",
+        "description": "Clients book a chair, a table or a class without calling. The business gets a free workspace for its calendar, requests, clients and team. One monorepo holds the marketplace, the workspace, the CMS and the API.",
+        "short": "Clients book without calling; the business runs its calendar, requests, clients and team.",
+        "progress": {
+          "steps": [
+            "product book",
+            "api",
+            "design system",
+            "business app",
+            "client site",
+            "launch"
+          ],
+          "current": 4
+        },
+        "tech": [
+          "React 19",
+          "TanStack Start",
+          "Hono",
+          "Drizzle",
+          "Postgres 18",
+          "Tailwind CSS 4",
+          "Storybook"
+        ],
+        "stats": [
+          {
+            "value": "125",
+            "label": "product questions answered before the code",
+            "short": "product questions"
+          },
+          {
+            "value": "79",
+            "label": "UI components, each with Storybook stories",
+            "short": "UI components"
+          },
+          {
+            "value": "1,000+",
+            "label": "unit, API and component tests",
+            "short": "tests"
+          }
+        ],
+        "secondaryLink": {
+          "label": "Open the design system",
+          "href": "https://storybook.yeral.app"
+        }
+      },
+      "page": {
+        "path": "/projects/yeral",
+        "statusLabel": "in development · the business app runs on test data",
+        "tagline": {
+          "strong": "Booking for any business that sells its time,",
+          "rest": "from a barber’s chair to a restaurant table. “Ýer al” is Turkmen for “take a place”."
+        },
+        "meta": [
+          {
+            "label": "role",
+            "text": "Owner and engineer: the product book, the architecture, the API and both apps"
+          },
+          {
+            "label": "stack",
+            "text": "React · TanStack · Hono · Postgres"
+          },
+          {
+            "label": "links",
+            "links": [
+              {
+                "label": "yeral.app",
+                "href": "https://yeral.app"
+              },
+              {
+                "label": "Design system",
+                "href": "https://storybook.yeral.app"
+              },
+              {
+                "label": "Source on GitHub",
+                "href": "https://github.com/azamatos/yeral"
+              }
+            ]
+          }
+        ],
+        "hero": {
+          "host": "business.yeral.app",
+          "isDesign": true,
+          "image": "assets/yeral-calendar.webp",
+          "alt": "Ýeral business workspace design: the day calendar with each specialist’s bookings and requests",
+          "phoneImage": "assets/yeral-phone-calendar.webp",
+          "phoneAlt": "Ýeral business calendar on a phone: one specialist’s day with confirmed visits, a pending request and a break"
+        },
+        "numbers": [
+          {
+            "value": 125,
+            "label": "product questions answered in a product book before the code"
+          },
+          {
+            "value": 79,
+            "label": "UI components in Storybook, each with stories"
+          },
+          {
+            "value": 1000,
+            "suffix": "+",
+            "label": "unit, API and component tests"
+          },
+          {
+            "value": 28,
+            "label": "architecture decisions, each written down"
+          }
+        ],
+        "numbersNote": "Counted in the repository today. Launch market: Turkmenistan, Ashgabat first.",
+        "sections": [
+          {
+            "number": "01",
+            "title": "the idea",
+            "lead": "A barber, a dentist or a café takes bookings by phone. Ýeral lets clients book a place without calling, and gives the business a free workspace to run its day.",
+            "text": "Every booking is a place: a chair, a table, a mat, a court. The category decides how a business is found and booked: by appointment, by table or by class. It launches in Turkmenistan first, in Turkmen, Russian and English, with prices in manats.",
+            "parts": [
+              {
+                "kind": "gallery",
+                "items": [
+                  {
+                    "host": "yeral.app",
+                    "img": "assets/yeral-client-home.webp",
+                    "alt": "Ýeral client site design: the home page with a search for a service near you and photos of places",
+                    "caption": "The client site: find a place near you and book it."
+                  },
+                  {
+                    "host": "yeral.app/glow-studio",
+                    "img": "assets/yeral-business-page.webp",
+                    "alt": "Ýeral business page design for Glow Studio: photos, rating, services and the next free time",
+                    "caption": "A business page: photos, services and the next free time."
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "number": "02",
+            "title": "one monorepo, five sites",
+            "lead": "Four apps and an API share one contract, so a change in the booking rules reaches every screen at once.",
+            "parts": [
+              {
+                "kind": "cards",
+                "min": "260px",
+                "items": [
+                  {
+                    "tag": "yeral.app",
+                    "title": "The marketplace",
+                    "body": "Home, search with a map, category and business pages, booking for an appointment, a table or a class, and the client’s account."
+                  },
+                  {
+                    "tag": "business.yeral.app",
+                    "title": "The business workspace",
+                    "body": "A calendar for every specialist, requests to confirm or decline, clients, services, the team and settings."
+                  },
+                  {
+                    "tag": "cms.yeral.app",
+                    "title": "The CMS",
+                    "body": "For the Ýeral team: businesses, users, complaints and the category catalogue in three languages."
+                  },
+                  {
+                    "tag": "api.yeral.app",
+                    "title": "The API",
+                    "body": "REST on Postgres for all of them, with its schema and documentation generated from one contract."
+                  },
+                  {
+                    "tag": "storybook.yeral.app",
+                    "title": "The design system",
+                    "body": "Every component with its stories; the stories run as browser tests with axe."
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "number": "03",
+            "title": "rules that never break",
+            "lead": "125 product questions were answered in a product book before the code, so every screen follows the same rules.",
+            "parts": [
+              {
+                "kind": "cards",
+                "min": "260px",
+                "items": [
+                  {
+                    "title": "The business confirms",
+                    "body": "By default a client never sees “booked” until the business confirms; until then the request is “sent”. A business can switch on instant confirmation."
+                  },
+                  {
+                    "title": "Five statuses, one meaning",
+                    "body": "Pending, Confirmed, Completed, Cancelled and No-show mean the same on the web, in the workspace and in the CMS."
+                  },
+                  {
+                    "title": "A phone booking is not a new status",
+                    "body": "When the business enters a booking by phone, it’s Confirmed with a phone icon."
+                  },
+                  {
+                    "title": "No city names in the copy",
+                    "body": "Everything is relative to where you are: “near me”, not a city."
+                  },
+                  {
+                    "title": "Pay at the place",
+                    "body": "No online payment yet; a deposit row is already reserved in every summary."
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "number": "04",
+            "title": "the business day",
+            "parts": [
+              {
+                "kind": "figure",
+                "host": "business.yeral.app/bookings",
+                "hasHost": true,
+                "maxw": "100%",
+                "img": "assets/yeral-bookings.webp",
+                "alt": "Ýeral bookings design: a table of the business’s bookings with client, service, time, source and status",
+                "caption": "Bookings in the business workspace: every request and visit with its status, in one list."
+              }
+            ]
+          }
+        ],
+        "builtWith": [
+          {
+            "group": "frontend",
+            "items": [
+              {
+                "name": "React",
+                "version": "19"
+              },
+              {
+                "name": "TanStack Start"
+              },
+              {
+                "name": "TanStack Router"
+              },
+              {
+                "name": "TanStack Query"
+              },
+              {
+                "name": "Vite",
+                "version": "8"
+              },
+              {
+                "name": "Tailwind CSS",
+                "version": "4"
+              },
+              {
+                "name": "Radix UI"
+              },
+              {
+                "name": "MapLibre GL"
+              },
+              {
+                "name": "use-intl"
+              }
+            ],
+            "note": "The client site renders on the server for search engines; the workspace is a single-page app. Turkmen, Russian and English from one set of messages."
+          },
+          {
+            "group": "backend",
+            "items": [
+              {
+                "name": "Hono",
+                "version": "4"
+              },
+              {
+                "name": "Zod",
+                "version": "4"
+              },
+              {
+                "name": "OpenAPI"
+              },
+              {
+                "name": "Drizzle ORM"
+              },
+              {
+                "name": "Postgres",
+                "version": "18"
+              }
+            ],
+            "note": "Own phone sign-in with SMS codes and sessions; live updates to the calendar over server-sent events."
+          },
+          {
+            "group": "architecture",
+            "items": [
+              {
+                "name": "Turborepo"
+              },
+              {
+                "name": "pnpm workspaces"
+              },
+              {
+                "name": "Feature-Sliced Design"
+              },
+              {
+                "name": "shared contract and SDK"
+              },
+              {
+                "name": "React Compiler"
+              }
+            ],
+            "note": "The booking engine is plain TypeScript in its own package, with no framework, so it is tested on its own."
+          },
+          {
+            "group": "running it",
+            "items": [
+              {
+                "name": "Docker Compose"
+              },
+              {
+                "name": "Caddy"
+              },
+              {
+                "name": "own server"
+              }
+            ],
+            "note": "One deployment per market: the same Docker stack moves to servers in Turkmenistan for the launch there."
+          },
+          {
+            "group": "quality",
+            "items": [
+              {
+                "name": "Vitest"
+              },
+              {
+                "name": "Storybook",
+                "version": "10"
+              },
+              {
+                "name": "axe"
+              },
+              {
+                "name": "Playwright"
+              },
+              {
+                "name": "Changesets"
+              },
+              {
+                "name": "GitHub Actions"
+              }
+            ],
+            "note": "28 architecture decisions are written down, and every pull request is reviewed before it merges."
+          }
+        ],
+        "log": {
+          "title": "git log",
+          "items": [
+            {
+              "label": "product book",
+              "note": "125 questions answered before the code",
+              "state": "done"
+            },
+            {
+              "label": "api",
+              "note": "REST on Hono and Postgres, one contract for every app",
+              "state": "done"
+            },
+            {
+              "label": "design system",
+              "note": "79 components in Storybook",
+              "state": "done"
+            },
+            {
+              "label": "business app",
+              "note": "calendar, requests, clients and team, on test data",
+              "state": "done"
+            },
+            {
+              "label": "client site",
+              "note": "search, business pages and booking, end to end",
+              "state": "current"
+            },
+            {
+              "label": "launch",
+              "note": "Ashgabat first",
+              "state": "next"
+            }
+          ]
+        },
+        "aside": {
+          "title": "how it’s run",
+          "items": [
+            "A product book first: every rule is decided and written down before a screen is built.",
+            "A library before our own code, and nothing more complicated than the product needs.",
+            "Never a secret, a key or a server address in the public repository."
+          ]
+        },
+        "actions": [
+          {
+            "label": "Open the design system",
+            "href": "https://storybook.yeral.app",
+            "primary": true
+          },
+          {
+            "label": "Source on GitHub",
+            "href": "https://github.com/azamatos/yeral",
+            "primary": false
+          }
+        ],
+        "next": "rebuffer"
+      }
+    },
+    {
+      "id": "rebuffer",
+      "name": "Rebuffer",
+      "accent": {
+        "dark": "#68edc0",
+        "light": "#0b7f5a"
+      },
+      "status": "live",
+      "list": {
+        "dir": "rebuffer/",
+        "mode": "drwxr-xr-x",
+        "commits": 138,
+        "stack": "react · hls.js · service worker"
+      },
+      "readme": {
+        "kind": "hls network lab",
+        "host": "rebuffer.azamatos.com",
+        "isDesign": false,
+        "image": "assets/rebuffer-run.webp",
+        "phoneImage": "assets/rebuffer-run.webp",
+        "alt": "A recorded Rebuffer run through a tunnel: the network drops, the player switches down, the buffer drains",
+        "panImage": false,
+        "headline": "See how a video player survives a bad network.",
+        "description": "A real hls.js player streams through a network simulated in a Service Worker. Live charts show every quality switch and stall, and a report scores the run.",
+        "short": "A real hls.js player streams through a simulated network, with live charts and a scored report.",
+        "progress": null,
+        "tech": [
+          "React 19",
+          "hls.js 1.7",
+          "Service Worker",
+          "Canvas",
+          "Zustand",
+          "Vite 8"
+        ],
+        "stats": [
+          {
+            "value": "554",
+            "label": "unit tests",
+            "short": "unit tests"
+          },
+          {
+            "value": "180",
+            "label": "Playwright checks in Chromium, Firefox and WebKit",
+            "short": "Playwright checks"
+          },
+          {
+            "value": "96.7 KB",
+            "label": "of JavaScript on Home, budget 100 KB",
+            "short": "JavaScript on Home"
+          }
+        ],
+        "secondaryLink": {
+          "label": "Open rebuffer.azamatos.com",
+          "href": "https://rebuffer.azamatos.com"
+        }
+      },
+      "page": {
+        "path": "/projects/rebuffer",
+        "statusLabel": "live · rebuffer.azamatos.com",
+        "tagline": {
+          "strong": "See how a video player survives a bad network,",
+          "rest": "in your browser, with the numbers viewers feel."
+        },
+        "meta": [
+          {
+            "label": "role",
+            "text": "Idea, design and code, from years of building HLS players and Smart TV apps"
+          },
+          {
+            "label": "stack",
+            "text": "React · hls.js · Service Worker · Canvas"
+          },
+          {
+            "label": "links",
+            "links": [
+              {
+                "label": "rebuffer.azamatos.com",
+                "href": "https://rebuffer.azamatos.com"
+              },
+              {
+                "label": "Source on GitHub",
+                "href": "https://github.com/azamatos/rebuffer"
+              }
+            ]
+          }
+        ],
+        "hero": {
+          "host": "rebuffer.azamatos.com",
+          "isDesign": false,
+          "image": "assets/rebuffer-home.webp",
+          "alt": "Rebuffer’s Run page: pick a stream, a network and a player setup, then run it",
+          "phoneImage": "assets/rebuffer-phone.webp",
+          "phoneAlt": "Rebuffer on a phone: See how a video player survives a bad network, with Try the tunnel"
+        },
+        "numbers": [
+          {
+            "value": 554,
+            "label": "unit tests for the framework-free core"
+          },
+          {
+            "value": 180,
+            "label": "Playwright checks in Chromium, Firefox and WebKit, axe on every screen"
+          },
+          {
+            "text": "3–24 ms",
+            "label": "how far downloads land behind the network curve, never ahead"
+          },
+          {
+            "text": "96.7 KB",
+            "label": "of JavaScript on Home, against a 100 KB budget"
+          }
+        ],
+        "numbersNote": "Measured locally and in CI; the repeatability job runs every week.",
+        "sections": [
+          {
+            "number": "01",
+            "title": "what it does",
+            "lead": "Pick a stream and a network, press Run, and watch a real hls.js player fight it.",
+            "text": "The bandwidth it gets, what it thinks it gets, the quality it picks, the buffer draining, every stall. Then a report with the numbers viewers feel, and what to try next.",
+            "parts": [
+              {
+                "kind": "figure",
+                "host": "rebuffer.azamatos.com/run",
+                "hasHost": true,
+                "maxw": "820px",
+                "img": "assets/rebuffer-run.webp",
+                "alt": "A recorded run through a tunnel: the network drops, the player switches down, the buffer drains and stalls",
+                "caption": "A recorded run: Try the tunnel, the network drops, hls.js switches down, the buffer drains, then the report."
+              },
+              {
+                "kind": "cards",
+                "min": "240px",
+                "items": [
+                  {
+                    "title": "Run",
+                    "body": "Any HLS stream through a simulated network, with three live charts on one time axis and an event log."
+                  },
+                  {
+                    "title": "Draw a network",
+                    "body": "A bandwidth curve with the stream’s qualities drawn over it. Seven presets, four recorded 4G journeys, or your own."
+                  },
+                  {
+                    "title": "Read the report",
+                    "body": "A score from a published QoE model, numbered notes on what happened when, and ideas to try next."
+                  },
+                  {
+                    "title": "Change one thing and compare",
+                    "body": "Run B with another player setup or network: what changed, a verdict, and the charts overlaid."
+                  },
+                  {
+                    "title": "Inspect a playlist",
+                    "body": "The ladder by codec, each segment’s bitrate against what’s declared, and findings with the spec they break."
+                  },
+                  {
+                    "title": "Tune the player",
+                    "body": "hls.js defaults, a low-memory TV preset, quality first, fast start, or one setting changed."
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "number": "02",
+            "title": "how it works",
+            "lead": "The player is the real one. The network is simulated where the player can’t tell.",
+            "parts": [
+              {
+                "kind": "flow",
+                "items": [
+                  {
+                    "tag": "react",
+                    "title": "Screens",
+                    "body": "Setup, run, report, compare and inspect.",
+                    "highlight": false
+                  },
+                  {
+                    "tag": "unmodified",
+                    "title": "hls.js",
+                    "body": "Keeps its own loader, bandwidth estimator and abandon rules.",
+                    "highlight": false
+                  },
+                  {
+                    "tag": "service worker",
+                    "title": "Network shaper",
+                    "body": "Fetches the real bytes and releases them on the curve’s schedule.",
+                    "highlight": false
+                  },
+                  {
+                    "tag": "canvas",
+                    "title": "Log, charts, report",
+                    "body": "Charts draw from the event log every frame, never through React state.",
+                    "highlight": false
+                  }
+                ]
+              },
+              {
+                "kind": "cards",
+                "min": "260px",
+                "items": [
+                  {
+                    "title": "Honest numbers",
+                    "body": "The simulation can slow a download down, never speed it up. A run says how many downloads were late because the visitor’s own network was slower."
+                  },
+                  {
+                    "title": "Repeatable",
+                    "body": "Repeat runs take their bytes from a copy saved in the browser, so they don’t depend on the visitor’s connection."
+                  },
+                  {
+                    "title": "A framework-free core",
+                    "body": "The playlist parser, network simulator, metrics and report text import no React, and the link scheduler is tested with a fake clock."
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "number": "03",
+            "title": "draw a network",
+            "lead": "A network is a curve of bandwidth over time plus a latency. Draw one with the keyboard or a pointer, or import it.",
+            "parts": [
+              {
+                "kind": "figure",
+                "host": "rebuffer.azamatos.com/networks",
+                "hasHost": true,
+                "maxw": "100%",
+                "img": "assets/rebuffer-networks.webp",
+                "alt": "Rebuffer network editor: Train through a tunnel, a bandwidth curve with the qualities of Tears of Steel drawn as dashed lines",
+                "caption": "Where the curve dips below a dashed line, that quality downloads slower than it plays. Import JSON, CSV or a HAR file."
+              }
+            ]
+          },
+          {
+            "number": "04",
+            "title": "measured",
+            "lead": "Each of the seven networks, run five times: scores within 2 points of each other, with the same stalls and switches.",
+            "parts": [
+              {
+                "kind": "table",
+                "label": "Repeatability, 7 networks × 5 runs",
+                "head": [
+                  "network",
+                  "score",
+                  "first frame",
+                  "stalls",
+                  "switches"
+                ],
+                "cols": "minmax(170px, 1.6fr) 80px 150px 70px 80px",
+                "minw": "600px",
+                "note": "Chromium, hls.js 1.7.3, a synthetic 2-minute stream with five qualities from 240p to 1080p. Rural 3G scores 0: its 11.7 s wait for the first frame costs more than its picture earns.",
+                "rows": [
+                  [
+                    "Home fibre",
+                    "89–91",
+                    "0.36–0.62 s",
+                    "0",
+                    "1"
+                  ],
+                  [
+                    "Busy café Wi-Fi",
+                    "86",
+                    "2.99–3.02 s",
+                    "0",
+                    "0"
+                  ],
+                  [
+                    "4G commute",
+                    "100",
+                    "1.71–1.73 s",
+                    "0",
+                    "3"
+                  ],
+                  [
+                    "Train through a tunnel",
+                    "37–38",
+                    "2.23–2.26 s",
+                    "1",
+                    "4"
+                  ],
+                  [
+                    "Rural 3G",
+                    "0",
+                    "11.56–11.66 s",
+                    "0",
+                    "1"
+                  ],
+                  [
+                    "Lift",
+                    "41–42",
+                    "1.59–1.69 s",
+                    "0",
+                    "0"
+                  ],
+                  [
+                    "Evening congestion",
+                    "88–89",
+                    "1.20–1.22 s",
+                    "0",
+                    "2"
+                  ]
+                ]
+              }
+            ]
+          }
+        ],
+        "builtWith": [
+          {
+            "group": "app",
+            "items": [
+              {
+                "name": "React",
+                "version": "19"
+              },
+              {
+                "name": "TanStack Router"
+              },
+              {
+                "name": "Zustand",
+                "version": "5"
+              },
+              {
+                "name": "Zod",
+                "version": "4"
+              },
+              {
+                "name": "Tailwind CSS",
+                "version": "4"
+              },
+              {
+                "name": "Vite",
+                "version": "8"
+              },
+              {
+                "name": "TypeScript",
+                "version": "6"
+              }
+            ],
+            "note": "Home is rendered at build time, so the first screen needs no JavaScript to show."
+          },
+          {
+            "group": "video",
+            "items": [
+              {
+                "name": "hls.js",
+                "version": "1.7.3"
+              },
+              {
+                "name": "Service Worker"
+              },
+              {
+                "name": "IndexedDB"
+              }
+            ],
+            "note": "hls.js runs unmodified. The Service Worker shapes every request it makes, and saved runs and their bytes stay in the browser."
+          },
+          {
+            "group": "charts",
+            "items": [
+              {
+                "name": "Canvas 2D"
+              },
+              {
+                "name": "own scales and drawing"
+              }
+            ],
+            "note": "0.1 ms per frame at the median, 1.8 ms at most, with the CPU throttled four times."
+          },
+          {
+            "group": "hosting",
+            "items": [
+              {
+                "name": "Cloudflare"
+              },
+              {
+                "name": "static files"
+              }
+            ],
+            "note": "No backend and no accounts: runs and networks stay in the browser that made them."
+          },
+          {
+            "group": "quality",
+            "items": [
+              {
+                "name": "Vitest"
+              },
+              {
+                "name": "Playwright"
+              },
+              {
+                "name": "axe"
+              },
+              {
+                "name": "size-limit"
+              },
+              {
+                "name": "Lighthouse CI"
+              },
+              {
+                "name": "GitHub Actions"
+              }
+            ],
+            "note": "CI fails on a bundle over budget or a Lighthouse score under 0.95; a repeatability job runs every preset five times each week."
+          }
+        ],
+        "log": {
+          "title": "what shipped",
+          "items": [
+            {
+              "label": "run",
+              "note": "live charts and an event log on one time axis",
+              "state": "done"
+            },
+            {
+              "label": "report",
+              "note": "a QoE score, notes and ideas to try next",
+              "state": "done"
+            },
+            {
+              "label": "networks",
+              "note": "presets, recorded 4G journeys and an editor",
+              "state": "done"
+            },
+            {
+              "label": "compare",
+              "note": "change one thing, run B, see what changed",
+              "state": "done"
+            },
+            {
+              "label": "inspect",
+              "note": "the ladder, codecs and findings for any playlist",
+              "state": "done"
+            },
+            {
+              "label": "themes",
+              "note": "system, light and dark, axe on every screen",
+              "state": "done"
+            }
+          ]
+        },
+        "aside": {
+          "title": "credits",
+          "items": [
+            "Sample film: Tears of Steel, (CC) Blender Foundation, used under CC BY 3.0, re-encoded for streaming.",
+            "Recorded networks: excerpts of the Irish 4G dataset (Raca et al., ACM MMSys 2018, CC BY 4.0).",
+            "Score: the linear QoE model from Yin et al., SIGCOMM 2015."
+          ]
+        },
+        "actions": [
+          {
+            "label": "Open rebuffer.azamatos.com",
+            "href": "https://rebuffer.azamatos.com",
+            "primary": true
+          },
+          {
+            "label": "Source on GitHub",
+            "href": "https://github.com/azamatos/rebuffer",
+            "primary": false
+          }
+        ],
+        "next": "pass"
+      }
+    },
+    {
+      "id": "pass",
+      "name": "pass",
+      "accent": {
+        "dark": "#ff6b4d",
+        "light": "#c23a1d"
+      },
+      "status": "live",
+      "list": {
+        "dir": "pass/",
+        "mode": "drwxr-xr-x",
+        "commits": 37,
+        "stack": "astro · typescript · web worker"
+      },
+      "readme": {
+        "kind": "password generator",
+        "host": "pass.azamatos.com/github",
+        "isDesign": false,
+        "image": "assets/pass-github.webp",
+        "phoneImage": "assets/pass-github.webp",
+        "alt": "pass.azamatos.com with the GitHub preset: a generated password, its strength, and GitHub’s rules",
+        "panImage": false,
+        "headline": "Passwords that pass each site’s real rules.",
+        "description": "Pick a site and get a password its sign-up form accepts, or a passphrase you can type. The strength and leak check runs in your browser, and the password never leaves it.",
+        "short": "Pick a site and get a password its sign-up form accepts. It never leaves your browser.",
+        "progress": null,
+        "tech": [
+          "Astro 7",
+          "TypeScript",
+          "Web Worker",
+          "zxcvbn-ts",
+          "Web Crypto"
+        ],
+        "stats": [
+          {
+            "value": "16",
+            "label": "site presets, each rule with its source",
+            "short": "site presets"
+          },
+          {
+            "value": "5 of 40",
+            "label": "hash characters the leak check sends",
+            "short": "hash characters sent"
+          },
+          {
+            "value": "0",
+            "label": "passwords stored, ever",
+            "short": "passwords stored"
+          }
+        ],
+        "secondaryLink": {
+          "label": "Open pass.azamatos.com",
+          "href": "https://pass.azamatos.com"
+        }
+      },
+      "page": {
+        "path": "/projects/pass",
+        "statusLabel": "live · pass.azamatos.com",
+        "tagline": {
+          "strong": "Passwords that pass a site’s real password rules,",
+          "rest": "made and checked in your browser."
+        },
+        "meta": [
+          {
+            "label": "role",
+            "text": "Idea, design and code"
+          },
+          {
+            "label": "stack",
+            "text": "Astro · TypeScript · Web Worker"
+          },
+          {
+            "label": "links",
+            "links": [
+              {
+                "label": "pass.azamatos.com",
+                "href": "https://pass.azamatos.com"
+              }
+            ]
+          }
+        ],
+        "hero": {
+          "host": "pass.azamatos.com/github",
+          "isDesign": false,
+          "image": "assets/pass-github.webp",
+          "alt": "pass.azamatos.com with the GitHub preset: a generated password that meets GitHub’s rules, its strength, and the rules",
+          "phoneImage": "assets/pass-phone.webp",
+          "phoneAlt": "pass on a phone: a GitHub password, Very strong, with Copy"
+        },
+        "numbers": [
+          {
+            "value": 16,
+            "label": "site presets, every rule with the page it was read from"
+          },
+          {
+            "text": "5 of 40",
+            "label": "characters of the password’s hash the leak check sends"
+          },
+          {
+            "text": "13.5 kB",
+            "label": "of JavaScript on a site’s page, against a 14 kB budget"
+          },
+          {
+            "value": 0,
+            "label": "passwords stored, ever"
+          }
+        ],
+        "numbersNote": "Measured locally; CI runs on every push and once a month.",
+        "sections": [
+          {
+            "number": "01",
+            "title": "what it does",
+            "lead": "Pick a site, and get a password its sign-up form accepts.",
+            "text": "The right length, the character types it requires, only the symbols it allows, no more repeats than it permits. Passphrases for things you type by hand, and a check of how long a password would take to guess and whether it has leaked.",
+            "parts": [
+              {
+                "kind": "chips",
+                "label": "Sites with their own rules",
+                "items": [
+                  "Instagram",
+                  "Google",
+                  "Apple",
+                  "Microsoft",
+                  "GitHub",
+                  "Amazon",
+                  "X (Twitter)",
+                  "LinkedIn",
+                  "Spotify",
+                  "TikTok",
+                  "PayPal",
+                  "Facebook",
+                  "Netflix",
+                  "Shopify",
+                  "Steam",
+                  "Twitch",
+                  "Any site"
+                ]
+              }
+            ]
+          },
+          {
+            "number": "02",
+            "title": "how it works",
+            "lead": "Everything runs in the browser. There is no backend and no account, and nothing is stored.",
+            "parts": [
+              {
+                "kind": "cards",
+                "min": "260px",
+                "items": [
+                  {
+                    "title": "Random the right way",
+                    "body": "Characters come from crypto.getRandomValues with rejection sampling. Whole passwords are redrawn until they meet the rules, so no password is likelier than another."
+                  },
+                  {
+                    "title": "Rules with sources",
+                    "body": "Each site’s rules come with the pages they were read from and the month they were checked. CI fails when a site’s rules are more than six months old."
+                  },
+                  {
+                    "title": "The leak check sends 5 characters",
+                    "body": "Have I Been Pwned is asked with k-anonymity: only the first 5 hex characters of the SHA-1 hash leave the browser, padded so the answer’s size gives nothing away."
+                  },
+                  {
+                    "title": "A strict Content Security Policy",
+                    "body": "Pages may connect only to the site, Have I Been Pwned and the analytics. The build fails on an inline script the policy would block."
+                  },
+                  {
+                    "title": "No UI framework",
+                    "body": "Astro renders static HTML and plain TypeScript makes it interactive. The rules logic is framework-free and unit-tested."
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "number": "03",
+            "title": "the health check",
+            "lead": "How long a password would take to guess, online and from a leaked database, and whether it has leaked.",
+            "parts": [
+              {
+                "kind": "figure",
+                "host": "pass.azamatos.com/health",
+                "hasHost": true,
+                "maxw": "100%",
+                "img": "assets/pass-health.webp",
+                "alt": "pass health page: a typed password rated Very strong, about 3 billion years to guess online, with the leak check turned off",
+                "caption": "The strength estimate runs zxcvbn-ts in a Web Worker. With the leak check off, nothing is sent at all."
+              }
+            ]
+          },
+          {
+            "number": "04",
+            "title": "measured",
+            "lead": "Small enough to feel instant on a phone.",
+            "parts": [
+              {
+                "kind": "table",
+                "label": "Measured",
+                "head": [
+                  "what",
+                  "result"
+                ],
+                "cols": "minmax(220px, 1.2fr) minmax(200px, 1fr)",
+                "minw": "480px",
+                "note": "gzip sizes, measured locally; the word list and the strength worker load only when first needed.",
+                "rows": [
+                  [
+                    "JavaScript on a site’s page",
+                    "13.5 kB of 14 kB"
+                  ],
+                  [
+                    "JavaScript on /health",
+                    "10.8 kB of 11.5 kB"
+                  ],
+                  [
+                    "Lighthouse on a phone",
+                    "performance 99–100, the rest 100"
+                  ],
+                  [
+                    "Layout shift while a page loads",
+                    "0"
+                  ],
+                  [
+                    "Switching pages, 200 ms network delay",
+                    "on screen 15–70 ms after the click"
+                  ],
+                  [
+                    "Tests",
+                    "89 unit, 47 Playwright in 3 browsers"
+                  ]
+                ]
+              }
+            ]
+          }
+        ],
+        "builtWith": [
+          {
+            "group": "site",
+            "items": [
+              {
+                "name": "Astro",
+                "version": "7"
+              },
+              {
+                "name": "TypeScript"
+              },
+              {
+                "name": "Astro client router"
+              },
+              {
+                "name": "Astro sitemap"
+              }
+            ],
+            "note": "Static HTML for every site’s page, with plain TypeScript for the generator and the check."
+          },
+          {
+            "group": "security",
+            "items": [
+              {
+                "name": "Web Crypto"
+              },
+              {
+                "name": "zxcvbn-ts"
+              },
+              {
+                "name": "Web Worker"
+              },
+              {
+                "name": "Have I Been Pwned"
+              },
+              {
+                "name": "strict CSP"
+              }
+            ],
+            "note": "The password never leaves the browser; the strength worker loads on the first check."
+          },
+          {
+            "group": "build",
+            "items": [
+              {
+                "name": "Satori"
+              },
+              {
+                "name": "resvg"
+              },
+              {
+                "name": "Cloudflare"
+              }
+            ],
+            "note": "A share image is made for every page at build time."
+          },
+          {
+            "group": "quality",
+            "items": [
+              {
+                "name": "Vitest"
+              },
+              {
+                "name": "Playwright"
+              },
+              {
+                "name": "axe"
+              },
+              {
+                "name": "Lighthouse CI"
+              },
+              {
+                "name": "GitHub Actions"
+              }
+            ],
+            "note": "Tests make 1,000 passwords per site and check each against its rules; CI also runs once a month."
+          }
+        ],
+        "log": {
+          "title": "what shipped",
+          "items": [
+            {
+              "label": "generator",
+              "note": "a password each site’s form accepts",
+              "state": "done"
+            },
+            {
+              "label": "passphrases",
+              "note": "for things you type by hand",
+              "state": "done"
+            },
+            {
+              "label": "health",
+              "note": "time to guess, online and offline",
+              "state": "done"
+            },
+            {
+              "label": "leak check",
+              "note": "5 characters of the hash, or nothing",
+              "state": "done"
+            },
+            {
+              "label": "themes",
+              "note": "system, light and dark, axe in both",
+              "state": "done"
+            }
+          ]
+        },
+        "aside": {
+          "title": "rules it keeps",
+          "items": [
+            "No backend and no account: the list of copied passwords lives in the open tab and is gone on reload.",
+            "Every site rule has a source and the month it was checked.",
+            "The leak check can be turned off, and then nothing is sent."
+          ]
+        },
+        "actions": [
+          {
+            "label": "Open pass.azamatos.com",
+            "href": "https://pass.azamatos.com",
+            "primary": true
+          }
+        ],
+        "next": "visaproof"
+      }
+    }
+  ],
+  "palette": [
+    {
+      "group": "go",
+      "verb": "ls",
+      "arg": "projects",
+      "description": "all four projects",
+      "action": "home → #projects"
+    },
+    {
+      "group": "go",
+      "verb": "cd",
+      "arg": "visaproof",
+      "description": "visa-friendly developer jobs · in development",
+      "action": "/projects/visaproof"
+    },
+    {
+      "group": "go",
+      "verb": "cd",
+      "arg": "yeral",
+      "description": "booking for any business · in development",
+      "action": "/projects/yeral"
+    },
+    {
+      "group": "go",
+      "verb": "cd",
+      "arg": "rebuffer",
+      "description": "a video player on a bad network · live",
+      "action": "/projects/rebuffer"
+    },
+    {
+      "group": "go",
+      "verb": "cd",
+      "arg": "pass",
+      "description": "passwords that pass real rules · live",
+      "action": "/projects/pass"
+    },
+    {
+      "group": "go",
+      "verb": "cd",
+      "arg": "~",
+      "description": "back to the top of the home page",
+      "action": "/"
+    },
+    {
+      "group": "do",
+      "verb": "cat",
+      "arg": "resume.pdf",
+      "description": "download my resume, 2 pages",
+      "action": "SITE.resume.url"
+    },
+    {
+      "group": "do",
+      "verb": "mail",
+      "arg": "hi@azamatos.com",
+      "description": "copy the address",
+      "action": "copy to clipboard"
+    },
+    {
+      "group": "set",
+      "verb": "theme",
+      "arg": "light",
+      "description": "a light page",
+      "action": "theme = light"
+    },
+    {
+      "group": "set",
+      "verb": "theme",
+      "arg": "dark",
+      "description": "a dark page",
+      "action": "theme = dark"
+    },
+    {
+      "group": "set",
+      "verb": "theme",
+      "arg": "system",
+      "description": "follow this device",
+      "action": "theme = system"
+    },
+    {
+      "group": "open",
+      "verb": "open",
+      "arg": "github",
+      "description": "github.com/azamatos",
+      "action": "SITE.links.github"
+    },
+    {
+      "group": "open",
+      "verb": "open",
+      "arg": "linkedin",
+      "description": "in/igwt",
+      "action": "SITE.links.linkedin"
+    },
+    {
+      "group": "open",
+      "verb": "open",
+      "arg": "telegram",
+      "description": "@eldzhernone",
+      "action": "SITE.links.telegram"
+    }
+  ]
+}
