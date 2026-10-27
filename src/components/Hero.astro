@@ -102,9 +102,21 @@ const firstRole = SITE.roles[0].split(" ");
     role.setAttribute("aria-hidden", "true");
     line.closest("h1")?.classList.add("typing");
 
-    // Non-breaking hyphens keep "full-stack" on one line while it types.
+    // Each word in its own no-wrap span, as the page renders the first role, so "full-stack" stays on one line
+    // while it types. (A non-breaking hyphen would do it too, but Geist hasn't got one, so it came from another font.)
+    const wordTemplate = role.querySelector(".word")?.cloneNode(false);
     const show = (text: string) => {
-      role.textContent = text.replaceAll("-", "‑");
+      if (!wordTemplate) {
+        role.textContent = text;
+        return;
+      }
+      role.replaceChildren(
+        ...text.split(" ").flatMap((word, i) => {
+          const span = wordTemplate.cloneNode(false);
+          span.textContent = word;
+          return i > 0 ? [" ", span] : [span];
+        }),
+      );
     };
 
     // Reserve the height of the tallest role, so the text below never jumps.
@@ -116,7 +128,7 @@ const firstRole = SITE.roles[0].split(" ");
         show(text);
         tallest = Math.max(tallest, line.getBoundingClientRect().height);
       }
-      role.textContent = current;
+      show(current);
       line.style.minHeight = `${tallest}px`;
     };
     reserveHeight();
