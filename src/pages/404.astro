@@ -12,24 +12,25 @@ import { SITE } from "@/site";
       The link may be old or mistyped. Here's the current resume, or go back to
       the <a href="/">home page</a>.
     </p>
-    <ResumeActions />
+    <ResumeActions mail />
   </section>
 </BaseLayout>
 
 <style>
   section {
     display: flex;
+    flex: 1;
     flex-direction: column;
     justify-content: center;
     gap: 24px;
     width: 100%;
-    padding: 80px var(--gutter);
+    padding: 80px var(--g);
   }
 
   .code {
     font-family: var(--font-space-mono);
     font-size: 16px;
-    color: var(--color-accent);
+    color: var(--mint);
   }
 
   h1 {
@@ -44,11 +45,11 @@ import { SITE } from "@/site";
     font-size: 18px;
     line-height: 1.5;
     letter-spacing: -0.02em;
-    color: var(--color-text-secondary);
+    color: var(--fg2);
   }
 
   .text a {
-    color: var(--color-text-primary);
+    color: var(--fg);
     text-decoration: underline;
     text-underline-offset: 3px;
   }
