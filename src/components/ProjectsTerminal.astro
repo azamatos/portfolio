@@ -3,7 +3,9 @@
 //
 // Desktop: the list, then each project's README. The script turns the rows into WAI-ARIA tabs and shows one README
 // at a time; without JavaScript the rows are links to the READMEs, which all stack under the list.
-// Phone (≤ 800px): an accordion of <details name="projects">, one open at a time, no JavaScript needed.
+// Phone (≤ 800px): an accordion of <details name="projects">, one open at a time, no JavaScript needed. Opening one
+// expands it and collapses the one that was open (0.28 s): in CSS where the browser can size to `auto`
+// (interpolate-size), with the Web Animations API elsewhere. An opened item whose row ends up off screen scrolls back.
 //
 // Motion, never with reduced motion: when the list scrolls into view the command types in, the rows print one by
 // one, then `cat <dir>README.md` types and the README fades up; every later pick types and fades again. The HTML is
@@ -368,7 +370,8 @@ const LS = "ls -la projects";
     if (id) for (const show of showers) show(id);
   };
 
-  // Phone: the <details> work without this; it only opens the project the visitor came back from.
+  // Phone: the <details> work without this. It opens the project the visitor came back from, animates the
+  // accordion where CSS can't, and brings an opened item's row back on screen.
   const items = [
     ...document.querySelectorAll<HTMLDetailsElement>("details[data-item]"),
   ];
@@ -377,6 +380,112 @@ const LS = "ls -la projects";
     if (item) for (const d of items) d.open = d === item;
   });
   showProject(back);
+
+  const DURATION = 280;
+  const EASE = "cubic-bezier(0.2, 0.8, 0.2, 1)";
+  /** Chromium: the CSS below animates ::details-content to and from `auto`; nothing to do here. */
+  const cssAnimates = CSS.supports("interpolate-size", "allow-keywords");
+  /** The accordion's animations under way, each with what it does when it ends. */
+  const running: { anim: Animation; end: () => void }[] = [];
+  /**
+   * Height from → to on the <details> itself, its overflow clipped meanwhile. While animations run, the items lose
+   * their shared `name`, so the browser doesn't close the old one at once; it gets it back when they end.
+   */
+  const animateHeight = (
+    d: HTMLDetailsElement,
+    from: number,
+    to: number,
+    done?: () => void,
+  ) => {
+    d.style.overflow = "hidden";
+    const a = d.animate(
+      { height: [`${from}px`, `${to}px`] },
+      { duration: DURATION, easing: EASE },
+    );
+    const run = {
+      anim: a,
+      end: () => {
+        if (!running.includes(run)) return;
+        running.splice(running.indexOf(run), 1);
+        d.style.overflow = "";
+        done?.();
+        if (!running.length)
+          for (const item of items) item.setAttribute("name", "projects");
+      },
+    };
+    running.push(run);
+    a.addEventListener("finish", run.end);
+    a.addEventListener("cancel", run.end);
+  };
+  const collapse = (d: HTMLDetailsElement) => {
+    const summary = d.querySelector("summary")!;
+    const border = d.offsetHeight - d.clientHeight;
+    const fade = d
+      .querySelector(".content")
+      ?.animate(
+        { opacity: [1, 0] },
+        { duration: DURATION * 0.6, easing: "ease-out", fill: "forwards" },
+      );
+    animateHeight(d, d.offsetHeight, summary.offsetHeight + border, () => {
+      d.open = false;
+      fade?.cancel();
+    });
+  };
+
+  /** The item whose row the visitor just clicked: once it's open, its row comes back on screen if it left. */
+  let clicked: HTMLDetailsElement | null = null;
+  for (const item of items) {
+    item.querySelector("summary")?.addEventListener("click", (e) => {
+      clicked = item;
+      if (reduce || cssAnimates) return;
+      e.preventDefault();
+      // A click during an animation ends it first (its `finish` event would only come later).
+      for (const r of [...running]) {
+        r.anim.finish();
+        r.end();
+      }
+      if (item.open) {
+        collapse(item);
+        return;
+      }
+      const others = items.filter((d) => d !== item && d.open);
+      for (const d of items) d.removeAttribute("name");
+      const from = item.offsetHeight;
+      item.open = true;
+      animateHeight(item, from, item.offsetHeight);
+      for (const d of others) collapse(d);
+    });
+    item.addEventListener("toggle", () => {
+      if (clicked !== item) return;
+      clicked = null;
+      if (!item.open) return;
+      // Once the old item has collapsed above it, the row may sit under the sticky header or off the top. Its place
+      // is read when the animations are over: at least their length, then two frames in which the row didn't move.
+      const summary = item.querySelector("summary")!;
+      const start = performance.now();
+      let last = NaN;
+      let still = 0;
+      const settle = () => {
+        const r = summary.getBoundingClientRect();
+        still = r.top === last ? still + 1 : 0;
+        last = r.top;
+        const waited = performance.now() - start;
+        const settled = (reduce || waited >= DURATION) && still >= 2;
+        if (!settled && waited < 1500)
+          return void requestAnimationFrame(settle);
+        const top =
+          parseFloat(
+            getComputedStyle(document.documentElement).scrollPaddingTop,
+          ) || 0;
+        if (r.top < top || r.bottom > innerHeight)
+          summary.scrollIntoView({
+            behavior: reduce ? "auto" : "smooth",
+            block: "start",
+          });
+      };
+      requestAnimationFrame(settle);
+    });
+  }
 
   for (const term of document.querySelectorAll<HTMLElement>("[data-term]")) {
     const list = term.querySelector<HTMLElement>("[data-rows]");
@@ -1158,6 +1267,26 @@ const LS = "ls -la projects";
 
     .item[open] .content {
       animation: drop 0.34s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+    }
+
+    /* The accordion opens and closes: the content box grows to its height and back, and stays rendered while it
+       shrinks. Elsewhere the script animates it. */
+    @supports (interpolate-size: allow-keywords) {
+      .items {
+        interpolate-size: allow-keywords;
+      }
+
+      .item::details-content {
+        block-size: 0;
+        overflow-y: clip;
+        transition:
+          block-size 0.28s cubic-bezier(0.2, 0.8, 0.2, 1),
+          content-visibility 0.28s allow-discrete;
+      }
+
+      .item[open]::details-content {
+        block-size: auto;
+      }
     }
   }
 
