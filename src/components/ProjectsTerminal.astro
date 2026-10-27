@@ -11,6 +11,9 @@
 // The cursor blinks, amber dots pulse, Visaproof's full-page screenshot pans, and Rebuffer's and pass's READMEs are
 // loops (Media.astro: only the selected one loads and plays, and only on screen); the hero's pause button
 // (html[data-motion="paused"]) stops them all, like the logo's cursor.
+//
+// Coming back from a project page (it leaves its id in sessionStorage) selects that project's row, or opens its
+// item on a phone.
 
 import Media from "@/components/project/Media.astro";
 import { getProjects, projectsIntro } from "@/lib/projects";
@@ -259,7 +262,13 @@ const LS = "ls -la projects";
 
       <div class="items">
         {rows.map(({ p, live, word, style }, i) => (
-          <details class="item" name="projects" open={i === 0} style={style}>
+          <details
+            class="item"
+            name="projects"
+            open={i === 0}
+            style={style}
+            data-item={p.id}
+          >
             <summary>
               <span class="head">
                 <span class="name">
@@ -339,6 +348,36 @@ const LS = "ls -la projects";
 
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+  /**
+   * The project page the visitor came back from (AllProjects.astro leaves its id), once: a later reload shows the
+   * first project again.
+   */
+  const cameBackFrom = () => {
+    try {
+      const id = sessionStorage.getItem("projects:back");
+      sessionStorage.removeItem("projects:back");
+      return id;
+    } catch {
+      return null;
+    }
+  };
+  const back = cameBackFrom();
+  /** Each terminal's way to show a project: the desktop selects its row, the phone opens its item. */
+  const showers: ((id: string) => void)[] = [];
+  const showProject = (id: string | null) => {
+    if (id) for (const show of showers) show(id);
+  };
+
+  // Phone: the <details> work without this; it only opens the project the visitor came back from.
+  const items = [
+    ...document.querySelectorAll<HTMLDetailsElement>("details[data-item]"),
+  ];
+  showers.push((id) => {
+    const item = items.find((d) => d.dataset.item === id);
+    if (item) for (const d of items) d.open = d === item;
+  });
+  showProject(back);
+
   for (const term of document.querySelectorAll<HTMLElement>("[data-term]")) {
     const list = term.querySelector<HTMLElement>("[data-rows]");
     const tabs = [...term.querySelectorAll<HTMLAnchorElement>("[data-tab]")];
@@ -378,7 +417,12 @@ const LS = "ls -la projects";
       }
       if (focus) tabs[i].focus();
     };
-    select(0);
+    const indexOf = (id: string | null) =>
+      tabs.findIndex((t) => t.id === `tab-${id}`);
+    select(Math.max(0, indexOf(back)));
+    showers.push((id) => {
+      if (indexOf(id) >= 0) select(indexOf(id));
+    });
 
     list.addEventListener("click", (e) => {
       const tab = (e.target as Element).closest<HTMLAnchorElement>(
@@ -418,6 +462,11 @@ const LS = "ls -la projects";
       io.observe(list);
     }
   }
+
+  // The browser's back button can bring this page back from its cache, where this script doesn't run again.
+  addEventListener("pageshow", (e) => {
+    if (e.persisted) showProject(cameBackFrom());
+  });
 </script>
 
 <style>

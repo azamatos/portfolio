@@ -1,18 +1,23 @@
 ---
-// The card that links to the next project's page: "next project", `➜ ~ cd ../<id>` with the arrow in that project's
-// accent, its headline, and a round arrow. The border turns to this page's accent on hover.
+// The end of a project page: the way back to all projects (AllProjects), then the card that links to the next
+// project's page: "next project", `➜ ~ cd ../<id>` with the arrow in that project's accent, its headline, and a round
+// arrow. The border turns to this page's accent on hover, and the arrow nudges forward.
 
 import type { Project } from "@/lib/projects";
+import AllProjects from "./AllProjects.astro";
 
 interface Props {
+  /** This page's project. */
+  project: Project;
   /** The next project: `getProject(project.page.next)`. */
   next: Project;
 }
 
-const { next } = Astro.props;
+const { project, next } = Astro.props;
 ---
 
-<section class="next" aria-label="Next project">
+<nav class="next" aria-label="More projects">
+  <AllProjects project={project.id} />
   <a href={next.path} class="card">
     <span class="text">
       <span class="kicker">next project</span>
@@ -34,10 +39,13 @@ const { next } = Astro.props;
       </svg>
     </span>
   </a>
-</section>
+</nav>
 
 <style>
   .next {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
     padding: 56px var(--g) 120px;
   }
 
@@ -118,6 +126,11 @@ const { next } = Astro.props;
     stroke-width: 2;
     stroke-linecap: round;
     stroke-linejoin: round;
+    transition: transform 0.16s ease;
+  }
+
+  .card:hover .go svg {
+    transform: translateX(3px);
   }
 
   @media (max-width: 800px) {
@@ -127,8 +140,13 @@ const { next } = Astro.props;
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .card {
+    .card,
+    .go svg {
       transition: none;
+    }
+
+    .card:hover .go svg {
+      transform: none;
     }
   }
 </style>

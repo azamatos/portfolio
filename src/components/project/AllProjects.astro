@@ -1,0 +1,146 @@
+---
+// The way back to the home page's Projects terminal (/#projects), at the top of a project page and beside the next
+// project at the bottom: a small card in the NextProject card's language (border, radius, the accent on hover, a
+// round arrow that moves). The command stays the main line, `➜ ~/projects/<id> cd ..`, and a plain line under it
+// says what it does, for visitors who don't read shell. Its name reads "cd .., back to all projects".
+//
+// The page leaves its id in sessionStorage each time it's shown, so the home page selects this project's row (or
+// opens its item on a phone) when the visitor comes back, by this link, the browser's back button or any other way.
+// Without JavaScript the link still lands on #projects.
+
+interface Props {
+  /** The project whose page this is. */
+  project: string;
+  class?: string;
+}
+
+const { project, class: className } = Astro.props;
+---
+
+<a href="/#projects" class:list={["all", className]}>
+  <span class="go" aria-hidden="true">
+    <svg viewBox="0 0 24 24" width="16" height="16">
+      <path d="M19 12H5" />
+      <path d="M11 6l-6 6 6 6" />
+    </svg>
+  </span>
+  <span class="text">
+    <span class="cmd">
+      <span class="arrow" aria-hidden="true">
+        ➜
+      </span>
+      <span class="path" aria-hidden="true">
+        ~/projects/{project}
+      </span>
+      <span>cd ..</span>
+    </span>
+    <span class="pj-sr-only">, </span>
+    <span class="plain">back to all projects</span>
+  </span>
+</a>
+
+<script>
+  // Read by ProjectsTerminal.astro on the home page. `pageshow` also runs when the browser's back or forward button
+  // brings this page back from its cache.
+  const id =
+    document.querySelector<HTMLElement>("main[data-project]")?.dataset.project;
+  if (id)
+    addEventListener("pageshow", () => {
+      try {
+        sessionStorage.setItem("projects:back", id);
+      } catch {
+        // Storage blocked: the home page shows its first project.
+      }
+    });
+</script>
+
+<style>
+  .all {
+    display: inline-flex;
+    align-items: center;
+    align-self: flex-start;
+    gap: 14px;
+    min-height: 56px;
+    padding: 9px 22px 9px 9px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: var(--chip);
+    color: inherit;
+    text-decoration: none;
+    transition:
+      border-color 0.16s ease,
+      background 0.16s ease;
+  }
+
+  .all:hover {
+    border-color: var(--acc);
+  }
+
+  .go {
+    display: flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border: 1px solid var(--line);
+    border-radius: 50%;
+    color: var(--fg);
+  }
+
+  .go svg {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: transform 0.16s ease;
+  }
+
+  .all:hover .go svg {
+    transform: translateX(-3px);
+  }
+
+  .text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  .cmd {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0 0.6em;
+    font-family: var(--font-space-mono), monospace;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--logo);
+  }
+
+  .arrow {
+    color: var(--acc);
+  }
+
+  .path {
+    color: var(--teal);
+  }
+
+  .plain {
+    font-size: 13px;
+    line-height: 1.4;
+    color: var(--fg2);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .all,
+    .go svg {
+      transition: none;
+    }
+
+    .all:hover .go svg {
+      transform: none;
+    }
+  }
+</style>
