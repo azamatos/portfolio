@@ -1,19 +1,19 @@
 {
-  "refreshedAt": "2026-10-27T20:36:43.999Z",
+  "refreshedAt": "2026-10-27T21:15:51.669Z",
   "values": {
     "commits": {
       "value": 38,
-      "asOf": "2026-10-27T20:36:44.955Z",
+      "asOf": "2026-10-27T21:15:52.696Z",
       "source": "https://github.com/azamatos/password-generator/commits/main"
     },
     "astro": {
       "value": "7",
-      "asOf": "2026-10-27T20:36:44.955Z",
+      "asOf": "2026-10-27T21:15:52.696Z",
       "source": "https://github.com/azamatos/password-generator/blob/main/package.json"
     },
     "presets": {
       "value": 16,
-      "asOf": "2026-10-27T20:36:45.585Z",
+      "asOf": "2026-10-27T21:15:53.033Z",
       "source": "https://raw.githubusercontent.com/azamatos/password-generator/main/src/data/platforms.json"
     },
     "unitTests": {
@@ -119,12 +119,12 @@
     }
   },
   "og": {
-    "url": "https://media.azamatos.com/portfolio/pass/og.2725c41025.jpg",
+    "url": "https://media.azamatos.com/portfolio/pass/og.5835a44c54.jpg",
     "width": 1200,
     "height": 630,
     "shot": "github",
     "from": "https://media.azamatos.com/portfolio/pass/github.330649add8",
-    "asOf": "2026-10-27T19:43:03.722Z"
+    "asOf": "2026-10-27T21:16:02.983Z"
   },
   "skipped": [],
   "problems": []
