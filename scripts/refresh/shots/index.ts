@@ -15,6 +15,7 @@ import {
   contentHash,
   encodeImage,
   encodeLoop,
+  LOOP_ENCODING,
   type EncodedImage,
 } from "./encode.ts";
 
@@ -100,12 +101,12 @@ export async function takeShot(
 
   const { frames } = await captureLoop(shot, CAPTURE_LIMIT);
   const still = frames.at(-1)!.jpeg;
-  const key = `${name}.${contentHash(frames.flatMap((f) => [f.jpeg, f.seconds.toFixed(4)]))}`;
+  const key = `${name}.${contentHash([LOOP_ENCODING, ...frames.flatMap((f) => [f.jpeg, f.seconds.toFixed(4)])])}`;
   const base = `${MEDIA_URL}/${prefix}/${key}`;
   if (old?.kind === "video" && old.poster.base === base)
     return { entry: old, same: true, files: 0, sent: 0, still };
   const enc = await encodeLoop(frames, key);
-  const mp4 = enc.files.find((f) => f.name.endsWith(".mp4"))!;
+  const mp4 = enc.files.find((f) => f.name === `${key}.mp4`)!;
   await keepRaw(project, `${name}.mp4`, mp4.body);
   await keepRaw(
     project,
@@ -120,6 +121,7 @@ export async function takeShot(
     sources: enc.files.map((f) => ({
       type: f.type,
       url: `${MEDIA_URL}/${prefix}/${f.name}`,
+      width: f.width,
     })),
     asOf,
     source: shot.url,

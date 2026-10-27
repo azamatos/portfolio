@@ -1,6 +1,6 @@
 // Turns captures into the files the site serves: AVIF and WebP stills in several widths (sharp), and loops as
-// WebM (VP9) and MP4 (H.264, faststart) without sound (ffmpeg). Names carry a hash of the capture, so a file never
-// changes once it's uploaded and can be cached for a year.
+// WebM (VP9) and MP4 (H.264, faststart) without sound (ffmpeg), at their own width and at the home README's.
+// Names carry a hash of the capture, so a file never changes once it's uploaded and can be cached for a year.
 
 import { createHash } from "node:crypto";
 import { execFile } from "node:child_process";
@@ -13,6 +13,13 @@ import type { Frame } from "./capture.ts";
 
 /** Bump when the settings below change, so new files get new names. */
 const ENCODING = "v1";
+/** The same for loops alone (their hash includes it): v2 added the README rendition. */
+export const LOOP_ENCODING = "loop-v2";
+/**
+ * A loop's smaller rendition, for the home README: it shows about 600px wide there, and this keeps its file well
+ * under the full one's. A loop no wider than this has just the one.
+ */
+export const README_WIDTH = 960;
 const WIDTHS = [480, 960, 1440, 2880];
 const FORMATS = ["avif", "webp"] as const;
 export const FPS = 30;
@@ -32,7 +39,8 @@ export type EncodedVideo = {
   width: number;
   height: number;
   poster: EncodedImage;
-  files: OutFile[];
+  /** Each rendition as WebM and MP4; `width` is the rendition's. */
+  files: (OutFile & { width: number })[];
 };
 
 const TYPES: Record<string, string> = {
@@ -105,7 +113,10 @@ async function ffmpeg(args: string[]) {
   }
 }
 
-/** The frames as a constant-rate loop in WebM and MP4, plus the last frame as the poster. */
+/**
+ * The frames as a constant-rate loop in WebM and MP4, at their own width (`<prefix>.webm`) and at the README's
+ * (`<prefix>.960.webm`), plus the last frame as the poster.
+ */
 export async function encodeLoop(
   frames: Frame[],
   prefix: string,
@@ -124,75 +135,78 @@ export async function encodeLoop(
 
     const seconds = frames.reduce((a, f) => a + f.seconds, 0);
     const input = ["-f", "concat", "-safe", "0", "-i", join(dir, "frames.txt")];
-    // JPEG frames are full range; video players expect TV range.
-    const scale = `scale=trunc(iw/2)*2:trunc(ih/2)*2:in_range=pc:out_range=tv`;
-    const common = [
-      "-vf",
-      `fps=${FPS},${scale},format=yuv420p`,
-      "-color_range",
-      "tv",
-      "-pix_fmt",
-      "yuv420p",
-      "-t",
-      seconds.toFixed(3),
-      "-an",
-      "-map_metadata",
-      "-1",
-      "-fflags",
-      "+bitexact",
-    ];
-    await ffmpeg([
-      ...input,
-      ...common,
-      "-c:v",
-      "libvpx-vp9",
-      "-b:v",
-      "0",
-      "-crf",
-      "36",
-      "-row-mt",
-      "1",
-      "-deadline",
-      "good",
-      "-cpu-used",
-      "2",
-      join(dir, "loop.webm"),
-    ]);
-    await ffmpeg([
-      ...input,
-      ...common,
-      "-c:v",
-      "libx264",
-      "-preset",
-      "slow",
-      "-crf",
-      "24",
-      "-profile:v",
-      "high",
-      "-movflags",
-      "+faststart",
-      join(dir, "loop.mp4"),
-    ]);
+    const { width: native } = await sharp(frames[0].jpeg).metadata();
+    if (!native) throw new Error("the loop's frames have no size");
+    const renditions =
+      native > README_WIDTH ? [native, README_WIDTH] : [native];
+
+    const files: EncodedVideo["files"] = [];
+    for (const width of renditions) {
+      // JPEG frames are full range; video players expect TV range.
+      const scale =
+        width === native
+          ? `scale=trunc(iw/2)*2:trunc(ih/2)*2:in_range=pc:out_range=tv`
+          : `scale=${width}:-2:flags=lanczos:in_range=pc:out_range=tv`;
+      const common = [
+        "-vf",
+        `fps=${FPS},${scale},format=yuv420p`,
+        "-color_range",
+        "tv",
+        "-pix_fmt",
+        "yuv420p",
+        "-t",
+        seconds.toFixed(3),
+        "-an",
+        "-map_metadata",
+        "-1",
+        "-fflags",
+        "+bitexact",
+      ];
+      const name = width === native ? prefix : `${prefix}.${width}`;
+      await ffmpeg([
+        ...input,
+        ...common,
+        "-c:v",
+        "libvpx-vp9",
+        "-b:v",
+        "0",
+        "-crf",
+        "36",
+        "-row-mt",
+        "1",
+        "-deadline",
+        "good",
+        "-cpu-used",
+        "2",
+        join(dir, `${name}.webm`),
+      ]);
+      await ffmpeg([
+        ...input,
+        ...common,
+        "-c:v",
+        "libx264",
+        "-preset",
+        "slow",
+        "-crf",
+        "24",
+        "-profile:v",
+        "high",
+        "-movflags",
+        "+faststart",
+        join(dir, `${name}.mp4`),
+      ]);
+      for (const ext of ["webm", "mp4"] as const)
+        files.push({
+          name: `${name}.${ext}`,
+          body: await readFile(join(dir, `${name}.${ext}`)),
+          type: TYPES[ext],
+          width,
+        });
+    }
 
     const posterPng = await sharp(frames.at(-1)!.jpeg).png().toBuffer();
     const poster = await encodeImage(posterPng, prefix);
-    return {
-      width: poster.width,
-      height: poster.height,
-      poster,
-      files: [
-        {
-          name: `${prefix}.webm`,
-          body: await readFile(join(dir, "loop.webm")),
-          type: TYPES.webm,
-        },
-        {
-          name: `${prefix}.mp4`,
-          body: await readFile(join(dir, "loop.mp4")),
-          type: TYPES.mp4,
-        },
-      ],
-    };
+    return { width: poster.width, height: poster.height, poster, files };
   } finally {
     await rm(dir, { recursive: true, force: true });
   }

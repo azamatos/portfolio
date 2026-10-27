@@ -279,13 +279,25 @@ export const valueSchema = z.discriminatedUnion("from", [
 
 // ── Shots: screenshots and loops the refresh command records ────────────────────────────────────────────────
 
-/** One step before the capture, in order. Selectors are Playwright's. */
+/** One step before the capture (or, under `video.steps`, during a loop), in order. Selectors are Playwright's. */
 export const shotStepSchema = z.union([
   z.strictObject({ click: text }),
   z.strictObject({ fill: text, value: z.string() }),
   z.strictObject({ waitFor: text }),
   /** Types the text of one element into another: Ýeral's sign-in shows its code on the screen. */
   z.strictObject({ copy: text, into: text }),
+  /**
+   * A CSS selector (not Playwright's): what it matches gets `display: none` from a style rule, from now on, including
+   * elements that appear later. For what describes the recording machine rather than the product.
+   */
+  z.strictObject({ hide: text }),
+  /** Seconds to wait: the pace of a loop's steps. */
+  z.strictObject({ wait: z.number().positive().max(30) }),
+  /**
+   * The page's random numbers start over from the shot's seed: a loop that returns to its first screen (pass's
+   * GitHub) draws the same password there, so its end meets its start.
+   */
+  z.strictObject({ restartRandom: z.literal(true) }),
 ]);
 
 export const shotSchema = z.strictObject({
@@ -297,9 +309,14 @@ export const shotSchema = z.strictObject({
   full: z.literal(true).optional(),
   /**
    * A muted loop instead of a still, with a poster frame. A loop is recorded only when it isn't collected yet, or
-   * with `--loops`.
+   * with `--loops`. Its `steps` run while it records (`steps` above run before), and must end within `seconds`.
    */
-  video: z.strictObject({ seconds: z.number().positive().max(60) }).optional(),
+  video: z
+    .strictObject({
+      seconds: z.number().positive().max(60),
+      steps: z.array(shotStepSchema).min(1).optional(),
+    })
+    .optional(),
   steps: z.array(shotStepSchema).min(1).optional(),
   /** Why the shot isn't taken for now: the refresh reports it as skipped, and the page keeps what it has. */
   skip: text.optional(),
@@ -744,14 +761,23 @@ export const collectedImageSchema = z.strictObject({
   source: url,
 });
 
-/** A loop in R2, with a still frame as its poster. */
+/**
+ * A loop in R2, with a still frame as its poster. Each source is one file of one rendition: the loop at its own
+ * width, and a smaller one for the home README. A source without `width` (recorded before renditions) is the full one.
+ */
 export const collectedVideoSchema = z.strictObject({
   kind: z.literal("video"),
   width: size,
   height: size,
   poster: collectedImageSchema,
   sources: z
-    .array(z.strictObject({ type: z.string().regex(/^video\//), url }))
+    .array(
+      z.strictObject({
+        type: z.string().regex(/^video\//),
+        url,
+        width: size.optional(),
+      }),
+    )
     .min(1),
   asOf: isoTime,
   source: url,

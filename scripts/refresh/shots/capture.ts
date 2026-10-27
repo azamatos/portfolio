@@ -15,10 +15,17 @@ export type Frame = { jpeg: Buffer; seconds: number };
 
 /**
  * Random numbers from a fixed seed, so a page that draws something random (pass's password) looks the same each
- * week: the capture's hash stays the same and nothing new is uploaded.
+ * week: the capture's hash stays the same and nothing new is uploaded. The `restartRandom` step starts the numbers
+ * over, so a loop that comes back to its first screen draws what it drew then.
  */
 function seedRandom() {
-  let s = 0x2f6b_4d1a;
+  const SEED = 0x2f6b_4d1a;
+  let s = SEED;
+  Object.defineProperty(window, "__restartRandom", {
+    value: () => {
+      s = SEED;
+    },
+  });
   const next = () => {
     s = (s + 0x6d2b79f5) | 0;
     let t = Math.imul(s ^ (s >>> 15), 1 | s);
@@ -103,6 +110,33 @@ async function runStep(page: Page, step: Step) {
     ).trim();
     if (!text) throw new Error(`"${step.copy}" is empty, nothing to copy`);
     await page.locator(step.into).first().fill(text, { timeout });
+  } else if ("hide" in step) {
+    // A style rule rather than the elements' own style: it also hides what the page adds later (a notice that shows
+    // once a check finishes). A constructed sheet, since a page's CSP can block a <style> element; querySelectorAll
+    // throws on a selector that isn't CSS.
+    await page.evaluate((selector) => {
+      document.querySelectorAll(selector);
+      const sheet = new CSSStyleSheet();
+      sheet.replaceSync(`${selector} { display: none !important; }`);
+      document.adoptedStyleSheets = [...document.adoptedStyleSheets, sheet];
+    }, step.hide);
+  } else if ("wait" in step) await page.waitForTimeout(step.wait * 1000);
+  else if ("restartRandom" in step)
+    await page.evaluate(() =>
+      (window as unknown as { __restartRandom: () => void }).__restartRandom(),
+    );
+}
+
+async function runSteps(page: Page, steps: Step[], during = "") {
+  for (const [i, step] of steps.entries()) {
+    try {
+      await runStep(page, step);
+    } catch (e) {
+      const first = (e as Error).message.split("\n")[0];
+      throw new Error(`${during}step ${i + 1} (${describe(step)}): ${first}`, {
+        cause: e,
+      });
+    }
   }
 }
 
@@ -159,16 +193,7 @@ async function prepare(
   const res = await page.goto(shot.url, { waitUntil: "load" });
   if (res && !res.ok()) throw new Error(`${shot.url} answered ${res.status()}`);
   await settle(page, quiet);
-  for (const [i, step] of (shot.steps ?? []).entries()) {
-    try {
-      await runStep(page, step);
-    } catch (e) {
-      const first = (e as Error).message.split("\n")[0];
-      throw new Error(`step ${i + 1} (${describe(step)}): ${first}`, {
-        cause: e,
-      });
-    }
-  }
+  await runSteps(page, shot.steps ?? []);
   if (shot.steps) await settle(page, quiet);
   return page;
 }
@@ -201,7 +226,7 @@ export function captureStill(shot: ShotConfig, limit: number): Promise<Buffer> {
 
 /**
  * A loop: Chrome's screencast frames for `video.seconds`, from the moment the page (and its steps) are ready, or an
- * error after `limit` ms.
+ * error after `limit` ms. The loop's own steps (`video.steps`) run while it records and must end in that time.
  */
 export function captureLoop(
   shot: ShotConfig,
@@ -228,7 +253,13 @@ export function captureLoop(
       everyNthFrame: 1,
     });
     const start = Date.now() / 1000;
-    await page.waitForTimeout(seconds * 1000);
+    await runSteps(page, shot.video!.steps ?? [], "during the loop, ");
+    const left = start + seconds - Date.now() / 1000;
+    if (left < 0)
+      throw new Error(
+        `the loop's steps took ${(seconds - left).toFixed(1)} s, longer than its ${seconds} s`,
+      );
+    await page.waitForTimeout(left * 1000);
     await cdp.send("Page.stopScreencast");
     if (raw.length < 2)
       throw new Error(`the screencast gave ${raw.length} frames`);
