@@ -5,6 +5,11 @@
  *   - "dark" or "light": data-theme on <html> (set before first paint by the inline script in BaseLayout).
  *   - "system": no data-theme; prefers-color-scheme decides.
  * .theme-dark pins a subtree to the dark tokens in every theme (the projects terminal and the command palette).
+ *
+ * Light differs from the export in four tokens, so every text colour stays at 4.5:1 or more on the --sel hover fill
+ * (#e6e6e4): --teal #127a74 → #11726d, --mint #0b7f5a → #0a7452, --muted #6b6b6b → #656565 (they were 4.0–4.3),
+ * and --hdr is opaque (was 85%): over the always-dark terminal a see-through light header turned grey and its teal
+ * verbs dropped to 3.4:1. The dark header passes at 80% even over white.
  */
 
 :root,
@@ -44,19 +49,19 @@
   --bg: #f7f7f5;
   --fg: #0b0b0b;
   --fg2: #545454;
-  --muted: #6b6b6b;
+  --muted: #656565;
   --line: rgba(0, 0, 0, 0.16);
   --line2: rgba(0, 0, 0, 0.08);
   --chip: rgba(255, 255, 255, 0.7);
   --sel: rgba(0, 0, 0, 0.07);
-  --mint: #0b7f5a;
-  --teal: #127a74;
+  --mint: #0a7452;
+  --teal: #11726d;
   --amber: #8a5a00;
   --logo: #0b0b0b;
   --btn-bg: #0b0b0b;
   --btn-fg: #ffffff;
   --btn-hover: #333333;
-  --hdr: rgba(247, 247, 245, 0.85);
+  --hdr: #f7f7f5;
   --card: #ffffff;
   --wave-filter: grayscale(1) contrast(0.9);
   --wave-blend: multiply;
@@ -71,19 +76,19 @@
     --bg: #f7f7f5;
     --fg: #0b0b0b;
     --fg2: #545454;
-    --muted: #6b6b6b;
+    --muted: #656565;
     --line: rgba(0, 0, 0, 0.16);
     --line2: rgba(0, 0, 0, 0.08);
     --chip: rgba(255, 255, 255, 0.7);
     --sel: rgba(0, 0, 0, 0.07);
-    --mint: #0b7f5a;
-    --teal: #127a74;
+    --mint: #0a7452;
+    --teal: #11726d;
     --amber: #8a5a00;
     --logo: #0b0b0b;
     --btn-bg: #0b0b0b;
     --btn-fg: #ffffff;
     --btn-hover: #333333;
-    --hdr: rgba(247, 247, 245, 0.85);
+    --hdr: #f7f7f5;
     --card: #ffffff;
     --wave-filter: grayscale(1) contrast(0.9);
     --wave-blend: multiply;
