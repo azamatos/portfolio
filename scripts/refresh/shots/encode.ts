@@ -13,8 +13,8 @@ import type { Frame } from "./capture.ts";
 
 /** Bump when the settings below change, so new files get new names. */
 const ENCODING = "v1";
-/** The same for loops alone (their hash includes it): v2 added the README rendition. */
-export const LOOP_ENCODING = "loop-v2";
+/** The same for loops alone (their hash includes it): v2 added the README rendition, v3 the frames' exact times. */
+export const LOOP_ENCODING = "loop-v3";
 /**
  * A loop's smaller rendition, for the home README: it shows about 600px wide there, and this keeps its file well
  * under the full one's. A loop no wider than this has just the one.
@@ -123,14 +123,18 @@ export async function encodeLoop(
 ): Promise<EncodedVideo> {
   const dir = await mkdtemp(join(tmpdir(), "refresh-loop-"));
   try {
+    // Each frame is read as an image with a clock of 1,000 frames a second, so its time keeps its milliseconds. At
+    // the image reader's default of 25, times were rounded to 1/25 s: a screencast's 60 frames a second came out as
+    // 25, and the 30 fps loop showed every sixth frame twice.
+    const clock = "option framerate 1000";
     const list = ["ffconcat version 1.0"];
     for (const [i, f] of frames.entries()) {
       const file = `f${String(i).padStart(5, "0")}.jpg`;
       await writeFile(join(dir, file), f.jpeg);
-      list.push(`file ${file}`, `duration ${f.seconds.toFixed(4)}`);
+      list.push(`file ${file}`, clock, `duration ${f.seconds.toFixed(4)}`);
     }
     // The concat demuxer drops the last duration unless the last file is listed again.
-    list.push(`file f${String(frames.length - 1).padStart(5, "0")}.jpg`);
+    list.push(`file f${String(frames.length - 1).padStart(5, "0")}.jpg`, clock);
     await writeFile(join(dir, "frames.txt"), list.join("\n") + "\n");
 
     const seconds = frames.reduce((a, f) => a + f.seconds, 0);
