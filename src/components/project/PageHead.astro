@@ -1,6 +1,6 @@
 ---
 // The top of a project page: the status chip, the name (the page's h1, id "project-title"), the tagline, the meta list
-// (role, stack, links), then the hero: the framed desktop screenshot, 700px tall, and the
+// (role, stack, links, which open in a new tab), then the hero: the framed desktop screenshot, 700px tall, and the
 // phone screenshot overlapping its bottom right. On a phone only the framed screenshot shows, at its natural height.
 // The head and the hero rise in on load. The desktop screenshot is the page's first image: it loads at once, high
 // priority. The way back to all projects is at the end of the page (NextProject) and in the header (`ls projects`).
@@ -41,7 +41,12 @@ const live = project.status === "live";
             {"text" in m ? (
               <span>{m.text}</span>
             ) : (
-              m.links.map((l) => <a href={l.href}>{l.label}</a>)
+              m.links.map((l) => (
+                <a href={l.href} target="_blank" rel="noopener">
+                  {l.label}
+                  <span class="sr-only"> (opens in a new tab)</span>
+                </a>
+              ))
             )}
           </dd>
         </>

@@ -1,5 +1,6 @@
 ---
-// The page's links out, as buttons with an ↗: the primary one filled (--btn-bg), the rest outlined.
+// The page's links out, as buttons with an ↗ that open in a new tab: the primary one filled (--btn-bg), the rest
+// outlined.
 
 import type { Action } from "./types";
 
@@ -12,8 +13,14 @@ const { actions } = Astro.props;
 
 <div class="actions">
   {actions.map((a) => (
-    <a href={a.href} class:list={["action", { primary: a.primary }]}>
+    <a
+      href={a.href}
+      target="_blank"
+      rel="noopener"
+      class:list={["action", { primary: a.primary }]}
+    >
       {a.label}
+      <span class="sr-only"> (opens in a new tab)</span>
       <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
         <path d="M7 17L17 7" />
         <path d="M8 7h9v9" />
