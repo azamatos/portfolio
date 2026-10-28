@@ -1,19 +1,19 @@
 {
-  "refreshedAt": "2026-10-27T22:56:09.186Z",
+  "refreshedAt": "2026-10-28T05:13:12.593Z",
   "values": {
     "commits": {
       "value": 38,
-      "asOf": "2026-10-27T22:56:10.132Z",
+      "asOf": "2026-10-28T05:13:13.634Z",
       "source": "https://github.com/azamatos/password-generator/commits/main"
     },
     "astro": {
       "value": "7",
-      "asOf": "2026-10-27T22:56:10.132Z",
+      "asOf": "2026-10-28T05:13:13.634Z",
       "source": "https://github.com/azamatos/password-generator/blob/main/package.json"
     },
     "presets": {
       "value": 16,
-      "asOf": "2026-10-27T22:56:10.642Z",
+      "asOf": "2026-10-28T05:13:14.013Z",
       "source": "https://raw.githubusercontent.com/azamatos/password-generator/main/src/data/platforms.json"
     },
     "unitTests": {
@@ -86,35 +86,35 @@
         "kind": "image",
         "width": 1440,
         "height": 900,
-        "base": "https://media.azamatos.com/portfolio/pass/sites.bc57b1f40f",
+        "base": "https://media.azamatos.com/portfolio/pass/sites.2e4d066697",
         "widths": [480, 960, 1440],
         "formats": ["avif", "webp"],
-        "asOf": "2026-10-27T22:56:20.617Z",
+        "asOf": "2026-10-28T05:13:23.695Z",
         "source": "https://pass.azamatos.com/github/"
       },
       "sources": [
         {
           "type": "video/webm",
-          "url": "https://media.azamatos.com/portfolio/pass/sites.bc57b1f40f.webm",
+          "url": "https://media.azamatos.com/portfolio/pass/sites.2e4d066697.webm",
           "width": 1440
         },
         {
           "type": "video/mp4",
-          "url": "https://media.azamatos.com/portfolio/pass/sites.bc57b1f40f.mp4",
+          "url": "https://media.azamatos.com/portfolio/pass/sites.2e4d066697.mp4",
           "width": 1440
         },
         {
           "type": "video/webm",
-          "url": "https://media.azamatos.com/portfolio/pass/sites.bc57b1f40f.960.webm",
+          "url": "https://media.azamatos.com/portfolio/pass/sites.2e4d066697.960.webm",
           "width": 960
         },
         {
           "type": "video/mp4",
-          "url": "https://media.azamatos.com/portfolio/pass/sites.bc57b1f40f.960.mp4",
+          "url": "https://media.azamatos.com/portfolio/pass/sites.2e4d066697.960.mp4",
           "width": 960
         }
       ],
-      "asOf": "2026-10-27T22:56:20.617Z",
+      "asOf": "2026-10-28T05:13:23.695Z",
       "source": "https://pass.azamatos.com/github/"
     }
   },
