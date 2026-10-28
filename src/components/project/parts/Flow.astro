@@ -1,6 +1,9 @@
 ---
-// Steps in a row with arrows between them (no arrows on a phone, where they stack). A step's mono tag is muted, in the
-// project accent with `accent`, and amber with an amber border with `highlight`.
+// Steps with arrows between them. From 1360px, in one row, each arrow pointing on to the next step: four steps get
+// 200px each there, near the design's 220px at 1440px (narrower, their text runs to ten lines). Below that they stack,
+// each arrow under its step pointing down, and on a phone without the arrows. Never wrapped: a step alone on the last
+// row would stretch to the full width, after an arrow pointing at nothing. A step's mono tag is muted, in the project
+// accent with `accent`, and amber with an amber border with `highlight`.
 
 import type { PartOf } from "../types";
 
@@ -39,9 +42,8 @@ const { part } = Astro.props;
 <style>
   .flow {
     display: flex;
-    flex-wrap: wrap;
-    align-items: stretch;
-    gap: 12px;
+    flex-direction: column;
+    gap: 8px;
     margin: 0;
     padding: 0;
     list-style: none;
@@ -49,9 +51,8 @@ const { part } = Astro.props;
 
   li {
     display: flex;
-    flex: 1 1 180px;
-    align-items: stretch;
-    gap: 12px;
+    flex-direction: column;
+    gap: 8px;
     min-width: 0;
   }
 
@@ -104,6 +105,7 @@ const { part } = Astro.props;
   .arrow {
     display: flex;
     align-items: center;
+    justify-content: center;
     color: var(--muted);
   }
 
@@ -113,9 +115,30 @@ const { part } = Astro.props;
     stroke-width: 1.75;
     stroke-linecap: round;
     stroke-linejoin: round;
+    transform: rotate(90deg);
+  }
+
+  @media (min-width: 1360px) {
+    .flow,
+    li {
+      flex-direction: row;
+      gap: 12px;
+    }
+
+    li {
+      flex: 1 1 0;
+    }
+
+    .arrow svg {
+      transform: none;
+    }
   }
 
   @media (max-width: 800px) {
+    .flow {
+      gap: 12px;
+    }
+
     .arrow {
       display: none;
     }
