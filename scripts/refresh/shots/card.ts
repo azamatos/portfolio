@@ -1,8 +1,9 @@
 // The share cards (og:image), 1200 × 630: plain HTML with inline styles and flexbox, in the frame language of the
-// owner's og-source.html, rendered by Chromium. The site's card lists the projects in a terminal (`ls projects`); a
-// project's card has its name, status, headline and two numbers, and its hero screenshot in a browser frame.
-// Fonts come from src/assets/fonts and the wave from public/hero.svg, inlined, so the HTML is the card's whole input:
-// og.ts names the file after a hash of it.
+// owner's og-source.html, rendered by Chromium. The site's card has the owner's name, role and photo (round, in a
+// ring); a project's card has its name, status, headline and two numbers, and its hero screenshot in a browser frame.
+// Fonts come from src/assets/fonts, the photo from src/assets/photo.jpg (the resume's, 328 × 328, shown at about its
+// own size) and the wave from public/hero.svg, inlined, so the HTML is the card's whole input: og.ts names the file
+// after a hash of it.
 
 import { readFile } from "node:fs/promises";
 import { browser } from "../browser.ts";
@@ -21,13 +22,6 @@ export type SiteCard = {
   line: string;
   email: string;
   availability: string;
-  projects: {
-    dir: string;
-    kind: string;
-    live: boolean;
-    status: string;
-    accent: string;
-  }[];
 };
 
 export type ProjectCard = {
@@ -84,14 +78,7 @@ const page = (body: string) =>
   `<body><div style="position:relative;width:${CARD.width}px;height:${CARD.height}px;overflow:hidden;background:#010101;color:#fff;font-family:Geist,sans-serif">${body}</div></body></html>`;
 
 export async function siteCardHtml(c: SiteCard): Promise<string> {
-  const rows = c.projects
-    .map(
-      (p) =>
-        `<div style="display:flex;align-items:center;gap:16px;height:70px;padding:0 6px;border-top:1px solid rgba(255,255,255,0.07)">${arrow(22, p.accent)}<span style="width:150px;font-family:${MONO};font-size:22px;color:#f0f4f3">${esc(p.dir)}</span><span style="flex:1;font-size:17px;color:#a6a6a6;white-space:nowrap">${esc(p.kind)}</span><span style="display:flex;align-items:center;gap:7px;font-family:${MONO};font-size:14px;white-space:nowrap;color:${p.live ? MINT : AMBER}">${dot(p.live ? MINT : AMBER)}${esc(p.status)}</span></div>`,
-    )
-    .join("");
-  const prompt = (rest: string) =>
-    `<div style="display:flex;align-items:center;gap:12px;font-family:${MONO};font-size:18px;color:#f0f4f3">${arrow(18, MINT)}<span style="color:#5bc8c0">~</span>${rest}</div>`;
+  const photo = await dataUrl("src/assets/photo.jpg", "image/jpeg");
   return (
     (await head()) +
     page(
@@ -101,7 +88,7 @@ export async function siteCardHtml(c: SiteCard): Promise<string> {
         mark +
         `<div style="position:absolute;right:64px;top:41px;display:flex;align-items:center;gap:10px;height:46px;padding:0 18px;border:1px solid rgba(255,255,255,0.14);border-radius:12px;background:rgba(255,255,255,0.03);font-size:18px;color:#e6e6e6"><svg width="18" height="18" viewBox="0 0 24 24" style="display:block"><rect x="3" y="5" width="18" height="14" rx="2.5" fill="none" stroke="#a6a6a6" stroke-width="1.8"/><path d="m4 7 8 6 8-6" fill="none" stroke="#a6a6a6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>${esc(c.email)}</div>` +
         `<div style="position:absolute;left:64px;top:150px;width:496px;display:flex;flex-direction:column;gap:22px"><p style="margin:0;font-family:${MONO};font-size:16px;letter-spacing:0.1em;text-transform:uppercase;color:${MINT}">${esc(c.role)}</p><h1 style="margin:0;font-size:66px;font-weight:500;line-height:1.02;letter-spacing:-0.05em">${esc(c.name)}</h1><p style="margin:0;font-size:24px;line-height:1.38;letter-spacing:-0.015em;color:#a6a6a6">${esc(c.line)}</p></div>` +
-        `<div style="position:absolute;left:584px;top:122px;width:552px;display:flex;flex-direction:column;padding:22px 22px 24px;border:1px solid rgba(255,255,255,0.11);border-radius:24px;background:#0b0c0e"><div style="display:flex;gap:7px;margin-bottom:18px">${dot("#2a2c30", 11).repeat(3)}</div><div style="margin:0 6px 14px">${prompt("<span>ls projects</span>")}</div>${rows}<div style="margin:16px 6px 0">${prompt(`<span style="width:10px;height:22px;background:${MINT}"></span>`)}</div></div>` +
+        `<div style="position:absolute;left:770px;top:140px;display:flex;width:340px;height:340px;padding:6px;border:1px solid rgba(255,255,255,0.14);border-radius:50%;background:#0b0c0e"><img src="${photo}" alt="" style="width:100%;height:100%;border-radius:50%;object-fit:cover"></div>` +
         `<div style="position:absolute;left:64px;bottom:44px;display:flex;align-items:center;gap:12px;height:40px;padding:0 18px 0 14px;border:1px solid rgba(255,255,255,0.14);border-radius:999px;background:#0a0a0b;font-size:15px;letter-spacing:-0.01em;color:#c4c4c4;white-space:nowrap"><span style="width:10px;height:10px;border-radius:50%;background:${MINT};box-shadow:0 0 0 4px rgba(104,237,192,0.18)"></span>${esc(c.availability)}</div>`,
     )
   );

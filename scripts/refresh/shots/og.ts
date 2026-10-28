@@ -24,7 +24,7 @@ import {
   statusText,
 } from "../../../src/lib/projects/values.ts";
 import { SITE } from "../../../src/site.ts";
-import { COLLECTED_DIR, loadProject, projectIds, ROOT } from "../config.ts";
+import { COLLECTED_DIR, ROOT } from "../config.ts";
 import { MEDIA_URL, saveLocally, upload } from "../r2.ts";
 import {
   CARD,
@@ -236,26 +236,17 @@ const lineOf = (s: string) => {
   return rest.charAt(0).toUpperCase() + rest.slice(1);
 };
 
-/** The site's card: every project's dir, kind, status and accent, in the terminal's order. */
+/** The site's card: the owner's name, role, line and photo, from src/site.ts. */
 export async function siteShareImage(
   old: SiteOg | undefined,
   publish: boolean,
 ): Promise<OgResult<SiteOg>> {
-  const configs = await Promise.all((await projectIds()).map(loadProject));
-  configs.sort((a, b) => a.order - b.order);
   const html = await siteCardHtml({
     name: SITE.name,
     role: SITE.role,
     line: lineOf(SITE.shareDescription),
     email: SITE.email,
     availability: SITE.availability,
-    projects: configs.map((c) => ({
-      dir: c.list.dir,
-      kind: c.readme.kind,
-      live: c.status === "live",
-      status: statusText(c.status),
-      accent: c.accent.dark,
-    })),
   });
   return publishCard(
     "portfolio/site",

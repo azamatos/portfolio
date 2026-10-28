@@ -317,7 +317,7 @@ try {
       report(id, [{ name: "refresh", message }]);
     }
   }
-  // The site's share card (home and 404 pages) lists every project, so every run checks it.
+  // The site's share card (home and 404 pages): every run checks it, and it changes with the site's copy or photo.
   console.log("\nSite");
   try {
     const r = await siteShareImage((await loadSite())?.og, publish);
