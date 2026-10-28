@@ -3,6 +3,8 @@
 Agreed 2026-10-27. The design is the Claude Design export in [`design/`](design/HANDOFF.md); this file records what
 was decided on top of it and the order of the work.
 
+**Done:** live on azamatos.com since 2026-10-28 (PR #1). The weekly refresh ran in GitHub Actions the same day.
+
 ## Decided
 
 - **Design:** build `docs/design/` as exported. The hero keeps the design's photo as is: it's a backdrop, so its
