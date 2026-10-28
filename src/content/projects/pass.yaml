@@ -15,7 +15,7 @@ readme:
   host: pass.azamatos.com
   image: { shot: sites }
   phoneImage: { shot: sites }
-  alt: "pass.azamatos.com switching sites, GitHub, Apple, Google, Microsoft and back: each brings its own colours, rules and a new password that meets them"
+  alt: "pass.azamatos.com sliding from site to site, GitHub, Apple, Google, Microsoft and back: each brings its own colours, rules and a new password that meets them"
   panImage: false
   headline: Passwords that pass each site’s real rules.
   description: Pick a site and get a password its sign-up form accepts, or a passphrase you can type. The strength and leak check runs in your browser, and the password never leaves it.
@@ -333,28 +333,41 @@ shots:
       - waitFor: text=Very strong
       - waitFor: text=Not found in known leaks
   sites:
-    # The home README's loop: the GitHub, Apple, Google and Microsoft pages, 2.5 s each, so the banner, the rule chips
-    # and the password change at each step. It ends on GitHub, where it starts (that page's time is split between the
-    # start and the end). The pages open as links, as "Change site" does, without its picker flashing up. The steps
-    # before it arrive at GitHub the way the loop's end does (the site's theme switch loses its highlight after a
-    # page change) and wait out the page's cross-fade, so the end meets the start.
+    # The home README's loop: the GitHub, Apple, Google and Microsoft pages, about 2.3 s each, so the banner, the rule
+    # chips and the password change at each step. It ends on GitHub, where it starts (that page's time is split
+    # between the start and the end). The pages open as links, as "Change site" does, without its picker flashing up.
+    # The site switches pages at once; for the loop, the style below turns the router's view transition into a
+    # half-second slide, the next page pushing in from the right under a header that stays. It also keeps the
+    # header's cursor still: it blinks four times after each page change, so the end would catch it lit and the start
+    # dark. The steps before the loop arrive at GitHub the way its end does (the site's theme switch loses its
+    # highlight after a page change) and wait out the slide, so the end meets the start.
     url: https://pass.azamatos.com/github/
     device: desktop
     theme: dark
     steps:
+      - style: |
+          :root { view-transition-name: root !important; }
+          [data-header] { view-transition-name: header; }
+          [data-header] .cursor { animation: none !important; }
+          ::view-transition-old(root) { animation: 0.5s cubic-bezier(0.33, 1, 0.68, 1) both slide-out; }
+          ::view-transition-new(root) { animation: 0.5s cubic-bezier(0.33, 1, 0.68, 1) both slide-in; }
+          ::view-transition-group(header), ::view-transition-new(header) { animation: none; }
+          ::view-transition-old(header) { animation: none; opacity: 0; }
+          @keyframes slide-out { to { transform: translateX(-100%); } }
+          @keyframes slide-in { from { transform: translateX(100%); } }
       - follow: /apple/
       - restartRandom: true
       - follow: /github/
       - wait: 1
     video:
-      seconds: 10
+      seconds: 11.4
       steps:
         - wait: 1.2
         - follow: /apple/
-        - wait: 2.4
+        - wait: 2.75
         - follow: /google/
-        - wait: 2.4
+        - wait: 2.75
         - follow: /microsoft/
-        - wait: 2.4
+        - wait: 2.75
         - restartRandom: true
         - follow: /github/
