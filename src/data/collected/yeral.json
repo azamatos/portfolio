@@ -1,0 +1,79 @@
+{
+  "refreshedAt": "2026-10-27T22:57:57.811Z",
+  "values": {
+    "commits": {
+      "value": 254,
+      "asOf": "2026-10-27T22:57:58.770Z",
+      "source": "https://github.com/azamatos/yeral/commits/main"
+    },
+    "react": {
+      "value": "19",
+      "asOf": "2026-10-27T22:57:58.770Z",
+      "source": "https://github.com/azamatos/yeral/blob/main/pnpm-workspace.yaml"
+    },
+    "vite": {
+      "value": "8",
+      "asOf": "2026-10-27T22:57:58.770Z",
+      "source": "https://github.com/azamatos/yeral/blob/main/pnpm-workspace.yaml"
+    },
+    "tailwind": {
+      "value": "4",
+      "asOf": "2026-10-27T22:57:58.770Z",
+      "source": "https://github.com/azamatos/yeral/blob/main/pnpm-workspace.yaml"
+    },
+    "hono": {
+      "value": "4",
+      "asOf": "2026-10-27T22:57:58.770Z",
+      "source": "https://github.com/azamatos/yeral/blob/main/pnpm-workspace.yaml"
+    },
+    "zod": {
+      "value": "4",
+      "asOf": "2026-10-27T22:57:58.770Z",
+      "source": "https://github.com/azamatos/yeral/blob/main/pnpm-workspace.yaml"
+    },
+    "storybook": {
+      "value": "10",
+      "asOf": "2026-10-27T22:57:58.770Z",
+      "source": "https://github.com/azamatos/yeral/blob/main/pnpm-workspace.yaml"
+    },
+    "postgres": {
+      "value": "18",
+      "asOf": "2026-10-27T22:57:58.770Z",
+      "source": "https://github.com/azamatos/yeral/blob/main/infra/server/yeral/compose.yml"
+    },
+    "components": {
+      "value": 105,
+      "asOf": "2026-10-27T22:57:59.457Z",
+      "source": "https://storybook.yeral.app/index.json"
+    },
+    "tests": {
+      "value": 1908,
+      "asOf": "2026-10-27T16:58:52.000Z",
+      "source": "https://github.com/azamatos/yeral/actions/runs/40544243368/job/122330441243"
+    },
+    "decisions": {
+      "value": 28,
+      "asOf": "2026-10-27T22:57:58.770Z",
+      "source": "https://github.com/azamatos/yeral/tree/main/docs/decisions"
+    }
+  },
+  "shots": {},
+  "og": {
+    "url": "https://media.azamatos.com/portfolio/yeral/og.916749d760.jpg",
+    "width": 1200,
+    "height": 630,
+    "from": "src/assets/projects/yeral-calendar.webp",
+    "asOf": "2026-10-27T22:58:02.616Z"
+  },
+  "skipped": [
+    {
+      "name": "calendar",
+      "reason": "the demo's 69 numbers can't sign in by code, and “Try the business app” (F-242) isn't in the live app yet"
+    },
+    {
+      "name": "phone-calendar",
+      "reason": "the demo's 69 numbers can't sign in by code, and “Try the business app” (F-242) isn't in the live app yet"
+    }
+  ],
+  "problems": []
+}

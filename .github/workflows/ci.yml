@@ -21,6 +21,6 @@ jobs:
       - run: pnpm lint
       - run: pnpm build
 
-      # Fails the run if accessibility, best practices or SEO drop below 100 (see lighthouserc.json).
+      # Fails the run if accessibility, best practices or SEO drop below 100 on any page (see lighthouserc.cjs).
       - name: Lighthouse
         run: pnpm dlx @lhci/cli@0.15.1 autorun

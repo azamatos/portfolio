@@ -1,0 +1,41 @@
+---
+// Beside the log: a small mono title ("rules it keeps", "credits") and its bullet list.
+
+import type { AsideList } from "./types";
+
+interface Props {
+  aside: AsideList;
+}
+
+const { aside } = Astro.props;
+---
+
+<h3>{aside.title}</h3>
+<ul>
+  {aside.items.map((item) => (
+    <li>{item}</li>
+  ))}
+</ul>
+
+<style>
+  h3 {
+    margin: 0;
+    font-family: var(--font-space-mono), monospace;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1.5;
+    color: var(--muted);
+  }
+
+  ul {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 0;
+    padding: 0 0 0 18px;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--fg2);
+    list-style: disc;
+  }
+</style>

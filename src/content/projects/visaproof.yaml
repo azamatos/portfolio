@@ -1,0 +1,542 @@
+order: 1
+name: Visaproof
+status: live
+site: https://visaproof.azamatos.com
+repo: azamatos/visaproof
+palette: visa-friendly developer jobs
+accent:
+  dark: "#76beff"
+  light: "#0863a9"
+  # The "won't sponsor" orange of the waffle and the bars.
+  acc2: { dark: "#f99f5d", light: "#a14808" }
+list:
+  dir: visaproof/
+  mode: drwxr-xr-x
+  commits: "{commits}"
+  stack: nuxt · postgres · claude · node
+readme:
+  kind: job finder
+  host: visaproof.azamatos.com
+  image: { shot: search-full }
+  phoneImage: { shot: search }
+  alt: "Visaproof search: roles grouped by visa answer, with filters for visa, relocation, language and country"
+  panImage: true
+  headline: Developer jobs in Europe, with the visa answer first.
+  description: "It reads open roles straight from companies’ own job boards and answers what a relocating developer asks first: will they sponsor a visa, and will they help me move. Every answer quotes the posting or an official sponsor register."
+  short: Reads open roles from companies’ own job boards. Every visa answer quotes the posting or an official sponsor register.
+  tech:
+    - Nuxt {nuxt}
+    - Vue {vue}
+    - Tailwind CSS {tailwind}
+    - Postgres {postgres}
+    - Claude
+    - DuckDB
+    - Docker
+  stats:
+    - value: "{roles}"
+      label: open roles, read from companies’ own boards
+      short: open roles
+    - value: "{companies}"
+      label: companies across {countries} countries
+      short: companies
+    - value: "{modelPrecision}"
+      label: precise on “sponsors”, against {rulesPrecision} for keyword rules
+      short: precise on “sponsors”
+  secondaryLink:
+    label: Open visaproof.azamatos.com
+    href: https://visaproof.azamatos.com
+page:
+  statusLabel: live · visaproof.azamatos.com
+  tagline:
+    strong: Developer jobs in Europe, with the visa answer first,
+    rest: and the evidence for every answer.
+  meta:
+    - label: role
+      text: "Everything, alone: the idea, the pipeline, the evaluation, the design and the site"
+    - label: stack
+      text: Nuxt · Vue · Postgres · Claude · Node
+    - label: links
+      links:
+        - label: visaproof.azamatos.com
+          href: https://visaproof.azamatos.com
+        - label: Source on GitHub
+          href: https://github.com/azamatos/visaproof
+  hero:
+    host: visaproof.azamatos.com
+    image: { shot: search }
+    alt: "Visaproof search: developer jobs in Europe grouped by visa answer, with filters for visa, relocation, language and country"
+    phoneImage: { shot: job-phone }
+    phoneAlt: "A Visaproof job page on a phone: a role that sponsors visas, with its moving and language answers"
+  numbers:
+    - value: "{roles}"
+      label: open software roles in Europe, read from companies’ own boards
+    - value: "{companies}"
+      label: companies hiring engineers, in {countries} countries
+    - value: "{boardsKnown}"
+      label: job boards found on 8 board types, almost all through Common Crawl
+    - value: "{newRoles}"
+      label: new roles in the last 24 hours
+  numbersNote: Live from the site’s own data, for the EU, EEA, UK and Switzerland; checked {checked}.
+  sections:
+    - title: the problem
+      lead: A developer who needs a visa opens fifty postings and searches each one for “visa”. Most never say.
+      text: "Only {mentionShare} of open roles mention visas, relocation, permits or the right to work at all. About {sponsorsPer100} in 100 clearly offer sponsorship, and {wontPer100} in 100 refuse it. So for most roles the answer can’t come from the posting: it has to come from the law and the sponsor registers."
+      parts:
+        - kind: waffle
+          label: 100 squares, one per 1% of open roles
+          note: One square = 1% of open roles
+          counts:
+            offers: "{sponsors}"
+            refuses: "{wont}"
+            unclear: "{unclear}"
+            silent: "{silent}"
+          legend:
+            - key: offers
+              swatch: var(--acc)
+              text: offer visa sponsorship, {sponsors} roles
+              alt: offer sponsorship
+            - key: refuses
+              swatch: var(--acc2)
+              text: refuse it
+              alt: refuse it
+            - key: unclear
+              swatch: var(--waffle-grey)
+              text: mention visas or relocation, no clear answer
+              alt: mention visas or relocation without a clear answer
+            - key: silent
+              swatch: var(--waffle-empty)
+              text: say nothing
+              alt: say nothing
+    - title: how it works
+      lead: Read every company’s own job board, keep the engineering roles in Europe, and check each one against the law.
+      parts:
+        - kind: flow
+          items:
+            - tag: sources
+              title: Company job boards
+              body: Ashby, Greenhouse, Lever, SmartRecruiters, Personio, Recruitee, Workable, Workday. One request per board where the API allows.
+              highlight: false
+            - tag: every 6 hours
+              accent: true
+              title: Pipeline
+              body: Keeps software roles in the EU, EEA, UK and Switzerland; marks each new, changed or closed.
+              highlight: false
+            - tag: postgres
+              title: Roles and evidence
+              body: Every fact stored with its quote or register entry, and when it was checked.
+              highlight: false
+            - tag: live
+              title: Website
+              body: Search with the visa answer first, job, company and country pages, the method and its accuracy.
+              highlight: false
+        - kind: feeds
+          items:
+            - when: weekly
+              title: Discovery
+              body: Common Crawl’s index finds new company boards.
+            - when: daily
+              title: Sponsor registers
+              body: The Dutch IND ({nlSponsors} sponsors) and the UK register ({ukSponsors}).
+            - when: nightly
+              title: Language model
+              body: Reads postings that mention visas and returns facts with exact quotes.
+    - title: the answer
+      lead: Yes or no isn’t honest. The visa answer has five levels, and each shows where it came from.
+      parts:
+        - kind: states
+          img: { shot: job }
+          alt: "A job page: the visa, moving, language and pay answers, then the quote from the posting and the sponsor-register check behind them"
+          caption: "The job page: every answer with its quote, its source and when it was checked."
+          items:
+            - label: Sponsors visa
+              when: The posting says it sponsors visas for this role.
+              evidence: the sentence
+              bg: var(--acc)
+              fg: var(--on-acc)
+              icon: var(--on-acc)
+              border: var(--acc)
+              bs: solid
+              r: 999px
+            - label: May sponsor
+              when: "The posting hedges: “for certain roles”, “case by case”."
+              evidence: the sentence
+              bg: color-mix(in srgb, var(--acc) 12%, transparent)
+              fg: var(--acc)
+              icon: var(--acc)
+              border: color-mix(in srgb, var(--acc) 45%, transparent)
+              bs: solid
+              r: 999px
+            - label: Can sponsor
+              when: "The posting doesn’t refuse, and the law lets this employer hire on a visa: a registered sponsor, or a salary above the Blue Card line."
+              evidence: the register entry or the salary rule
+              bg: transparent
+              fg: var(--fg)
+              icon: var(--acc)
+              border: color-mix(in srgb, var(--acc) 45%, transparent)
+              bs: solid
+              r: 4px
+            - label: Visa unknown
+              when: The posting says nothing, and no register or salary check applies.
+              evidence: a short note on the country’s rules
+              bg: transparent
+              fg: var(--fg2)
+              icon: var(--fg2)
+              border: var(--line)
+              bs: dashed
+              r: 999px
+            - label: Won’t sponsor
+              when: "The posting refuses: “visa sponsorship is not available”."
+              evidence: the sentence
+              bg: color-mix(in srgb, var(--acc2) 12%, transparent)
+              fg: var(--acc2)
+              icon: var(--acc2)
+              border: color-mix(in srgb, var(--acc2) 45%, transparent)
+              bs: solid
+              r: 999px
+    - title: measured
+      lead: Keyword rules were wrong on {rulesWrong} of the postings they marked “offers”. So they never show an answer; a language model does, checked against {labelled} postings labelled by hand.
+      parts:
+        - kind: bars
+          title: “offers visa sponsorship”, on the labelled set
+          text: "Precision: of the roles marked “offers”, how many really offer. Recall: of the roles that really offer, how many were found. The rules now only pick which postings the model reads: the {mentionShare} that mention visas or relocation. Every quote it returns must be an exact substring of the posting, or it’s dropped."
+          groups:
+            - who: Keyword rules
+              rows:
+                - metric: precision
+                  value: "{rulesPrecision}"
+                  color: var(--acc2)
+                - metric: recall
+                  value: "{rulesRecall}"
+                  color: "#5c5c5c"
+            - who: Language model (Claude)
+              rows:
+                - metric: precision
+                  value: "{modelPrecision}"
+                  color: var(--acc)
+                - metric: recall
+                  value: "{modelRecall}"
+                  color: var(--acc)
+    - title: what the first sweep broke
+      text: The first full sweep, on 22 October 2026, read every board Common Crawl knew.
+      parts:
+        - kind: cards
+          min: 320px
+          items:
+            - title: "{twiceBoards} boards counted twice"
+              body: Case-insensitive slugs and boards served on two domains held {twiceRoles} duplicate roles. One migration merged them.
+            - title: Every EU-hosted Greenhouse board failed
+              body: "All {greenhouseEu} of them: the EU API host doesn’t exist. The main API serves them."
+            - title: Rate limits from Workable and Recruitee
+              body: Each Recruitee company has its own subdomain, so requests now queue per site, not per host.
+            - title: "{churnRoles} roles “changed” on every run"
+              body: Workable lists a job once per location under one id. Now it’s one posting with all its locations.
+        - kind: note
+          text: ✓ after the fixes, {failedAfter} of {boardsAfter} boards failed in the next run, all on the boards’ side
+  builtWith:
+    - group: website
+      items:
+        - { name: Nuxt, version: "{nuxt}" }
+        - { name: Vue, version: "{vue}" }
+        - { name: TypeScript }
+        - { name: Tailwind CSS, version: "{tailwind}" }
+        - { name: Reka UI }
+      note: Pages render on the server, and the filters are a plain form, so the search lives in the URL. Own components, with Reka UI for the hard widgets like the phone filter drawer.
+    - group: server and data
+      items:
+        - { name: Nitro server routes }
+        - { name: Postgres, version: "{postgres}" }
+        - { name: postgres.js }
+        - { name: plain SQL migrations }
+        - { name: LRU cache }
+      note: The site reads Postgres as a read-only user on the same server; answers are cached for 5 minutes, because the data changes every 6 hours at most.
+    - group: pipeline and AI
+      items:
+        - { name: Node, version: "{node}" }
+        - { name: Claude }
+        - { name: DuckDB }
+        - { name: Common Crawl }
+        - { name: IND and UK registers }
+      note: Node runs the TypeScript directly, with no build step. Claude reads the postings that mention visas and must quote them exactly.
+    - group: running it
+      items:
+        - { name: Docker Compose }
+        - { name: Caddy }
+        - { name: Cloudflare }
+        - { name: systemd timers }
+        - { name: Telegram alerts }
+      note: "On my own server: a missed run starts at boot, and a broken run sends a message."
+    - group: quality
+      items:
+        - { name: Vitest }
+        - { name: Playwright }
+        - { name: axe }
+        - { name: ESLint strict }
+        - { name: GitHub Actions }
+      note: Precision has to stay at 95% or more on “offers” before a prompt or model change ships.
+  log:
+    title: git log
+    items:
+      - label: pipeline
+        note: reads the boards every 6 hours, alerts in Telegram
+        state: done
+      - label: evidence
+        note: labelled set, scorer, extractor, sponsor registers
+        state: done
+      - label: design
+        note: six screens on phone and desktop, with every state
+        state: done
+      - label: website
+        note: built straight from the design
+        state: done
+      - label: launch
+        note: open to search engines, 27 Oct
+        state: done
+  aside:
+    title: rules it keeps
+    items:
+      - "Only official public feeds: company job-board APIs, Common Crawl’s index, government registers."
+      - "Doesn’t republish postings: short quotes and facts, then a link to apply on the original."
+      - “Unknown” is a valid answer. Sponsorship is never guessed from a company’s size, reputation or another posting.
+  actions:
+    - label: Open visaproof.azamatos.com
+      href: https://visaproof.azamatos.com
+      primary: true
+    - label: Source on GitHub
+      href: https://github.com/azamatos/visaproof
+      primary: false
+
+sources:
+  stats: https://visaproof.azamatos.com/api/stats
+  status: https://visaproof.azamatos.com/api/status
+
+values:
+  commits:
+    from: github
+    get: commits
+    means: Commits on the main branch of azamatos/visaproof.
+    maxAge: 14
+  nuxt:
+    from: github
+    get: version
+    package: nuxt
+    file: apps/web/package.json
+    means: The major version of Nuxt the website depends on.
+    maxAge: 14
+  vue:
+    from: github
+    get: version
+    package: vue
+    file: apps/web/package.json
+    parts: 2
+    means: The major and minor version of Vue the website depends on.
+    maxAge: 14
+  tailwind:
+    from: github
+    get: version
+    package: tailwindcss
+    file: apps/web/package.json
+    means: The major version of Tailwind CSS the website depends on.
+    maxAge: 14
+  postgres:
+    from: github
+    get: version
+    package: postgres
+    file: deploy/compose.yml
+    means: The major version of the Postgres image in the production compose file.
+    maxAge: 14
+  node:
+    from: github
+    get: version
+    package: node
+    file: .nvmrc
+    means: The major version of Node in .nvmrc.
+    maxAge: 14
+  roles:
+    from: json
+    source: stats
+    path: roles
+    means: Open software roles in the EU, EEA, UK and Switzerland on the live site.
+    maxAge: 14
+  companies:
+    from: json
+    source: stats
+    path: companies
+    means: Companies with at least one open role on the live site.
+    maxAge: 14
+  boardsKnown:
+    from: json
+    source: stats
+    path: boardsKnown
+    means: Company job boards the pipeline knows, whether or not they have roles in Europe now.
+    maxAge: 14
+  countries:
+    from: json
+    source: status
+    path: parts.key=roles.rows.k=Countries.v
+    means: Countries with at least one open role, from the live status page.
+    maxAge: 14
+  newRoles:
+    from: json
+    source: status
+    path: parts.key=roles.rows.k=New in the last 24 hours.v
+    means: Open roles first seen in the 24 hours before the refresh, from the live status page.
+    maxAge: 14
+  sponsors:
+    from: json
+    source: stats
+    path: visa.sponsors
+    means: Open roles whose posting says it sponsors visas (the "Sponsors visa" answer).
+    maxAge: 14
+  wont:
+    from: json
+    source: stats
+    path: visa.wont
+    means: Open roles whose posting refuses visa sponsorship (the "Won't sponsor" answer).
+    maxAge: 14
+  mentions:
+    from: json
+    source: stats
+    path: mentions
+    means: Open roles whose posting mentions visas, relocation, permits or the right to work at all.
+    maxAge: 14
+  unclear:
+    from: calc
+    expr: mentions - sponsors - wont
+    means: Open roles that mention visas or relocation but neither offer nor refuse sponsorship.
+  silent:
+    from: calc
+    expr: roles - mentions
+    means: Open roles that say nothing about visas, relocation, permits or the right to work.
+  mentionShare:
+    from: calc
+    expr: mentions / roles * 100
+    means: The share of open roles that mention visas, relocation, permits or the right to work.
+    format: { suffix: "%" }
+  sponsorsPer100:
+    from: calc
+    expr: sponsors / roles * 100
+    means: Open roles that clearly offer visa sponsorship, per 100 open roles.
+    format: { decimals: 1 }
+  wontPer100:
+    from: calc
+    expr: wont / roles * 100
+    means: Open roles that refuse visa sponsorship, per 100 open roles.
+    format: { decimals: 1 }
+  nlSponsors:
+    from: json
+    source: status
+    path: parts.key=registers.rows.k=IND, Netherlands.v
+    means: Employers on the Dutch IND register of recognised sponsors, as the site last loaded it.
+    maxAge: 14
+  ukSponsors:
+    from: json
+    source: status
+    path: parts.key=registers.rows.k=Home Office, UK.v
+    means: Employers on the UK Home Office register of licensed sponsors, as the site last loaded it.
+    maxAge: 14
+  labelled:
+    from: manual
+    value: 200
+    checked: 2026-10-23
+    sourceUrl: https://github.com/azamatos/visaproof/blob/main/docs/findings.md#what-postings-say-about-visas
+    means: Postings labelled by hand for the evaluation set.
+    maxAge: 180
+  rulesPrecision:
+    from: manual
+    value: 33
+    checked: 2026-10-23
+    sourceUrl: https://github.com/azamatos/visaproof/blob/main/docs/findings.md#language-model-results
+    means: Of the labelled postings the keyword rules marked "offers sponsorship", the share that really offer it.
+    maxAge: 180
+    format: { suffix: "%" }
+  rulesWrong:
+    from: calc
+    expr: 100 - rulesPrecision
+    means: Of the labelled postings the keyword rules marked "offers sponsorship", the share that don't offer it.
+    format: { suffix: "%" }
+  rulesRecall:
+    from: manual
+    value: 90
+    checked: 2026-10-23
+    sourceUrl: https://github.com/azamatos/visaproof/blob/main/docs/findings.md#language-model-results
+    means: Of the labelled postings that really offer sponsorship, the share the keyword rules found.
+    maxAge: 180
+    format: { suffix: "%" }
+  modelPrecision:
+    from: manual
+    value: 100
+    checked: 2026-10-23
+    sourceUrl: https://github.com/azamatos/visaproof/blob/main/docs/findings.md#language-model-results
+    means: Of the labelled postings the language model (Opus 5.5) marked "offers sponsorship", the share that really offer it.
+    maxAge: 180
+    format: { suffix: "%" }
+  modelRecall:
+    from: manual
+    value: 100
+    checked: 2026-10-23
+    sourceUrl: https://github.com/azamatos/visaproof/blob/main/docs/findings.md#language-model-results
+    means: Of the labelled postings that really offer sponsorship, the share the language model (Opus 5.5) found.
+    maxAge: 180
+    format: { suffix: "%" }
+  twiceBoards:
+    from: manual
+    value: 255
+    checked: 2026-10-23
+    sourceUrl: https://github.com/azamatos/visaproof/blob/main/docs/findings.md#boards
+    means: Boards the first sweep (22 Oct 2026) counted twice.
+  twiceRoles:
+    from: manual
+    value: 1050
+    checked: 2026-10-23
+    sourceUrl: https://github.com/azamatos/visaproof/blob/main/docs/findings.md#boards
+    means: Duplicate roles on the boards the first sweep counted twice.
+  greenhouseEu:
+    from: manual
+    value: 403
+    checked: 2026-10-23
+    sourceUrl: https://github.com/azamatos/visaproof/blob/main/docs/findings.md#boards
+    means: Boards on Greenhouse's EU host, all of which failed in the first sweep.
+  churnRoles:
+    from: manual
+    value: 850
+    checked: 2026-10-23
+    sourceUrl: https://github.com/azamatos/visaproof/blob/main/docs/findings.md#boards
+    means: Workable roles that came out "changed" on every run before the fix (about this many).
+  failedAfter:
+    from: manual
+    value: 8
+    checked: 2026-10-23
+    sourceUrl: https://github.com/azamatos/visaproof/blob/main/docs/findings.md#boards
+    means: Boards that failed in the first run after the fixes (23 Oct 2026).
+  boardsAfter:
+    from: manual
+    value: 2915
+    checked: 2026-10-23
+    sourceUrl: https://github.com/azamatos/visaproof/blob/main/docs/findings.md#boards
+    means: Boards read in the first run after the fixes (23 Oct 2026).
+
+shots:
+  # Search with no filters, so its header counts every open role, as the numbers do.
+  search-full:
+    url: https://visaproof.azamatos.com/
+    device: desktop
+    theme: dark
+    full: true
+  search:
+    url: https://visaproof.azamatos.com/
+    device: desktop
+    theme: dark
+  job:
+    url: https://visaproof.azamatos.com/?visa=sponsors
+    device: desktop
+    theme: dark
+    steps:
+      - click: 'a[href^="/jobs/"]'
+      - waitFor: text=Where the answers come from
+  job-phone:
+    url: https://visaproof.azamatos.com/?visa=sponsors
+    device: phone
+    theme: dark
+    steps:
+      - click: 'a[href^="/jobs/"]'
+      - waitFor: text=Where the answers come from

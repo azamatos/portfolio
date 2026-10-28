@@ -1,0 +1,100 @@
+/*
+ * azamatos.com design tokens, exported from the Chosen design (27 Oct 2026).
+ *
+ * Theme: dark is the default. The visitor picks system / dark / light (footer switch or ⌘K → theme …).
+ *   - "dark" or "light": set data-theme on <html>.
+ *   - "system": remove data-theme; prefers-color-scheme decides.
+ * The projects terminal and the command palette stay dark in both themes (their colours are fixed, see HANDOFF.md).
+ */
+
+:root,
+:root[data-theme="dark"] {
+  --bg: #010101;          /* page */
+  --fg: #ffffff;          /* text, headings */
+  --fg2: #a6a6a6;         /* secondary text, the muted half of the headline */
+  --muted: rgba(255, 255, 255, 0.5);  /* labels, notes, mono captions */
+  --line: rgba(255, 255, 255, 0.18);  /* borders of chips, buttons, cards */
+  --line2: rgba(255, 255, 255, 0.08); /* hairlines between rows and sections */
+  --chip: rgba(255, 255, 255, 0.02);  /* chip, card and secondary-button fill */
+  --sel: rgba(255, 255, 255, 0.08);   /* hover and pressed fill */
+  --mint: #68edc0;        /* prompt arrow, "live", success */
+  --teal: #5bc8c0;        /* command verbs: ls, cat, mail, cd */
+  --amber: #f2c14e;       /* "in development", the current milestone */
+  --logo: #f0f4f3;
+  --btn-bg: #ffffff;      /* primary button */
+  --btn-fg: #010101;
+  --hdr: rgba(1, 1, 1, 0.8);          /* sticky header, with backdrop-filter: blur(14px) */
+  --card: #070707;
+
+  /* hero wave (public/hero.svg), shown only behind the text */
+  --wave-filter: brightness(0.6) contrast(2) invert(0.2);
+  --wave-blend: luminosity;
+  --wave-opacity: 1;
+
+  /* hero backdrop photo */
+  --photo-filter: grayscale(1) contrast(1.08) brightness(0.88);
+  --scan: 0.6;            /* opacity of the horizontal scan lines over the photo */
+
+  color-scheme: dark;
+}
+
+:root[data-theme="light"] {
+  --bg: #f7f7f5;
+  --fg: #0b0b0b;
+  --fg2: #545454;
+  --muted: #6b6b6b;
+  --line: rgba(0, 0, 0, 0.16);
+  --line2: rgba(0, 0, 0, 0.08);
+  --chip: rgba(255, 255, 255, 0.7);
+  --sel: rgba(0, 0, 0, 0.07);
+  --mint: #0b7f5a;
+  --teal: #127a74;
+  --amber: #8a5a00;
+  --logo: #0b0b0b;
+  --btn-bg: #0b0b0b;
+  --btn-fg: #ffffff;
+  --hdr: rgba(247, 247, 245, 0.85);
+  --card: #ffffff;
+  --wave-filter: grayscale(1) contrast(0.9);
+  --wave-blend: multiply;
+  --wave-opacity: 0.32;
+  --photo-filter: grayscale(1) contrast(0.95) brightness(1.12);
+  --scan: 0.7;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme]) {
+    --bg: #f7f7f5; --fg: #0b0b0b; --fg2: #545454; --muted: #6b6b6b;
+    --line: rgba(0, 0, 0, 0.16); --line2: rgba(0, 0, 0, 0.08); --chip: rgba(255, 255, 255, 0.7); --sel: rgba(0, 0, 0, 0.07);
+    --mint: #0b7f5a; --teal: #127a74; --amber: #8a5a00; --logo: #0b0b0b;
+    --btn-bg: #0b0b0b; --btn-fg: #ffffff; --hdr: rgba(247, 247, 245, 0.85); --card: #ffffff;
+    --wave-filter: grayscale(1) contrast(0.9); --wave-blend: multiply; --wave-opacity: 0.32;
+    --photo-filter: grayscale(1) contrast(0.95) brightness(1.12); --scan: 0.7;
+    color-scheme: light;
+  }
+}
+
+/* Project accents: set data-project on the project page's <main>.
+ * --acc is the project colour, --acc2 the second colour (Visaproof's "won't sponsor" orange), --on-acc text on --acc. */
+[data-project="visaproof"] { --acc: #76beff; --acc2: #f99f5d; --on-acc: #010101; }
+[data-project="yeral"]     { --acc: #9a85ff; --acc2: #f99f5d; --on-acc: #010101; }
+[data-project="rebuffer"]  { --acc: #68edc0; --acc2: #f2c14e; --on-acc: #010101; }
+[data-project="pass"]      { --acc: #ff6b4d; --acc2: #f2c14e; --on-acc: #010101; }
+:root[data-theme="light"] [data-project="visaproof"] { --acc: #0863a9; --acc2: #a14808; --on-acc: #ffffff; }
+:root[data-theme="light"] [data-project="yeral"]     { --acc: #5a3fe0; --acc2: #a14808; --on-acc: #ffffff; }
+:root[data-theme="light"] [data-project="rebuffer"]  { --acc: #0b7f5a; --acc2: #8a5a00; --on-acc: #ffffff; }
+:root[data-theme="light"] [data-project="pass"]      { --acc: #c23a1d; --acc2: #8a5a00; --on-acc: #ffffff; }
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme]) [data-project="visaproof"] { --acc: #0863a9; --acc2: #a14808; --on-acc: #ffffff; }
+  :root:not([data-theme]) [data-project="yeral"]     { --acc: #5a3fe0; --acc2: #a14808; --on-acc: #ffffff; }
+  :root:not([data-theme]) [data-project="rebuffer"]  { --acc: #0b7f5a; --acc2: #8a5a00; --on-acc: #ffffff; }
+  :root:not([data-theme]) [data-project="pass"]      { --acc: #c23a1d; --acc2: #8a5a00; --on-acc: #ffffff; }
+}
+
+/* Layout */
+:root { --g: 120px; }                                   /* side gutter */
+@media (max-width: 1200px) { :root { --g: 80px; } }
+@media (max-width: 800px) { :root { --g: 20px; } }      /* the phone layout starts at 800px */
+
+/* Type: Geist 400/500 for text, Space Mono 400 for everything terminal-like (already self-hosted in src/assets/fonts). */

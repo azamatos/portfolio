@@ -1,0 +1,69 @@
+/*
+ * Shared by the project page components (src/components/project/). Imported by the components that use it, so it
+ * only ships on pages that have them. Colours come from tokens.css; the project accent (--acc, --acc2, --on-acc) from
+ * data-project on an ancestor.
+ */
+
+/* The waffle's grey ("no clear answer") and empty squares, per theme. */
+:root,
+:root[data-theme="dark"] {
+  --waffle-grey: #5c5c5c;
+  --waffle-empty: #1f1f1f;
+  --waffle-ring: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+}
+
+:root[data-theme="light"] {
+  --waffle-grey: #b3b3b3;
+  --waffle-empty: #ececea;
+  --waffle-ring: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme]) {
+    --waffle-grey: #b3b3b3;
+    --waffle-empty: #ececea;
+    --waffle-ring: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
+  }
+}
+
+/* An amber dot that pulses: "in development", the current step of a log. Three times, then it stays still, as the
+   terminal's dots do on a page without the hero's motion switch; never with reduced motion. */
+@media (prefers-reduced-motion: no-preference) {
+  .pj-pulse {
+    animation: pj-pulse 1.8s ease-out 3;
+  }
+}
+
+@keyframes pj-pulse {
+  0% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--amber) 45%, transparent);
+  }
+  70% {
+    box-shadow: 0 0 0 7px transparent;
+  }
+  100% {
+    box-shadow: 0 0 0 0 transparent;
+  }
+}
+
+/* The page head and its hero rise in on load. */
+.pj-rise {
+  animation: pj-rise 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+@keyframes pj-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pj-rise {
+    animation: none;
+  }
+}

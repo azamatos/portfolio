@@ -1,0 +1,51 @@
+---
+// Framed 16:10 screenshots side by side (stacked on a phone), each with its host bar and a mono caption.
+
+import Media from "../Media.astro";
+import type { PartOf } from "../types";
+
+interface Props {
+  part: PartOf<"gallery">;
+}
+
+const { part } = Astro.props;
+---
+
+<div class="gallery">
+  {part.items.map((item) => (
+    <figure>
+      <Media
+        media={item.img}
+        alt={item.alt}
+        frame="gallery"
+        host={item.host}
+        ratio="16 / 10"
+        sizes="(max-width: 800px) calc(100vw - 40px), (max-width: 1200px) calc(50vw - 88px), 450px"
+      />
+      <figcaption>{item.caption}</figcaption>
+    </figure>
+  ))}
+</div>
+
+<style>
+  .gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr));
+    gap: 16px;
+  }
+
+  figure {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-width: 0;
+    margin: 0;
+  }
+
+  figcaption {
+    font-family: var(--font-space-mono), monospace;
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--fg2);
+  }
+</style>

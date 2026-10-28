@@ -1,37 +1,15 @@
-:root {
-    --color-bg: #010101;
-    --color-text-primary: #fff;
-    --color-text-secondary: #a6a6a6;
-    --color-text-muted: rgba(255, 255, 255, 0.5);
-    --color-accent: #68edc0;
-    --color-border: rgba(255, 255, 255, 0.18);
-    --color-border-hover: rgba(255, 255, 255, 0.35);
-    --color-surface: rgba(255, 255, 255, 0.02);
-    --color-surface-hover: rgba(255, 255, 255, 0.06);
+@import "./tokens.css";
 
-    /* One horizontal gutter for header, hero and footer, so their edges line up. */
-    --gutter: 120px;
-
-    color-scheme: dark;
-}
-
-@media (max-width: 1200px) {
-    :root {
-        --gutter: 80px;
-    }
-}
-
-@media (max-width: 800px) {
-    :root {
-        --gutter: 24px;
-    }
+html {
+    /* Anchors and focused elements stop below the sticky header. */
+    scroll-padding-top: var(--hdr-h);
 }
 
 body {
     padding: 0;
     margin: 0;
-    background: var(--color-bg);
-    color: var(--color-text-primary);
+    background: var(--bg);
+    color: var(--fg);
     font-family: var(--font-geist);
     font-optical-sizing: auto;
     font-weight: 400;
@@ -44,6 +22,11 @@ body {
     margin: 0;
     box-sizing: border-box;
     -webkit-font-smoothing: inherit;
+}
+
+/* Components set display on their own classes; this keeps the hidden attribute stronger than those. */
+[hidden] {
+    display: none !important;
 }
 
 ol,
@@ -82,9 +65,19 @@ h6 {
     overflow-wrap: break-word;
 }
 
+kbd {
+    font-family: var(--font-space-mono);
+}
+
 :focus-visible {
-    outline: 2px solid var(--color-accent);
+    outline: 2px solid var(--mint);
     outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    html {
+        scroll-behavior: smooth;
+    }
 }
 
 .sr-only {
@@ -94,4 +87,17 @@ h6 {
     overflow: hidden;
     clip-path: inset(50%);
     white-space: nowrap;
+}
+
+/* Desktop-only and phone-only parts of a component; the phone layout starts at 800px. */
+@media (max-width: 800px) {
+    .only-desk {
+        display: none !important;
+    }
+}
+
+@media (width > 800px) {
+    .only-phone {
+        display: none !important;
+    }
 }

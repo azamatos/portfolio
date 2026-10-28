@@ -1,11 +1,13 @@
 ---
+import { Picture } from "astro:assets";
 import ResumeActions from "@/components/ResumeActions.astro";
+import heroPhoto from "@/assets/hero-photo.webp";
 import { SITE } from "@/site";
 
 const firstRole = SITE.roles[0].split(" ");
 ---
 
-<section aria-labelledby="hero-title">
+<section class="hero" aria-labelledby="hero-title">
   <div class="content">
     <p class="availability">
       <span class="dot" aria-hidden="true"></span>
@@ -14,10 +16,10 @@ const firstRole = SITE.roles[0].split(" ");
 
     <h1 id="hero-title">
       <span class="line">
-        <span class="muted">Hi, I'm</span> {SITE.name}.
+        <span class="muted">Hi, I’m</span> {SITE.name}.
       </span>{" "}
       <span class="line">
-        <span class="muted">I'm a</span>{" "}
+        <span class="muted">I’m a</span>{" "}
         <span class="role" data-roles={JSON.stringify(SITE.roles)}>
           {firstRole.map((word, i) => (
             <Fragment>
@@ -32,12 +34,31 @@ const firstRole = SITE.roles[0].split(" ");
 
     <p class="summary">{SITE.summary}</p>
 
-    <ResumeActions />
+    <ResumeActions mail />
+  </div>
+
+  <!-- The backdrop: a transparent cut-out, black and white behind scan lines, drawn in from the top.
+       On a phone it's a full-width band above the text. Likely the largest paint, so it loads first. -->
+  <div class="photo">
+    <Picture
+      src={heroPhoto}
+      formats={["avif"]}
+      fallbackFormat="webp"
+      alt="Azamat Jorayev in glasses and a black hoodie"
+      loading="eager"
+      fetchpriority="high"
+    />
   </div>
 
   <div class="wave" aria-hidden="true">
     <img src="/hero.svg" alt="" width="3501" height="2149" decoding="async" />
   </div>
+
+  <a class="cue only-desk" href="#projects">
+    <span>
+      <span aria-hidden="true">↓</span> <span class="verb">ls</span> projects
+    </span>
+  </a>
 
   <!-- Shown by the script below once the typing starts (WCAG 2.2.2: moving text needs a pause). -->
   <button class="typing-toggle" type="button" data-typing-toggle hidden>
@@ -81,9 +102,21 @@ const firstRole = SITE.roles[0].split(" ");
     role.setAttribute("aria-hidden", "true");
     line.closest("h1")?.classList.add("typing");
 
-    // Non-breaking hyphens keep "full-stack" on one line while it types.
+    // Each word in its own no-wrap span, as the page renders the first role, so "full-stack" stays on one line
+    // while it types. (A non-breaking hyphen would do it too, but Geist hasn't got one, so it came from another font.)
+    const wordTemplate = role.querySelector(".word")?.cloneNode(false);
     const show = (text: string) => {
-      role.textContent = text.replaceAll("-", "‑");
+      if (!wordTemplate) {
+        role.textContent = text;
+        return;
+      }
+      role.replaceChildren(
+        ...text.split(" ").flatMap((word, i) => {
+          const span = wordTemplate.cloneNode(false);
+          span.textContent = word;
+          return i > 0 ? [" ", span] : [span];
+        }),
+      );
     };
 
     // Reserve the height of the tallest role, so the text below never jumps.
@@ -95,7 +128,7 @@ const firstRole = SITE.roles[0].split(" ");
         show(text);
         tallest = Math.max(tallest, line.getBoundingClientRect().height);
       }
-      role.textContent = current;
+      show(current);
       line.style.minHeight = `${tallest}px`;
     };
     reserveHeight();
@@ -164,13 +197,13 @@ const firstRole = SITE.roles[0].split(" ");
 </script>
 
 <style>
-  section {
+  .hero {
     position: relative;
     display: flex;
-    flex-direction: column;
-    justify-content: center;
+    align-items: center;
     width: 100%;
-    padding: 80px var(--gutter);
+    min-height: 816px;
+    padding: 48px var(--g) 96px;
     overflow: hidden;
   }
 
@@ -180,6 +213,21 @@ const firstRole = SITE.roles[0].split(" ");
     display: flex;
     flex-direction: column;
     gap: 24px;
+    width: 100%;
+    max-width: 660px;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .content {
+      animation: rise 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) 0.05s both;
+    }
+  }
+
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(14px);
+    }
   }
 
   .availability {
@@ -188,13 +236,12 @@ const firstRole = SITE.roles[0].split(" ");
     align-items: center;
     gap: 10px;
     padding: 7px 16px 7px 14px;
-    border: 1px solid var(--color-border);
+    border: 1px solid var(--line);
     border-radius: 999px;
-    background: var(--color-surface);
-    backdrop-filter: blur(10px);
-    font-size: 16px;
+    background: var(--chip);
+    font-size: 14px;
     letter-spacing: -0.01em;
-    color: var(--color-text-secondary);
+    color: var(--fg2);
   }
 
   .dot {
@@ -202,22 +249,22 @@ const firstRole = SITE.roles[0].split(" ");
     height: 8px;
     flex: none;
     border-radius: 50%;
-    background: var(--color-accent);
-    box-shadow: 0 0 0 4px rgba(104, 237, 192, 0.16);
+    background: var(--mint);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--mint) 16%, transparent);
   }
 
   h1 {
     display: flex;
     flex-direction: column;
-    gap: 0.2em;
-    font-size: 120px;
+    gap: 0.18em;
+    font-size: 58px;
     font-weight: 500;
     letter-spacing: -0.06em;
     line-height: 1.05;
   }
 
   .muted {
-    color: var(--color-text-secondary);
+    color: var(--fg2);
   }
 
   .word {
@@ -234,7 +281,7 @@ const firstRole = SITE.roles[0].split(" ");
     height: 0.9em;
     margin-left: 0.08em;
     vertical-align: -0.12em;
-    background: var(--color-text-primary);
+    background: var(--fg);
   }
 
   .cursor.blink {
@@ -247,20 +294,124 @@ const firstRole = SITE.roles[0].split(" ");
     }
   }
 
+  .summary {
+    max-width: 580px;
+    font-size: 18px;
+    line-height: 1.5;
+    letter-spacing: -0.02em;
+    color: var(--fg2);
+  }
+
+  /* The wave sits behind the text only and fades out before the photo. */
+  .wave {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 110%;
+    height: 100%;
+    filter: var(--wave-filter);
+    mix-blend-mode: var(--wave-blend);
+    opacity: var(--wave-opacity);
+    pointer-events: none;
+    mask-image: linear-gradient(to right, #000 0%, #000 30%, transparent 54%);
+  }
+
+  .wave img {
+    width: 100%;
+    height: 100%;
+    max-width: none;
+  }
+
+  /* The photo fades in from the left; the image fades out at the bottom; scan lines run over it. */
+  .photo {
+    position: absolute;
+    right: -3%;
+    bottom: 0;
+    height: 90%;
+    pointer-events: none;
+    mask-image: linear-gradient(to right, transparent 0%, #000 32%);
+  }
+
+  .photo::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    opacity: var(--scan);
+    background: repeating-linear-gradient(
+      to bottom,
+      transparent 0 3px,
+      var(--bg) 3px 5px
+    );
+  }
+
+  .photo :global(picture) {
+    height: 100%;
+  }
+
+  .photo :global(img) {
+    width: auto;
+    height: 100%;
+    max-width: none;
+    filter: var(--photo-filter);
+    mask-image: linear-gradient(to top, transparent 0%, #000 22%);
+  }
+
+  /* Drawn in from top to bottom. */
+  @media (prefers-reduced-motion: no-preference) {
+    .photo :global(img) {
+      animation: draw 1.6s cubic-bezier(0.4, 0, 0.2, 1) 0.2s both;
+    }
+  }
+
+  @keyframes draw {
+    from {
+      clip-path: inset(0 0 100% 0);
+    }
+
+    to {
+      clip-path: inset(0);
+    }
+  }
+
+  .cue {
+    position: absolute;
+    left: 50%;
+    bottom: 28px;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    height: 44px;
+    padding: 0 12px;
+    transform: translateX(-50%);
+    font-family: var(--font-space-mono);
+    font-size: 13px;
+    color: var(--muted);
+    white-space: nowrap;
+    transition: color 0.16s ease;
+  }
+
+  .cue:hover {
+    color: var(--fg);
+  }
+
+  .verb {
+    color: var(--teal);
+  }
+
   .typing-toggle {
     position: absolute;
-    right: var(--gutter);
-    bottom: 24px;
+    right: var(--g);
+    bottom: 35px;
     z-index: 1;
     display: inline-flex;
     align-items: center;
     gap: 8px;
     padding: 6px 12px;
-    border: 1px solid var(--color-border);
+    border: 1px solid var(--line);
     border-radius: 999px;
-    background: var(--color-surface);
+    background: var(--chip);
     backdrop-filter: blur(10px);
-    color: var(--color-text-secondary);
+    color: var(--fg2);
     font-family: var(--font-space-mono);
     font-size: 12px;
     cursor: pointer;
@@ -270,12 +421,8 @@ const firstRole = SITE.roles[0].split(" ");
   }
 
   .typing-toggle:hover {
-    color: var(--color-text-primary);
-    border-color: var(--color-border-hover);
-  }
-
-  .typing-toggle[hidden] {
-    display: none;
+    color: var(--fg);
+    border-color: var(--fg2);
   }
 
   .typing-toggle svg {
@@ -293,64 +440,63 @@ const firstRole = SITE.roles[0].split(" ");
     display: block;
   }
 
-  .summary {
-    max-width: 640px;
-    font-size: 20px;
-    line-height: 1.5;
-    letter-spacing: -0.02em;
-    color: var(--color-text-secondary);
-  }
-
-  .wave {
-    position: absolute;
-    top: 0;
-    right: -10%;
-    z-index: 0;
-    width: 120%;
-    height: 100%;
-    filter: brightness(0.6) contrast(2) invert(0.2);
-    mix-blend-mode: luminosity;
-    pointer-events: none;
-  }
-
-  .wave img {
-    width: 100%;
-    height: 100%;
-    max-width: none;
-  }
-
-  @media (max-width: 1920px) {
-    h1 {
-      font-size: 72px;
-    }
-
-    .availability {
-      font-size: 14px;
-    }
-
-    .summary {
-      max-width: 580px;
-      font-size: 18px;
+  @media (prefers-reduced-motion: reduce) {
+    .cue,
+    .typing-toggle {
+      transition: none;
     }
   }
 
-  @media (max-width: 1200px) {
-    h1 {
-      font-size: 56px;
+  /* Below 1366px the photo shrinks with the window, so the face stays clear of the text column
+     (the face starts at ~30% of the image's width; the text column needs the gutter + 600px). */
+  @media (width > 1000px) {
+    .photo {
+      height: min(90%, (103vw - var(--g) - 600px) * 1.1);
+    }
+  }
+
+  /* Tablets and phones: the photo becomes a full-width band above the text, low enough that the resume buttons
+     stay on a 900px-tall screen. */
+  @media (max-width: 1000px) {
+    .hero {
+      flex-direction: column;
+      align-items: stretch;
+      min-height: 0;
+      padding: 28px var(--g) 96px;
     }
 
-    .wave {
-      width: 144%;
-      height: 68%;
-      top: 120px;
-      right: -144px;
+    .photo {
+      position: relative;
+      right: auto;
+      bottom: auto;
+      order: -1;
+      height: auto;
+      margin: -28px calc(var(--g) * -1) 0;
+      mask-image: none;
+    }
+
+    .photo :global(img) {
+      width: 100%;
+      height: 320px;
+      object-fit: cover;
+      object-position: 45% 0;
+    }
+  }
+
+  /* A tablet's band is wider than the photo at that height: the whole photo shows, as on a phone, its sides faded. */
+  @media (width > 800px) and (max-width: 1000px) {
+    .photo :global(img) {
+      width: auto;
+      margin-inline: auto;
+      mask-image:
+        linear-gradient(to top, transparent 0%, #000 22%),
+        linear-gradient(to right, transparent, #000 18%, #000 82%, transparent);
+      mask-composite: intersect;
     }
   }
 
   @media (max-width: 800px) {
-    section {
-      justify-content: flex-start;
-      padding-top: 32px;
+    .hero {
       padding-bottom: 64px;
     }
 
@@ -358,19 +504,8 @@ const firstRole = SITE.roles[0].split(" ");
       gap: 20px;
     }
 
-    .availability {
-      align-items: flex-start;
-      padding: 8px 14px 8px 12px;
-      border-radius: 14px;
-      font-size: 13px;
-    }
-
-    .dot {
-      margin-top: calc((1.5em - 8px) / 2);
-    }
-
     h1 {
-      font-size: 32px;
+      font-size: 34px;
     }
 
     .summary {
@@ -379,13 +514,6 @@ const firstRole = SITE.roles[0].split(" ");
 
     .typing-toggle {
       bottom: 20px;
-    }
-
-    .wave {
-      width: 144%;
-      height: 44%;
-      top: 120px;
-      right: -80px;
     }
   }
 </style>

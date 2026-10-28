@@ -1,0 +1,131 @@
+{
+  "refreshedAt": "2026-10-28T05:13:12.593Z",
+  "values": {
+    "commits": {
+      "value": 38,
+      "asOf": "2026-10-28T05:13:13.634Z",
+      "source": "https://github.com/azamatos/password-generator/commits/main"
+    },
+    "astro": {
+      "value": "7",
+      "asOf": "2026-10-28T05:13:13.634Z",
+      "source": "https://github.com/azamatos/password-generator/blob/main/package.json"
+    },
+    "presets": {
+      "value": 16,
+      "asOf": "2026-10-28T05:13:14.013Z",
+      "source": "https://raw.githubusercontent.com/azamatos/password-generator/main/src/data/platforms.json"
+    },
+    "unitTests": {
+      "value": 88,
+      "asOf": "2026-10-27T17:09:44.000Z",
+      "source": "https://github.com/azamatos/password-generator/actions/runs/40540241849/job/122316363081"
+    },
+    "e2eTests": {
+      "value": 136,
+      "asOf": "2026-10-27T17:09:44.000Z",
+      "source": "https://github.com/azamatos/password-generator/actions/runs/40540241849/job/122316363527"
+    },
+    "siteJs": {
+      "value": 13.4,
+      "asOf": "2026-10-27T17:09:44.000Z",
+      "source": "https://github.com/azamatos/password-generator/actions/runs/40540241849/job/122316363081"
+    },
+    "siteBudget": {
+      "value": 14,
+      "asOf": "2026-10-27T17:09:44.000Z",
+      "source": "https://github.com/azamatos/password-generator/actions/runs/40540241849/job/122316363081"
+    },
+    "healthJs": {
+      "value": 10.7,
+      "asOf": "2026-10-27T17:09:44.000Z",
+      "source": "https://github.com/azamatos/password-generator/actions/runs/40540241849/job/122316363081"
+    },
+    "healthBudget": {
+      "value": 11.5,
+      "asOf": "2026-10-27T17:09:44.000Z",
+      "source": "https://github.com/azamatos/password-generator/actions/runs/40540241849/job/122316363081"
+    }
+  },
+  "shots": {
+    "github": {
+      "kind": "image",
+      "width": 2880,
+      "height": 1800,
+      "base": "https://media.azamatos.com/portfolio/pass/github.330649add8",
+      "widths": [480, 960, 1440, 2880],
+      "formats": ["avif", "webp"],
+      "asOf": "2026-10-27T17:28:33.019Z",
+      "source": "https://pass.azamatos.com/github/"
+    },
+    "phone": {
+      "kind": "image",
+      "width": 780,
+      "height": 1688,
+      "base": "https://media.azamatos.com/portfolio/pass/phone.f071eddd64",
+      "widths": [480, 780],
+      "formats": ["avif", "webp"],
+      "asOf": "2026-10-27T17:28:44.518Z",
+      "source": "https://pass.azamatos.com/github/"
+    },
+    "health": {
+      "kind": "image",
+      "width": 2880,
+      "height": 1800,
+      "base": "https://media.azamatos.com/portfolio/pass/health.44fddfc45f",
+      "widths": [480, 960, 1440, 2880],
+      "formats": ["avif", "webp"],
+      "asOf": "2026-10-27T17:28:50.293Z",
+      "source": "https://pass.azamatos.com/health/"
+    },
+    "sites": {
+      "kind": "video",
+      "width": 1440,
+      "height": 900,
+      "poster": {
+        "kind": "image",
+        "width": 1440,
+        "height": 900,
+        "base": "https://media.azamatos.com/portfolio/pass/sites.2e4d066697",
+        "widths": [480, 960, 1440],
+        "formats": ["avif", "webp"],
+        "asOf": "2026-10-28T05:13:23.695Z",
+        "source": "https://pass.azamatos.com/github/"
+      },
+      "sources": [
+        {
+          "type": "video/webm",
+          "url": "https://media.azamatos.com/portfolio/pass/sites.2e4d066697.webm",
+          "width": 1440
+        },
+        {
+          "type": "video/mp4",
+          "url": "https://media.azamatos.com/portfolio/pass/sites.2e4d066697.mp4",
+          "width": 1440
+        },
+        {
+          "type": "video/webm",
+          "url": "https://media.azamatos.com/portfolio/pass/sites.2e4d066697.960.webm",
+          "width": 960
+        },
+        {
+          "type": "video/mp4",
+          "url": "https://media.azamatos.com/portfolio/pass/sites.2e4d066697.960.mp4",
+          "width": 960
+        }
+      ],
+      "asOf": "2026-10-28T05:13:23.695Z",
+      "source": "https://pass.azamatos.com/github/"
+    }
+  },
+  "og": {
+    "url": "https://media.azamatos.com/portfolio/pass/og.5835a44c54.jpg",
+    "width": 1200,
+    "height": 630,
+    "shot": "github",
+    "from": "https://media.azamatos.com/portfolio/pass/github.330649add8",
+    "asOf": "2026-10-27T21:16:02.983Z"
+  },
+  "skipped": [],
+  "problems": []
+}

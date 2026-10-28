@@ -1,5 +1,13 @@
 ---
+import EmailButton from "@/components/EmailButton.astro";
 import { SITE } from "@/site";
+
+interface Props {
+  /** On a phone, adds `mail hi@azamatos.com` with its copy button under Download (the header hides it there). */
+  mail?: boolean;
+}
+
+const { mail = false } = Astro.props;
 ---
 
 <div class="resume">
@@ -14,7 +22,12 @@ import { SITE } from "@/site";
       </svg>
       Download resume
     </a>
-    <a class="view" href={SITE.resume.url} target="_blank" rel="noopener">
+    <a
+      class="view only-desk"
+      href={SITE.resume.url}
+      target="_blank"
+      rel="noopener"
+    >
       View online
       <span class="sr-only">(opens in a new tab)</span>
       <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -24,8 +37,9 @@ import { SITE } from "@/site";
         </g>
       </svg>
     </a>
+    {mail && <EmailButton variant="line" class="only-phone" />}
   </div>
-  <p class="meta">PDF · {SITE.resume.pages} pages</p>
+  <p class="meta only-desk">PDF · {SITE.resume.pages} pages</p>
 </div>
 
 <style>
@@ -45,11 +59,11 @@ import { SITE } from "@/site";
     align-items: center;
     justify-content: center;
     gap: 10px;
-    height: 56px;
-    padding: 0 26px;
+    height: 48px;
+    padding: 0 20px;
     border: 1px solid transparent;
     border-radius: 10px;
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 500;
     letter-spacing: -0.02em;
     white-space: nowrap;
@@ -64,24 +78,23 @@ import { SITE } from "@/site";
   }
 
   .download {
-    background: var(--color-text-primary);
-    color: var(--color-bg);
+    background: var(--btn-bg);
+    color: var(--btn-fg);
   }
 
   .download:hover {
-    background: #d9d9d9;
+    background: var(--btn-hover);
   }
 
   .view {
-    border-color: var(--color-border);
-    background: var(--color-surface);
-    color: var(--color-text-primary);
-    backdrop-filter: blur(10px);
+    border-color: var(--line);
+    background: var(--chip);
+    color: var(--fg);
   }
 
   .view:hover {
-    background: var(--color-surface-hover);
-    border-color: var(--color-border-hover);
+    background: var(--sel);
+    border-color: var(--fg2);
   }
 
   svg {
@@ -109,10 +122,10 @@ import { SITE } from "@/site";
   }
 
   .meta {
-    margin-top: 14px;
+    margin-top: 26px;
     font-family: var(--font-space-mono);
     font-size: 13px;
-    color: var(--color-text-secondary);
+    color: var(--muted);
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -128,37 +141,9 @@ import { SITE } from "@/site";
     }
   }
 
-  @media (max-width: 1920px) {
-    a {
-      height: 48px;
-      padding: 0 20px;
-      font-size: 16px;
-    }
-  }
-
   @media (max-width: 800px) {
-    .resume {
-      margin-top: 4px;
-    }
-
-    .actions {
-      gap: 10px;
-    }
-
-    a {
-      flex: 1 1 auto;
-      height: 44px;
-      padding: 0 18px;
-      font-size: 15px;
-    }
-
-    svg {
-      width: 16px;
-      height: 16px;
-    }
-
-    .meta {
-      font-size: 12px;
+    .download {
+      width: 100%;
     }
   }
 </style>

@@ -11,3 +11,10 @@ node_modules/
 .DS_Store
 .astro/
 .lighthouseci/
+
+# Renders of the design export, for comparing (5 MB); not in git.
+docs/design/screens/
+
+# The refresh command's encoded shots and raw captures.
+.cache/
+.claude/worktrees/

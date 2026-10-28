@@ -1,0 +1,141 @@
+---
+// The design's browser frame around a screenshot: a dark bar with the host in the middle and, for a mockup, an amber
+// "design" tag on the right. Always dark, in both themes. `size` picks the bar from the design:
+//   hero 38px (the page's hero) · readme 34px (the home terminal) · figure 32px · gallery 30px · phone 28px (the home
+//   accordion) · plain: no bar, just the rounded border (the states part). Without `size`, no frame: just the slot.
+// The border is var(--frame-border), var(--line) unless an ancestor sets it (the terminal: rgba(255, 255, 255, .14)).
+
+export type FrameSize =
+  | "hero"
+  | "readme"
+  | "figure"
+  | "gallery"
+  | "phone"
+  | "plain";
+
+interface Props {
+  size?: FrameSize;
+  host?: string;
+  design?: boolean;
+  class?: string;
+}
+
+const { size, host, design = false, class: className } = Astro.props;
+const bar = size !== "plain" && host !== undefined;
+---
+
+{size ? (
+  <div class:list={["frame", className]} data-size={size}>
+    {bar && (
+      <div class="bar">
+        <span class="host">{host}</span>
+        {design && <span class="design">design</span>}
+      </div>
+    )}
+    <div class="screen">
+      <slot />
+    </div>
+  </div>
+) : (
+  <slot />
+)}
+
+<style>
+  .frame {
+    --bar: 32px;
+    --host-size: 11px;
+    --host-pad: 0;
+    --host-bg: transparent;
+    --tag-size: 11px;
+    --tag-pad: 2px 9px;
+    --tag-right: 12px;
+    --radius: 12px;
+
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border: 1px solid var(--frame-border, var(--line));
+    border-radius: var(--radius);
+    background: #0b0c0e;
+  }
+
+  .frame[data-size="hero"] {
+    --bar: 38px;
+    --host-size: 12px;
+    --host-pad: 3px 16px;
+    --host-bg: rgba(255, 255, 255, 0.05);
+    --radius: 16px;
+
+    box-shadow: 0 40px 120px rgba(0, 0, 0, 0.35);
+  }
+
+  .frame[data-size="readme"] {
+    --bar: 34px;
+    --host-pad: 2px 14px;
+    --host-bg: rgba(255, 255, 255, 0.05);
+    --tag-size: 10px;
+    --tag-pad: 2px 8px;
+    --tag-right: 10px;
+  }
+
+  .frame[data-size="gallery"] {
+    --bar: 30px;
+  }
+
+  .frame[data-size="phone"] {
+    --bar: 28px;
+    --host-size: 10px;
+    --tag-size: 9px;
+    --tag-pad: 1px 6px;
+    --tag-right: 8px;
+    --radius: 10px;
+  }
+
+  .bar {
+    position: relative;
+    display: flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    height: var(--bar);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .host {
+    padding: var(--host-pad);
+    border-radius: 6px;
+    background: var(--host-bg);
+    font-family: var(--font-space-mono), monospace;
+    font-size: var(--host-size);
+    line-height: 1.5;
+    color: #a6a6a6;
+    white-space: nowrap;
+  }
+
+  .design {
+    position: absolute;
+    right: var(--tag-right);
+    padding: var(--tag-pad);
+    border: 1px solid rgba(242, 193, 78, 0.4);
+    border-radius: 999px;
+    font-family: var(--font-space-mono), monospace;
+    font-size: var(--tag-size);
+    line-height: 1.5;
+    color: #f2c14e;
+  }
+
+  .screen {
+    position: relative;
+    flex: 1;
+    min-height: 0;
+  }
+
+  @media (max-width: 800px) {
+    /* A long host and the tag share a narrow bar: the host gives way. */
+    .host {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: calc(100% - 120px);
+    }
+  }
+</style>

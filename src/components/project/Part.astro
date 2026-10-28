@@ -1,0 +1,51 @@
+---
+// One section part, by its kind.
+
+import type { ProjectPart } from "@/lib/projects";
+import Bars from "./parts/Bars.astro";
+import Cards from "./parts/Cards.astro";
+import Chips from "./parts/Chips.astro";
+import Feeds from "./parts/Feeds.astro";
+import Figure from "./parts/Figure.astro";
+import Flow from "./parts/Flow.astro";
+import Gallery from "./parts/Gallery.astro";
+import Note from "./parts/Note.astro";
+import States from "./parts/States.astro";
+import Table from "./parts/Table.astro";
+import Waffle from "./parts/Waffle.astro";
+
+interface Props {
+  part: ProjectPart;
+}
+
+const { part } = Astro.props;
+---
+
+{(() => {
+  switch (part.kind) {
+    case "waffle":
+      return <Waffle part={part} />;
+    case "flow":
+      return <Flow part={part} />;
+    case "feeds":
+      return <Feeds part={part} />;
+    case "states":
+      return <States part={part} />;
+    case "bars":
+      return <Bars part={part} />;
+    case "cards":
+      return <Cards part={part} />;
+    case "figure":
+      return <Figure part={part} />;
+    case "gallery":
+      return <Gallery part={part} />;
+    case "table":
+      return <Table part={part} />;
+    case "chips":
+      return <Chips part={part} />;
+    case "note":
+      return <Note part={part} />;
+    default:
+      return part satisfies never;
+  }
+})()}

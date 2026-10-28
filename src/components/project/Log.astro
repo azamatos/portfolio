@@ -1,0 +1,106 @@
+---
+// The log ("git log" or "what shipped"), numbered after "built with": one mono row per step, ✓ in mint when done, a
+// pulsing amber dot for the current one (aria-current="step"), ○ for what's next; the state is also said in words for
+// screen readers. The slot is the column beside it: <Aside> and <Actions>.
+
+import "@/styles/project.css";
+import Section from "./Section.astro";
+import type { LogList } from "./types";
+
+interface Props {
+  /** "07": the section number after "built with". */
+  number: string;
+  log: LogList;
+}
+
+const { number, log } = Astro.props;
+const said = { done: "done", current: "in progress", next: "next" } as const;
+---
+
+<Section number={number} title={log.title} layout="split">
+  <ol aria-label={log.title}>
+    {log.items.map((item) => (
+      <li
+        data-state={item.state}
+        aria-current={item.state === "current" ? "step" : undefined}
+      >
+        <span class="mark" aria-hidden="true">
+          {item.state === "done" && "✓"}
+          {item.state === "current" && <span class="dot pj-pulse" />}
+          {item.state === "next" && "○"}
+        </span>
+        <span class="label">
+          {item.label}
+          <span class="sr-only">, {said[item.state]}:</span>
+        </span>
+        <span class="note">{item.note}</span>
+      </li>
+    ))}
+  </ol>
+  <div class="side">
+    <slot />
+  </div>
+</Section>
+
+<style>
+  ol {
+    display: flex;
+    flex: 1 1 420px;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-space-mono), monospace;
+    font-size: 14px;
+    line-height: 1.5;
+    list-style: none;
+  }
+
+  li {
+    display: grid;
+    grid-template-columns: 20px 130px minmax(0, 1fr);
+    align-items: baseline;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--line2);
+    color: var(--fg2);
+  }
+
+  li[data-state="current"] {
+    color: var(--fg);
+  }
+
+  li[data-state="next"] {
+    color: var(--muted);
+  }
+
+  .mark {
+    display: inline-flex;
+    justify-content: center;
+    color: var(--muted);
+  }
+
+  li[data-state="done"] .mark {
+    color: var(--mint);
+  }
+
+  .dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--amber);
+  }
+
+  .note {
+    font-family: var(--font-geist), system-ui, sans-serif;
+    font-size: 15px;
+    color: var(--fg2);
+  }
+
+  .side {
+    display: flex;
+    flex: 1 1 280px;
+    flex-direction: column;
+    gap: 14px;
+  }
+</style>

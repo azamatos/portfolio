@@ -1,0 +1,957 @@
+---
+// The ⌘K command palette, on every page. The rows are rendered here at build time (from src/lib/palette.ts); the
+// script below opens the dialog, filters the rows and runs them. Without JavaScript nothing of it shows.
+import { getProjects } from "@/lib/projects";
+import { paletteCommands } from "@/lib/palette";
+
+const commands = paletteCommands(await getProjects());
+const groups = (["go", "do", "set", "open"] as const)
+  .map((name) => ({
+    name,
+    commands: commands
+      .map((command, index) => ({ ...command, id: `palette-${index}` }))
+      .filter((command) => command.group === name),
+  }))
+  .filter((group) => group.commands.length > 0);
+---
+
+<!-- tabindex: a finger opens it with the focus on the dialog itself, so the keyboard doesn't cover the list. -->
+<dialog
+  class="palette theme-dark"
+  aria-label="Command palette"
+  tabindex="-1"
+  data-palette
+>
+  <!-- Phone: the bottom sheet's grab handle; it and the prompt row drag the sheet down. -->
+  <div class="grip" aria-hidden="true"></div>
+  <div class="prompt">
+    <span class="arrow" aria-hidden="true">
+      ➜
+    </span>
+    <span class="tilde" aria-hidden="true">
+      ~
+    </span>
+    <label class="sr-only" for="palette-input">
+      Command
+    </label>
+    <input
+      id="palette-input"
+      type="text"
+      role="combobox"
+      aria-expanded="true"
+      aria-controls="palette-list"
+      aria-autocomplete="list"
+      placeholder="ls, cd, cat, mail, theme…"
+      autocomplete="off"
+      autocapitalize="off"
+      spellcheck="false"
+      enterkeyhint="go"
+    />
+    <button
+      class="esc"
+      type="button"
+      aria-label="esc: close"
+      data-palette-close
+    >
+      <kbd>esc</kbd>
+    </button>
+  </div>
+
+  <div class="list">
+    <div id="palette-list" role="listbox" aria-label="Commands">
+      {groups.map((group) => (
+        <div
+          class="group"
+          role="group"
+          aria-labelledby={`palette-group-${group.name}`}
+        >
+          <p
+            class="heading"
+            id={`palette-group-${group.name}`}
+            aria-hidden="true"
+          >
+            {group.name}
+          </p>
+          {group.commands.map(({ id, verb, arg, description, action }) => {
+            const filter = `${verb} ${arg} ${description}`.toLowerCase();
+            const content = (
+              <Fragment>
+                <span class="row">
+                  <span class="cmd">
+                    <span class="verb">{verb}</span>{" "}
+                    <span class="arg">{arg}</span>
+                  </span>
+                  <span class="desc">{description}</span>
+                </span>
+                <span class="hint" aria-hidden="true" />
+              </Fragment>
+            );
+            return action.type === "theme" ? (
+              <div
+                class="option"
+                id={id}
+                role="option"
+                aria-selected="false"
+                data-filter={filter}
+                data-desc={description}
+                data-theme-set={action.theme}
+              >
+                {content}
+              </div>
+            ) : action.type === "copy" ? (
+              <a
+                class="option"
+                id={id}
+                role="option"
+                aria-selected="false"
+                tabindex="-1"
+                href={`mailto:${action.text}`}
+                data-filter={filter}
+                data-desc={description}
+                data-copy={action.text}
+              >
+                {content}
+              </a>
+            ) : (
+              <a
+                class="option"
+                id={id}
+                role="option"
+                aria-selected="false"
+                tabindex="-1"
+                href={action.href}
+                download={action.download}
+                target={action.external && "_blank"}
+                rel={action.external && "noopener"}
+                data-filter={filter}
+              >
+                {content}
+              </a>
+            );
+          })}
+        </div>
+      ))}
+    </div>
+    <p class="none" hidden>
+      zsh: command not found: <span></span>
+    </p>
+  </div>
+
+  <p class="keys">
+    <span>↑ ↓ move · ↵ run · esc close</span>
+    <span>⌘K anywhere on the site</span>
+  </p>
+  <p class="sr-only" role="status"></p>
+</dialog>
+
+<script>
+  // Only the type: importing the theme module here too would split it into a shared script file. The palette asks
+  // the footer switch (ThemeSwitch.astro) to switch, through the "theme:set" event.
+  import type { Theme } from "@/lib/theme";
+
+  const dialog = document.querySelector<HTMLDialogElement>("[data-palette]");
+
+  if (dialog) {
+    const input = dialog.querySelector("input")!;
+    const listbox = dialog.querySelector<HTMLElement>('[role="listbox"]')!;
+    const none = dialog.querySelector<HTMLElement>(".none")!;
+    const status = dialog.querySelector('[role="status"]')!;
+    const groups = dialog.querySelectorAll<HTMLElement>(".group");
+    const options = [
+      ...dialog.querySelectorAll<HTMLElement>('[role="option"]'),
+    ];
+    const triggers = document.querySelectorAll<HTMLElement>(
+      "[data-palette-open]",
+    );
+    const desc = (option: HTMLElement) => option.querySelector(".desc")!;
+    const reduce = matchMedia("(prefers-reduced-motion: reduce)");
+    // Chrome keeps a closing dialog in the top layer while it animates out (a transition on `overlay`). Safari and
+    // Firefox take it out at once, so there the script keeps it open until the slide or fade has ended.
+    const leavesByItself = CSS.supports("overlay", "auto");
+
+    let shown = options;
+    let active = 0;
+    let opener: Element | null = null;
+    let downOnBackdrop = false;
+    let timer: number | undefined;
+    let leaving: number | undefined;
+
+    const select = (index: number) => {
+      active = Math.max(0, Math.min(index, shown.length - 1));
+      const option = shown[active];
+      for (const o of options)
+        o.setAttribute("aria-selected", String(o === option));
+      if (option) {
+        input.setAttribute("aria-activedescendant", option.id);
+        option.scrollIntoView({ block: "nearest" });
+      } else input.removeAttribute("aria-activedescendant");
+    };
+
+    const filter = () => {
+      const query = input.value.trim();
+      const q = query.toLowerCase();
+      for (const o of options) o.hidden = !o.dataset.filter!.includes(q);
+      shown = options.filter((o) => !o.hidden);
+      for (const group of groups)
+        group.hidden = !group.querySelector('[role="option"]:not([hidden])');
+      none.hidden = shown.length > 0;
+      listbox.hidden = !none.hidden;
+      none.lastElementChild!.textContent = query;
+      select(0);
+      return query;
+    };
+
+    // The theme rows say which one is on now, as the footer switch does.
+    const sync = () => {
+      const theme = document.documentElement.dataset.theme;
+      const now = theme === "light" || theme === "dark" ? theme : "system";
+      for (const o of options)
+        if (o.dataset.themeSet)
+          desc(o).textContent =
+            o.dataset.themeSet === now ? "on now" : o.dataset.desc!;
+    };
+
+    const expand = (open: boolean) => {
+      for (const trigger of triggers)
+        trigger.setAttribute("aria-expanded", String(open));
+    };
+
+    // Safari doesn't focus a clicked button, so a trigger passes itself. Opened with a finger, the focus goes to
+    // the dialog, not the input: the keyboard would cover half the sheet as it slides up, and most people tap a
+    // row. Tapping the input brings the keyboard; typing on a hardware one goes into the input (see keydown).
+    const open = (from = document.activeElement, touch = false) => {
+      if (dialog.open) return;
+      opener = from;
+      input.value = "";
+      filter();
+      sync();
+      status.textContent = "";
+      dialog.autofocus = touch;
+      dialog.showModal();
+      // Safari and Firefox focus a dialog with autofocus; Chrome focuses its first field regardless.
+      if (!touch) input.focus();
+      else if (document.activeElement !== dialog)
+        dialog.focus({ preventScroll: true });
+      expand(true);
+    };
+
+    // It slides (phone) or fades (desktop) out, then closes: see leavesByItself. With reduced motion, at once.
+    const close = () => {
+      if (!dialog.open || dialog.dataset.closing !== undefined) return;
+      if (leavesByItself || reduce.matches) return dialog.close();
+      dialog.dataset.closing = "";
+      const done = () => {
+        delete dialog.dataset.closing;
+        if (!dialog.open) return;
+        // Gone at once: Safari would otherwise run the display transition outside the top layer.
+        dialog.style.transition = "none";
+        dialog.close();
+        dialog.getBoundingClientRect();
+        dialog.style.transition = "";
+      };
+      const wait = parseFloat(getComputedStyle(dialog).transitionDuration);
+      if (wait > 0) leaving = window.setTimeout(done, wait * 1000 + 40);
+      else done();
+    };
+
+    const copy = async (option: HTMLElement) => {
+      try {
+        await navigator.clipboard.writeText(option.dataset.copy!);
+      } catch {
+        // No clipboard (refused, or not a secure page): open the mail app instead.
+        close();
+        location.href = option.getAttribute("href")!;
+        return;
+      }
+      option.classList.add("copied");
+      desc(option).textContent = "copied";
+      status.textContent = "Email address copied";
+      clearTimeout(timer);
+      timer = window.setTimeout(() => {
+        option.classList.remove("copied");
+        desc(option).textContent = option.dataset.desc!;
+      }, 1600);
+    };
+
+    for (const trigger of triggers) {
+      let pointer = "";
+      trigger.hidden = false;
+      trigger.addEventListener("pointerdown", (event) => {
+        pointer = event.pointerType;
+      });
+      trigger.addEventListener("click", (event) => {
+        open(trigger, event.detail > 0 && !!pointer && pointer !== "mouse");
+        pointer = "";
+      });
+    }
+
+    document.addEventListener("keydown", (event) => {
+      if (
+        !(event.metaKey || event.ctrlKey) ||
+        event.altKey ||
+        event.shiftKey ||
+        event.repeat
+      )
+        return;
+      // The letter K in any layout: the key itself on Latin layouts, its place on the others.
+      const key = event.key ?? "";
+      if (
+        !(/^[a-z]$/i.test(key)
+          ? key.toLowerCase() === "k"
+          : event.code === "KeyK")
+      )
+        return;
+      if (dialog.open) {
+        event.preventDefault();
+        close();
+        return;
+      }
+      // Not while typing somewhere else on the page.
+      const target = event.target as HTMLElement;
+      if (
+        !dialog.contains(target) &&
+        (target.closest?.("input, textarea, select") ||
+          target.isContentEditable)
+      )
+        return;
+      event.preventDefault();
+      open();
+    });
+
+    document.addEventListener("themechange", sync);
+
+    input.addEventListener("input", () => {
+      const query = filter();
+      const n = shown.length;
+      status.textContent = n
+        ? `${n} command${n === 1 ? "" : "s"}`
+        : `command not found: ${query}`;
+    });
+
+    // In the input, or on the dialog itself (opened with a finger, or after a click on a blank part): the arrows
+    // move, Enter runs, and typing goes into the input. The close button keeps its own keys.
+    dialog.addEventListener("keydown", (event) => {
+      const target = event.target;
+      if (event.isComposing || (target !== input && target !== dialog)) return;
+      if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+        event.preventDefault();
+        input.focus();
+        select(active + (event.key === "ArrowDown" ? 1 : -1));
+      } else if (event.key === "Enter") {
+        event.preventDefault();
+        shown[active]?.click();
+      } else if (
+        event.key.length === 1 &&
+        !(event.metaKey || event.ctrlKey || event.altKey)
+      )
+        input.focus();
+    });
+
+    // Esc: Chrome closes it and the styles animate it out; elsewhere close() does both.
+    dialog.addEventListener("cancel", (event) => {
+      if (leavesByItself || reduce.matches) return;
+      event.preventDefault();
+      close();
+    });
+
+    dialog.addEventListener("pointerdown", (event) => {
+      downOnBackdrop = event.target === dialog;
+    });
+
+    // The pointer selects; moving it (not the list scrolling under it, nor a finger scrolling) picks the row.
+    dialog.addEventListener("pointermove", (event) => {
+      if (event.pointerType === "touch") return;
+      const option = (event.target as Element).closest<HTMLElement>(
+        '[role="option"]',
+      );
+      if (option && option !== shown[active]) select(shown.indexOf(option));
+    });
+
+    // Keep the focus in the input when a row is clicked.
+    dialog.addEventListener("mousedown", (event) => {
+      if ((event.target as Element).closest('[role="option"]'))
+        event.preventDefault();
+    });
+
+    dialog.addEventListener("click", (event) => {
+      const target = event.target as Element;
+      if (target === dialog) {
+        if (downOnBackdrop) close();
+        return;
+      }
+      if (target.closest("[data-palette-close]")) return close();
+      const option = target.closest<HTMLElement>('[role="option"]');
+      if (!option) return;
+      select(shown.indexOf(option));
+      const theme = option.dataset.themeSet as Theme | undefined;
+      if (theme) {
+        document.dispatchEvent(
+          new CustomEvent<Theme>("theme:set", { detail: theme }),
+        );
+        sync();
+      } else if (option.dataset.copy) {
+        event.preventDefault();
+        copy(option);
+      } else close();
+    });
+
+    dialog.addEventListener("close", () => {
+      clearTimeout(leaving);
+      delete dialog.dataset.closing;
+      expand(false);
+      // Back to what opened it; opened with ⌘K from the page itself, let go of the input. It was in sight and the
+      // page couldn't scroll: no scrolling (Safari scrolled up to the sticky header's >_ under scroll-padding-top).
+      if (
+        opener instanceof HTMLElement &&
+        opener !== document.body &&
+        opener.isConnected
+      )
+        opener.focus({ preventScroll: true });
+      else input.blur();
+      opener = null;
+    });
+  }
+</script>
+
+<script>
+  // The phone's bottom sheet (see the styles): it sits on top of the on-screen keyboard, and a swipe down closes it.
+  // The script above does everything else; this one closes the sheet through the close button.
+  const dialog = document.querySelector<HTMLDialogElement>("[data-palette]");
+
+  if (dialog) {
+    const list = dialog.querySelector<HTMLElement>(".list")!;
+    const closer = dialog.querySelector<HTMLElement>("[data-palette-close]")!;
+    const sheet = matchMedia("(max-width: 800px)");
+    const style = dialog.style;
+
+    // The keyboard covers the bottom of the layout viewport, outside the visual one: --kb lifts the sheet above
+    // it and --vh fits the sheet into what's left, so the input and the rows stay in sight.
+    const fit = () => {
+      const view = visualViewport;
+      if (view && view.scale < 1.01) {
+        const covered = innerHeight - view.height - view.offsetTop;
+        style.setProperty("--kb", `${Math.max(0, covered)}px`);
+        style.setProperty("--vh", `${view.height}px`);
+      } else {
+        style.removeProperty("--kb");
+        style.removeProperty("--vh");
+      }
+    };
+    fit();
+    visualViewport?.addEventListener("resize", fit);
+    visualViewport?.addEventListener("scroll", fit);
+
+    // Swipe down from the handle or the prompt row, or from the list when it's scrolled to the top: the sheet
+    // follows the finger. Let go past 30% of its height, or flick it, and it closes; else it springs back.
+    type Drag = {
+      id: number;
+      startY: number;
+      y: number;
+      time: number;
+      speed: number;
+      moving: boolean;
+      fromList: boolean;
+    };
+    let drag: Drag | undefined;
+    let draggedAt = -Infinity;
+
+    const letGo = () => {
+      drag = undefined;
+      delete dialog.dataset.dragging;
+      style.removeProperty("--drag");
+      style.removeProperty("--drag-p");
+    };
+
+    dialog.addEventListener("pointerdown", (event) => {
+      const target = event.target as Element;
+      const fromList = !!target.closest(".list");
+      if (
+        sheet.matches &&
+        event.isPrimary &&
+        event.button === 0 &&
+        dialog.dataset.closing === undefined &&
+        (target.closest(".grip, .prompt") || (fromList && list.scrollTop <= 0))
+      )
+        drag = {
+          id: event.pointerId,
+          startY: event.clientY,
+          y: event.clientY,
+          time: event.timeStamp,
+          speed: 0,
+          moving: false,
+          fromList,
+        };
+    });
+
+    dialog.addEventListener("pointermove", (event) => {
+      if (drag?.id !== event.pointerId) return;
+      const dy = event.clientY - drag.startY;
+      if (!drag.moving) {
+        if (Math.abs(dy) < 6) return;
+        // Up from the list scrolls the list.
+        if (dy < 0 && drag.fromList) return letGo();
+        drag.moving = true;
+        dialog.dataset.dragging = "";
+        try {
+          dialog.setPointerCapture(event.pointerId);
+        } catch {
+          // Not an active pointer (a synthetic event): follow it without capture.
+        }
+      }
+      const dt = event.timeStamp - drag.time;
+      if (dt > 0)
+        drag.speed = 0.6 * ((event.clientY - drag.y) / dt) + 0.4 * drag.speed;
+      drag.y = event.clientY;
+      drag.time = event.timeStamp;
+      // Down only: there's nothing under the sheet.
+      const offset = Math.max(0, dy);
+      style.setProperty("--drag", `${offset}px`);
+      style.setProperty(
+        "--drag-p",
+        String(Math.min(1, offset / dialog.offsetHeight)),
+      );
+    });
+
+    const release = (event: PointerEvent) => {
+      if (drag?.id !== event.pointerId) return;
+      const { moving, speed, time } = drag;
+      if (!moving) return letGo();
+      draggedAt = event.timeStamp;
+      const offset = parseFloat(style.getPropertyValue("--drag")) || 0;
+      // A flick: still moving down fast (px/ms) when it let go.
+      const flick = speed > 0.5 && event.timeStamp - time < 100;
+      if (
+        event.type === "pointerup" &&
+        offset > 0 &&
+        (offset > dialog.offsetHeight * 0.3 || flick)
+      ) {
+        drag = undefined;
+        // It slides on from where the finger left it (the closing styles don't use --drag).
+        closer.click();
+      } else letGo();
+    };
+    dialog.addEventListener("pointerup", release);
+    dialog.addEventListener("pointercancel", release);
+    dialog.addEventListener("close", letGo);
+
+    // A touch that drags the sheet mustn't scroll the list; nor may one outside the list scroll the page.
+    dialog.addEventListener(
+      "touchmove",
+      (event) => {
+        const y = event.touches[0]?.clientY ?? 0;
+        if (
+          event.cancelable &&
+          (drag
+            ? drag.moving || y > drag.startY
+            : !(event.target as Element).closest(".list"))
+        )
+          event.preventDefault();
+      },
+      { passive: false },
+    );
+
+    // A drag isn't a click on whatever it started on.
+    dialog.addEventListener(
+      "click",
+      (event) => {
+        if (event.isTrusted && event.timeStamp - draggedAt < 400) {
+          event.preventDefault();
+          event.stopImmediatePropagation();
+        }
+      },
+      true,
+    );
+  }
+</script>
+
+<style>
+  /* The page behind stays put while the palette is open (iOS too); the gutter keeps a classic scrollbar's room. */
+  :global(html:has(dialog[data-palette][open])) {
+    overflow: hidden;
+    scrollbar-gutter: stable;
+  }
+
+  /* Always dark (.theme-dark pins the dark tokens), so it looks the same in the light theme. */
+  .palette {
+    /* Where it comes from and goes back to: a short drop and a fade on a desktop, below the screen on a phone. */
+    --from-y: -8px;
+    --from-scale: 0.985;
+    --from-opacity: 0;
+    /* Closing; the open state sets its own. */
+    --t: 0.15s;
+    --ease: cubic-bezier(0.4, 0, 1, 1);
+
+    /* Set here, not left to the UA's dialog:modal, so it stays put while it animates out of the top layer. */
+    position: fixed;
+    inset: 0;
+    width: 640px;
+    max-width: calc(100% - 32px);
+    height: fit-content;
+    max-height: calc(100% - 140px);
+    margin: 108px auto auto;
+    padding: 0;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 16px;
+    background: #0b0b0b;
+    box-shadow: 0 40px 120px rgba(0, 0, 0, 0.6);
+    color: var(--fg);
+    overflow: hidden;
+    /* Here, not only when [open]: Chrome keeps display: flex while it animates out, and a row would show. */
+    flex-direction: column;
+    opacity: var(--from-opacity);
+    translate: 0 var(--from-y);
+    scale: var(--from-scale);
+    /* Closed or closing: clicks go through to the page while it leaves. */
+    pointer-events: none;
+  }
+
+  .palette[open] {
+    display: flex;
+  }
+
+  .palette[open]:not([data-closing]) {
+    --t: 0.2s;
+    --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+
+    opacity: 1;
+    translate: 0 var(--drag, 0px);
+    scale: 1;
+    pointer-events: auto;
+  }
+
+  .palette:focus {
+    outline: none;
+  }
+
+  .palette::backdrop {
+    background: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(3px);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .palette[open]:not([data-closing])::backdrop {
+    /* Lightens as the sheet is dragged down. */
+    opacity: calc(1 - var(--drag-p, 0));
+    pointer-events: auto;
+  }
+
+  @starting-style {
+    .palette[open]:not([data-closing]) {
+      opacity: var(--from-opacity);
+      translate: 0 var(--from-y);
+      scale: var(--from-scale);
+    }
+
+    .palette[open]:not([data-closing])::backdrop {
+      opacity: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .palette {
+      /* Without transition-behavior (older browsers) the second one is dropped: it still fades, opening at once. */
+      transition:
+        opacity var(--t) var(--ease),
+        translate var(--t) var(--ease),
+        scale var(--t) var(--ease);
+      transition:
+        opacity var(--t) var(--ease),
+        translate var(--t) var(--ease),
+        scale var(--t) var(--ease),
+        height 0.2s ease-out,
+        bottom 0.2s ease-out,
+        display var(--t) allow-discrete,
+        overlay var(--t) allow-discrete;
+    }
+
+    .palette::backdrop {
+      transition:
+        opacity 0.15s ease,
+        display 0.15s allow-discrete,
+        overlay 0.15s allow-discrete;
+    }
+
+    .palette[open]:not([data-closing])::backdrop {
+      transition-duration: 0.2s;
+    }
+  }
+
+  .palette :focus-visible {
+    outline: 2px solid var(--mint);
+    outline-offset: 2px;
+  }
+
+  .palette [hidden] {
+    display: none !important;
+  }
+
+  .grip {
+    display: none;
+  }
+
+  .prompt {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: 12px;
+    height: 61px;
+    padding: 0 10px 0 18px;
+    border-bottom: 1px solid var(--line2);
+    font-family: var(--font-space-mono);
+    font-size: 16px;
+  }
+
+  .arrow {
+    color: var(--mint);
+  }
+
+  .tilde {
+    color: var(--teal);
+  }
+
+  input {
+    flex: 1;
+    min-width: 0;
+    height: 44px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--fg);
+    font-family: var(--font-space-mono);
+    font-size: 16px;
+    caret-color: var(--mint);
+  }
+
+  /* The caret shows where the focus is; the input holds it the whole time the palette is open. */
+  .prompt input:focus-visible {
+    outline: none;
+  }
+
+  input::placeholder {
+    color: var(--muted);
+    opacity: 1;
+  }
+
+  .esc {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    height: 44px;
+    padding: 0;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--fg2);
+    font-family: var(--font-space-mono);
+    font-size: 11px;
+    cursor: pointer;
+  }
+
+  kbd {
+    display: inline-flex;
+    align-items: center;
+    height: 24px;
+    padding: 0 7px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 6px;
+    font-family: inherit;
+  }
+
+  .list {
+    display: flex;
+    flex: 0 1 auto;
+    flex-direction: column;
+    gap: 2px;
+    min-height: 0;
+    max-height: 496px;
+    padding: 8px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  #palette-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .group {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .heading {
+    margin: 8px 12px 6px;
+    color: var(--muted);
+    font-family: var(--font-space-mono);
+    font-size: 11px;
+    line-height: 1.5;
+  }
+
+  .option {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 16px;
+    min-height: 46px;
+    padding: 0 12px;
+    border-radius: 9px;
+    color: var(--fg);
+    cursor: pointer;
+  }
+
+  .option[aria-selected="true"] {
+    background: rgba(255, 255, 255, 0.07);
+  }
+
+  .row {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    min-width: 0;
+  }
+
+  .cmd {
+    font-family: var(--font-space-mono);
+    font-size: 15px;
+    white-space: nowrap;
+  }
+
+  .verb {
+    color: var(--teal);
+  }
+
+  .arg {
+    color: var(--logo);
+  }
+
+  .desc {
+    overflow: hidden;
+    color: var(--fg2);
+    font-size: 13px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .hint {
+    color: var(--fg2);
+    font-family: var(--font-space-mono);
+    font-size: 12px;
+  }
+
+  [aria-selected="true"] .hint::before {
+    content: "↵";
+  }
+
+  .copied .hint {
+    color: var(--mint);
+  }
+
+  .copied .hint::before {
+    content: "✓";
+  }
+
+  .none {
+    margin: 16px 12px;
+    color: var(--fg2);
+    font-family: var(--font-space-mono);
+    font-size: 13px;
+    overflow-wrap: anywhere;
+  }
+
+  .keys {
+    display: flex;
+    flex: none;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    height: 41px;
+    padding: 0 18px;
+    border-top: 1px solid var(--line2);
+    color: var(--muted);
+    font-family: var(--font-space-mono);
+    font-size: 11px;
+  }
+
+  /* Phone: a bottom sheet. It slides up from below, sits on top of the on-screen keyboard (--kb, --vh: see fit()),
+     and a swipe down closes it. The description goes under the command. */
+  @media (max-width: 800px) {
+    .palette {
+      --from-y: 100%;
+      --from-scale: 1;
+      --from-opacity: 1;
+      --t: 0.24s;
+      --ease: cubic-bezier(0.32, 0.72, 0, 1);
+
+      inset: auto 0 var(--kb, 0px);
+      width: 100%;
+      max-width: none;
+      height: min(90dvh, var(--vh, 100dvh) - 12px);
+      max-height: none;
+      margin: 0;
+      border-width: 1px 0 0;
+      border-radius: 16px 16px 0 0;
+      box-shadow: 0 -16px 48px rgba(0, 0, 0, 0.5);
+    }
+
+    .palette[open]:not([data-closing]) {
+      --t: 0.28s;
+      --ease: cubic-bezier(0.32, 0.72, 0, 1);
+    }
+
+    .grip {
+      display: flex;
+      flex: none;
+      justify-content: center;
+      padding: 8px 0 2px;
+    }
+
+    .grip::before {
+      content: "";
+      width: 36px;
+      height: 5px;
+      border-radius: 3px;
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    /* The browser mustn't take these touches for scrolling: they drag the sheet. */
+    .grip,
+    .prompt {
+      touch-action: none;
+    }
+
+    .list {
+      flex: 1 1 auto;
+      max-height: none;
+      padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px));
+    }
+
+    .row {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 2px;
+    }
+
+    .keys {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) and (max-width: 800px) {
+    .palette::backdrop {
+      transition-duration: 0.24s;
+    }
+
+    .palette[open]:not([data-closing])::backdrop {
+      transition-duration: 0.28s;
+    }
+  }
+
+  /* Following the finger. */
+  .palette[open][data-dragging]:not([data-closing]),
+  .palette[open][data-dragging]:not([data-closing])::backdrop {
+    transition: none;
+  }
+</style>

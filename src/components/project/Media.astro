@@ -1,0 +1,356 @@
+---
+// Any resolved media ref (see src/lib/projects/media.ts), optionally in the design's browser frame:
+//   - a collected screenshot: <picture> with AVIF and WebP srcsets from media.azamatos.com
+//   - a file in src/assets/projects/ (a design mockup): astro:assets <Picture>
+//   - a collected loop: a muted, looping <video> over its poster image, at the rendition `videoWidth` picks. Nothing
+//     of it loads until it plays, and it plays only while on screen (a hidden tab panel or a closed <details> isn't),
+//     never with reduced motion or Save-Data, and not while the hero's pause button holds the page's motion
+//     (html[data-motion="paused"]). It has its own Pause/Play button (WCAG 2.2.2). Without JavaScript the poster shows.
+//
+// Layout: the media is as tall as its width allows, unless `ratio` ("16 / 10": a box of that shape) or `fill` (the
+// height of the parent, which sets it) crops it with object-fit: cover, from `position` (top left by default).
+// `pan` moves a full-page screenshot from top to bottom and back (the home README), except with reduced motion.
+
+import { Picture } from "astro:assets";
+import { imageSrcset, imageUrl, type Media } from "@/lib/projects";
+import Frame, { type FrameSize } from "./Frame.astro";
+
+interface Props {
+  media: Media;
+  alt: string;
+  /** The `sizes` attribute: how wide the image shows at each breakpoint. */
+  sizes: string;
+  /** The browser frame and its bar size; `host` goes in the bar. */
+  frame?: FrameSize;
+  host?: string;
+  /** The page's first image: loads at once, with high priority. Everything else loads lazily. */
+  priority?: boolean;
+  ratio?: string;
+  fill?: boolean;
+  position?: string;
+  pan?: boolean;
+  /**
+   * A loop's widest rendition to load: the home README passes the refresh's README width (960). By default, the
+   * loop at its own width.
+   */
+  videoWidth?: number;
+  class?: string;
+}
+
+const {
+  media,
+  alt,
+  sizes,
+  frame,
+  host,
+  priority = false,
+  ratio,
+  fill = false,
+  position = "top left",
+  pan = false,
+  videoWidth,
+  class: className,
+} = Astro.props;
+
+const loading = priority ? "eager" : "lazy";
+const fetchpriority = priority ? "high" : "auto";
+const crop = fill || ratio !== undefined;
+const design = media.kind === "asset" && media.design;
+
+type Image = Extract<Media, { kind: "image" }>;
+/** AVIF first: the browser takes the first source it supports. WebP is the <img> fallback. */
+const ORDER = ["avif", "webp"] as const;
+const sourcesOf = (img: Image) => ORDER.filter((f) => img.formats.includes(f));
+/** The <img> src for browsers without srcset: the widest file up to 1440px. */
+const fallbackOf = (img: Image) => {
+  const formats = sourcesOf(img);
+  const width = img.widths.filter((w) => w <= 1440).at(-1) ?? img.widths[0];
+  return imageUrl(img, width, formats.at(-1) ?? img.formats[0]);
+};
+
+/** Widths for a local asset, up to its own. */
+const assetWidths = (width: number) => [
+  ...new Set([480, 960, 1440, 2880].filter((w) => w < width).concat(width)),
+];
+
+const poster = media.kind === "video" ? media.poster : undefined;
+const image = media.kind === "image" ? media : poster;
+/** The rendition: the widest up to `videoWidth` (or the narrowest there is), as WebM then MP4. */
+const videoSources = (() => {
+  if (media.kind !== "video") return [];
+  const widths = [...new Set(media.sources.map((s) => s.width))].sort(
+    (a, b) => a - b,
+  );
+  const chosen =
+    videoWidth === undefined
+      ? widths.at(-1)
+      : (widths.filter((w) => w <= videoWidth).at(-1) ?? widths[0]);
+  return media.sources
+    .filter((s) => s.width === chosen)
+    .sort(
+      (a, b) =>
+        Number(b.type === "video/webm") - Number(a.type === "video/webm"),
+    );
+})();
+const style = `--media-pos: ${pan ? "50% 0%" : position}`;
+---
+
+<Frame size={frame} host={host} design={design} class={frame && className}>
+  <div
+    class:list={["media", { crop, fill, pan }, !frame && className]}
+    style={crop ? `${style}; aspect-ratio: ${ratio ?? "auto"}` : undefined}
+    data-video={media.kind === "video" ? "" : undefined}
+  >
+    {image && (
+      <picture>
+        {sourcesOf(image).map((f) => (
+          <source
+            type={`image/${f}`}
+            srcset={imageSrcset(image, f)}
+            sizes={sizes}
+          />
+        ))}
+        <img
+          src={fallbackOf(image)}
+          width={image.width}
+          height={image.height}
+          alt={alt}
+          loading={loading}
+          decoding="async"
+          fetchpriority={fetchpriority}
+        />
+      </picture>
+    )}
+    {media.kind === "asset" && (
+      <Picture
+        src={media.image}
+        alt={alt}
+        formats={["avif", "webp"]}
+        fallbackFormat="webp"
+        widths={assetWidths(media.image.width)}
+        sizes={sizes}
+        loading={loading}
+        decoding="async"
+        fetchpriority={fetchpriority}
+      />
+    )}
+    {media.kind === "video" && (
+      <>
+        <video
+          muted
+          loop
+          playsinline
+          preload="none"
+          width={media.width}
+          height={media.height}
+          aria-hidden="true"
+          tabindex="-1"
+        >
+          {videoSources.map((s) => (
+            <source src={s.url} type={s.type} />
+          ))}
+        </video>
+        <button type="button" class="toggle" data-video-toggle hidden>
+          <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true">
+            <path class="icon-pause" d="M8 5v14M16 5v14" />
+            <path class="icon-play" d="M7 4.5v15l12-7.5z" />
+          </svg>
+          <span>Play</span>
+        </button>
+      </>
+    )}
+  </div>
+</Frame>
+
+<script>
+  // Loops play while at least a quarter is on screen, unless the visitor paused them, prefers reduced motion or saves
+  // data; the button is the way to start one then. A loop in a hidden tab panel or a closed <details> has no box, so
+  // it counts as off screen: only the selected README's loop plays. `preload="none"` keeps every file unloaded until
+  // the first play. The hero's pause button (html[data-motion]) pauses them all, and its play button lets them go on.
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)");
+  const saveData =
+    (navigator as Navigator & { connection?: { saveData?: boolean } })
+      .connection?.saveData === true;
+  const root = document.documentElement;
+  const held = () => root.dataset.motion === "paused";
+  const loops: { hold: (on: boolean) => void }[] = [];
+
+  for (const box of document.querySelectorAll<HTMLElement>("[data-video]")) {
+    const video = box.querySelector("video");
+    const button = box.querySelector<HTMLButtonElement>("[data-video-toggle]");
+    const label = button?.querySelector("span");
+    if (!video || !button || !label) continue;
+
+    const still = () => reduce.matches || saveData;
+    let paused = still() || held(); // by the visitor (or their settings)
+    let inView = false;
+
+    const sync = () => {
+      if (inView && !paused) video.play().catch(() => {});
+      else video.pause();
+    };
+    const show = () => {
+      const playing = !video.paused;
+      label.textContent = playing ? "Pause" : "Play";
+      button.dataset.playing = String(playing);
+    };
+
+    video.addEventListener("play", show);
+    video.addEventListener("pause", show);
+    // The video covers its poster from its first frame on, and keeps its frame when paused.
+    video.addEventListener(
+      "playing",
+      () => box.setAttribute("data-shown", ""),
+      {
+        once: true,
+      },
+    );
+    button.addEventListener("click", () => {
+      paused = !video.paused;
+      if (!paused) inView = true; // a click plays it even if barely on screen
+      sync();
+    });
+    reduce.addEventListener("change", () => {
+      if (reduce.matches) paused = true;
+      sync();
+    });
+    new IntersectionObserver(
+      ([entry]) => {
+        inView = entry.isIntersecting;
+        sync();
+      },
+      { threshold: 0.25 },
+    ).observe(box);
+    loops.push({
+      hold: (on) => {
+        paused = on || still();
+        sync();
+      },
+    });
+
+    button.hidden = false;
+    show();
+  }
+
+  if (loops.length)
+    new MutationObserver(() => {
+      for (const loop of loops) loop.hold(held());
+    }).observe(root, { attributes: true, attributeFilter: ["data-motion"] });
+</script>
+
+<style>
+  .media {
+    position: relative;
+  }
+
+  .media :global(picture),
+  .media :global(img),
+  .media video {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .crop,
+  .fill {
+    overflow: hidden;
+  }
+
+  .fill {
+    height: 100%;
+  }
+
+  .crop :global(picture),
+  .crop :global(img),
+  .crop video {
+    height: 100%;
+    object-fit: cover;
+    object-position: var(--media-pos);
+  }
+
+  .pan :global(img) {
+    animation: pan 14s ease-in-out infinite alternate;
+  }
+
+  @keyframes pan {
+    0%,
+    10% {
+      object-position: 50% 0%;
+    }
+    90%,
+    100% {
+      object-position: 50% 100%;
+    }
+  }
+
+  /* The loop sits on its poster and shows once it plays. */
+  .media video {
+    position: absolute;
+    inset: 0;
+    height: 100%;
+    object-fit: cover;
+    object-position: var(--media-pos, top left);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  [data-shown] video {
+    opacity: 1;
+  }
+
+  .toggle {
+    position: absolute;
+    right: 12px;
+    bottom: 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 44px;
+    padding: 0 16px 0 14px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 999px;
+    background: rgba(1, 1, 1, 0.72);
+    backdrop-filter: blur(6px);
+    color: #ffffff;
+    font-family: var(--font-space-mono), monospace;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background 0.16s ease;
+  }
+
+  .toggle[hidden] {
+    display: none;
+  }
+
+  .toggle:hover {
+    background: rgba(1, 1, 1, 0.9);
+  }
+
+  .toggle svg {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .toggle .icon-play {
+    fill: currentColor;
+    stroke-width: 1.5;
+  }
+
+  .toggle[data-playing="true"] .icon-play,
+  .toggle[data-playing="false"] .icon-pause {
+    display: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pan :global(img) {
+      animation: none;
+    }
+
+    .media video {
+      transition: none;
+    }
+  }
+</style>

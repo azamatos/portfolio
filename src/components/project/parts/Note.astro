@@ -1,0 +1,23 @@
+---
+// One mono line in mint: an outcome, like "✓ after the fixes, …".
+
+import type { PartOf } from "../types";
+
+interface Props {
+  part: PartOf<"note">;
+}
+
+const { part } = Astro.props;
+---
+
+<p>{part.text}</p>
+
+<style>
+  p {
+    margin: 0;
+    font-family: var(--font-space-mono), monospace;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--mint);
+  }
+</style>

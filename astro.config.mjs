@@ -1,12 +1,35 @@
 // @ts-check
 import { defineConfig, fontProviders } from "astro/config";
 import sitemap from "@astrojs/sitemap";
+import { readdirSync, readFileSync } from "node:fs";
+import { URL } from "node:url";
+
+// The sitemap's lastmod: a project page changes with every refresh of its data (its numbers and "checked" day), and
+// the home page shows those numbers too, so it takes the latest.
+const COLLECTED = "./src/data/collected";
+const refreshed = Object.fromEntries(
+  readdirSync(COLLECTED)
+    .filter((f) => f.endsWith(".json") && !f.startsWith("_"))
+    .map((f) => [
+      `/projects/${f.slice(0, -".json".length)}/`,
+      JSON.parse(readFileSync(`${COLLECTED}/${f}`, "utf8")).refreshedAt,
+    ]),
+);
+const latest = Object.values(refreshed).sort().at(-1);
 
 // https://astro.build/config
 export default defineConfig({
   site: "https://azamatos.com",
 
-  integrations: [sitemap()],
+  integrations: [
+    sitemap({
+      serialize(item) {
+        const path = new URL(item.url).pathname;
+        const lastmod = path === "/" ? latest : refreshed[path];
+        return lastmod ? { ...item, lastmod } : item;
+      },
+    }),
+  ],
 
   // The CSS is a few KB, so inline it on every page instead of a render-blocking file.
   build: {
@@ -23,7 +46,9 @@ export default defineConfig({
       provider: fontProviders.local(),
       name: "Geist",
       cssVariable: "--font-geist",
-      fallbacks: ["sans-serif"],
+      // Symbol fonts before the generic family: they draw the arrows, checks and theme icons the web fonts lack,
+      // so a phone doesn't pick a colour emoji font for them.
+      fallbacks: ["Segoe UI Symbol", "Noto Sans Symbols 2", "sans-serif"],
       options: {
         variants: [
           {
@@ -43,7 +68,14 @@ export default defineConfig({
       provider: fontProviders.local(),
       name: "Space Mono",
       cssVariable: "--font-space-mono",
-      fallbacks: ["monospace"],
+      fallbacks: [
+        "Menlo",
+        "Consolas",
+        "DejaVu Sans Mono",
+        "Segoe UI Symbol",
+        "Noto Sans Symbols 2",
+        "monospace",
+      ],
       options: {
         variants: [
           {

@@ -1,0 +1,97 @@
+name: Refresh project data
+
+# Reads every project's numbers, takes its screenshots, uploads them to R2 and commits src/data/collected/ to main
+# (every run changes it: the files carry the day they were checked); Cloudflare deploys that push. Pushes made with
+# the job's token don't start ci.yml, so the job checks and builds the site itself before it commits, and again after
+# pulling if main moved on meanwhile. When the refresh reports problems or runs out of time, what it wrote is still
+# committed and the job then fails, so GitHub sends an email. Loops are recorded again only when asked (the "loops"
+# box). Only this job, on main, deletes unused media from R2 (scripts/refresh/cleanup.ts).
+
+on:
+  schedule:
+    - cron: "0 6 * * 1" # Mondays, 06:00 UTC
+  workflow_dispatch:
+    inputs:
+      project:
+        description: "One project id (src/content/projects/<id>.yaml); empty for all"
+        required: false
+        default: ""
+      loops:
+        description: "Record the loops again too"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh-project-data
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: main
+          # The whole history: the R2 cleanup keeps every file a collected file of the last 30 days used.
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec playwright install --with-deps chromium
+      - name: ffmpeg
+        run: command -v ffmpeg || (sudo apt-get update && sudo apt-get install -y --no-install-recommends ffmpeg)
+
+      - name: Refresh
+        id: refresh
+        continue-on-error: true
+        timeout-minutes: 20
+        run: pnpm data:refresh ${PROJECT:+"$PROJECT"} ${LOOPS:+--loops}
+        env:
+          PROJECT: ${{ inputs.project }}
+          LOOPS: ${{ inputs.loops && '1' || '' }}
+          # The four repositories are public. If the job's own token is ever refused for their CI logs, add a
+          # read-only token as the GH_READ_TOKEN secret and it's used instead.
+          GITHUB_TOKEN: ${{ secrets.GH_READ_TOKEN || github.token }}
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+
+      - run: pnpm check
+      - run: pnpm build
+
+      - name: Commit
+        run: |
+          git add src/data/collected
+          if git diff --cached --quiet; then
+            echo "Nothing changed."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "chore: Refresh project data"
+          # Someone may have pushed to main during the run: their change and this data have never been built
+          # together (a new value in a config, say), so build the combined tree before pushing it. If main moves
+          # again meanwhile, the push is refused and the job fails rather than deploy an unbuilt tree.
+          base=$(git rev-parse HEAD~1)
+          git pull --rebase origin main
+          if [ "$(git rev-parse HEAD~1)" != "$base" ]; then
+            echo "main moved on during the run: checking and building the combined tree."
+            pnpm install --frozen-lockfile
+            pnpm check
+            pnpm build
+          fi
+          git push origin HEAD:main
+
+      - name: Fail on problems
+        if: steps.refresh.outcome == 'failure'
+        run: |
+          echo "::error::The refresh reported problems or ran out of time (see the Refresh step). What it wrote was committed."
+          exit 1

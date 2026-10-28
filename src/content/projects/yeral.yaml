@@ -1,0 +1,336 @@
+order: 2
+name: Ýeral
+status: development
+site: https://business.yeral.app
+repo: azamatos/yeral
+palette: booking for any business
+accent: { dark: "#9a85ff", light: "#5a3fe0" }
+list:
+  dir: yeral/
+  mode: drwxr-x---
+  commits: "{commits}"
+  stack: react · tanstack · hono · postgres
+readme:
+  kind: booking platform
+  host: business.yeral.app
+  image: { asset: yeral-calendar.webp, design: true }
+  phoneImage: { asset: yeral-calendar.webp, design: true }
+  alt: "Ýeral business calendar design: the team’s day with bookings and requests"
+  panImage: false
+  headline: Booking for any business that sells its time.
+  description: Clients book a chair, a table or a class without calling. The business gets a free workspace for its calendar, requests, clients and team. One monorepo holds the marketplace, the workspace, the CMS and the API.
+  short: Clients book without calling; the business runs its calendar, requests, clients and team.
+  progress:
+    steps:
+      - product book
+      - api
+      - design system
+      - business app
+      - client site
+      - launch
+    current: 4
+  tech:
+    - React {react}
+    - TanStack Start
+    - Hono
+    - Drizzle
+    - Postgres {postgres}
+    - Tailwind CSS {tailwind}
+    - Storybook
+  stats:
+    - value: "{productQuestions}"
+      label: product questions answered before the code
+      short: product questions
+    - value: "{components}"
+      label: components and screens in Storybook
+      short: components and screens
+    - value: "{tests}"
+      label: tests in CI, a render check of every story included
+      short: tests in CI
+  secondaryLink:
+    label: Open business.yeral.app
+    href: https://business.yeral.app
+page:
+  statusLabel: in development · the business app is live on test data
+  tagline:
+    strong: Booking for any business that sells its time,
+    rest: from a barber’s chair to a restaurant table. “Ýer al” is Turkmen for “take a place”.
+  meta:
+    - label: role
+      text: "Owner and engineer: the product book, the architecture, the API and both apps"
+    - label: stack
+      text: React · TanStack · Hono · Postgres
+    - label: links
+      links:
+        - label: business.yeral.app
+          href: https://business.yeral.app
+        - label: Design system
+          href: https://storybook.yeral.app
+        - label: Source on GitHub
+          href: https://github.com/azamatos/yeral
+  hero:
+    host: business.yeral.app
+    image: { asset: yeral-calendar.webp, design: true }
+    alt: "Ýeral business calendar design: the day with each specialist’s bookings and requests"
+    phoneImage: { asset: yeral-phone-calendar.webp, design: true }
+    phoneAlt: "Ýeral business calendar design for a phone: one specialist’s day with visits and requests"
+  numbers:
+    - value: "{productQuestions}"
+      label: product questions answered in a product book before the code
+    - value: "{components}"
+      label: components and screens in Storybook
+    - value: "{tests}"
+      label: tests in CI, a render check of every story included
+    - value: "{decisions}"
+      label: architecture decisions, each written down
+  numbersNote: "Counted from the repository, its CI and the live Storybook; checked {checked}. Launch market: Turkmenistan, Ashgabat first."
+  sections:
+    - title: the idea
+      lead: A barber, a dentist or a café takes bookings by phone. Ýeral lets clients book a place without calling, and gives the business a free workspace to run its day.
+      text: "Every booking is a place: a chair, a table, a mat, a court. The category decides how a business is found and booked: by appointment, by table or by class. It launches in Turkmenistan first, in Turkmen, Russian and English, with prices in manats."
+      parts:
+        - kind: gallery
+          items:
+            - host: yeral.app
+              img: { asset: yeral-client-home.webp, design: true }
+              alt: "Ýeral client site design: the home page with a search for a service near you and photos of places"
+              caption: "The client site: find a place near you and book it."
+            - host: yeral.app/glow-studio
+              img: { asset: yeral-business-page.webp, design: true }
+              alt: "Ýeral business page design for Glow Studio: photos, rating, services and the next free time"
+              caption: "A business page: photos, services and the next free time."
+    - title: one monorepo, five sites
+      lead: Four apps and an API share one contract, so a change in the booking rules reaches every screen at once.
+      parts:
+        - kind: cards
+          min: 260px
+          items:
+            - tag: yeral.app
+              title: The marketplace
+              body: Home, search with a map, category and business pages, booking for an appointment, a table or a class, and the client’s account.
+            - tag: business.yeral.app
+              title: The business workspace
+              body: A calendar for every specialist, requests to confirm or decline, clients, services, the team and settings.
+            - tag: cms.yeral.app
+              title: The CMS
+              body: "For the Ýeral team: businesses, users, complaints and the category catalogue in three languages."
+            - tag: api.yeral.app
+              title: The API
+              body: REST on Postgres for all of them, with its schema and documentation generated from one contract.
+            - tag: storybook.yeral.app
+              title: The design system
+              body: Every component with its stories; the stories run as browser tests with axe.
+    - title: rules that never break
+      lead: "{productQuestions} product questions were answered in a product book before the code, so every screen follows the same rules."
+      parts:
+        - kind: cards
+          min: 260px
+          items:
+            - title: The business confirms
+              body: By default a client never sees “booked” until the business confirms; until then the request is “sent”. A business can switch on instant confirmation.
+            - title: Five statuses, one meaning
+              body: Pending, Confirmed, Completed, Cancelled and No-show mean the same on the web, in the workspace and in the CMS.
+            - title: A phone booking is not a new status
+              body: When the business enters a booking by phone, it’s Confirmed with a phone icon.
+            - title: No city names in the copy
+              body: "Everything is relative to where you are: “near me”, not a city."
+            - title: Pay at the place
+              body: No online payment yet; a deposit row is already reserved in every summary.
+    - title: the business day
+      parts:
+        - kind: figure
+          host: business.yeral.app/bookings
+          hasHost: true
+          maxw: 100%
+          img: { asset: yeral-bookings.webp, design: true }
+          alt: "Ýeral bookings design: a table of the business’s bookings with client, service, time, source and status"
+          caption: "Bookings in the business workspace: every request and visit with its status, in one list."
+  builtWith:
+    - group: frontend
+      items:
+        - { name: React, version: "{react}" }
+        - { name: TanStack Start }
+        - { name: TanStack Router }
+        - { name: TanStack Query }
+        - { name: Vite, version: "{vite}" }
+        - { name: Tailwind CSS, version: "{tailwind}" }
+        - { name: Radix UI }
+        - { name: MapLibre GL }
+        - { name: use-intl }
+      note: The client site renders on the server for search engines; the workspace is a single-page app. Turkmen, Russian and English from one set of messages.
+    - group: backend
+      items:
+        - { name: Hono, version: "{hono}" }
+        - { name: Zod, version: "{zod}" }
+        - { name: OpenAPI }
+        - { name: Drizzle ORM }
+        - { name: Postgres, version: "{postgres}" }
+      note: Own phone sign-in with SMS codes and sessions; live updates to the calendar over server-sent events.
+    - group: architecture
+      items:
+        - { name: Turborepo }
+        - { name: pnpm workspaces }
+        - { name: Feature-Sliced Design }
+        - { name: shared contract and SDK }
+        - { name: React Compiler }
+      note: The booking engine is plain TypeScript in its own package, with no framework, so it is tested on its own.
+    - group: running it
+      items:
+        - { name: Docker Compose }
+        - { name: Caddy }
+        - { name: own server }
+      note: "One deployment per market: the same Docker stack moves to servers in Turkmenistan for the launch there."
+    - group: quality
+      items:
+        - { name: Vitest }
+        - { name: Storybook, version: "{storybook}" }
+        - { name: axe }
+        - { name: Playwright }
+        - { name: Changesets }
+        - { name: GitHub Actions }
+      note: "{decisions} architecture decisions are written down, and every pull request is reviewed before it merges."
+  log:
+    title: git log
+    items:
+      - label: product book
+        note: "{productQuestions} questions answered before the code"
+        state: done
+      - label: api
+        note: REST on Hono and Postgres, one contract for every app
+        state: done
+      - label: design system
+        note: "{components} components and screens in Storybook"
+        state: done
+      - label: business app
+        note: calendar, requests, clients and team, on test data
+        state: done
+      - label: client site
+        note: search, business pages and booking, end to end
+        state: current
+      - label: launch
+        note: Ashgabat first
+        state: next
+  aside:
+    title: how it’s run
+    items:
+      - "A product book first: every rule is decided and written down before a screen is built."
+      - A library before our own code, and nothing more complicated than the product needs.
+      - Never a secret, a key or a server address in the public repository.
+  actions:
+    - label: Open business.yeral.app
+      href: https://business.yeral.app
+      primary: true
+    - label: Open the design system
+      href: https://storybook.yeral.app
+      primary: false
+    - label: Source on GitHub
+      href: https://github.com/azamatos/yeral
+      primary: false
+
+values:
+  commits:
+    from: github
+    get: commits
+    means: Commits on the main branch of azamatos/yeral.
+    maxAge: 14
+  react:
+    from: github
+    get: version
+    package: react
+    file: pnpm-workspace.yaml
+    means: The major version of React in the monorepo's catalog.
+    maxAge: 14
+  vite:
+    from: github
+    get: version
+    package: vite
+    file: pnpm-workspace.yaml
+    means: The major version of Vite in the monorepo's catalog.
+    maxAge: 14
+  tailwind:
+    from: github
+    get: version
+    package: tailwindcss
+    file: pnpm-workspace.yaml
+    means: The major version of Tailwind CSS in the monorepo's catalog.
+    maxAge: 14
+  hono:
+    from: github
+    get: version
+    package: hono
+    file: pnpm-workspace.yaml
+    means: The major version of Hono in the monorepo's catalog.
+    maxAge: 14
+  zod:
+    from: github
+    get: version
+    package: zod
+    file: pnpm-workspace.yaml
+    means: The major version of Zod in the monorepo's catalog.
+    maxAge: 14
+  storybook:
+    from: github
+    get: version
+    package: storybook
+    file: pnpm-workspace.yaml
+    means: The major version of Storybook in the monorepo's catalog.
+    maxAge: 14
+  postgres:
+    from: github
+    get: version
+    package: postgres
+    file: infra/server/yeral/compose.yml
+    means: The major version of the Postgres image in the server's compose file.
+    maxAge: 14
+  components:
+    from: json
+    url: https://storybook.yeral.app/index.json
+    count: entries
+    where: { type: story }
+    distinct: title
+    means: Titles with stories in the live Storybook (its index.json), each one component or app screen; docs pages not counted.
+    maxAge: 14
+  tests:
+    from: ci
+    workflow: ci.yml
+    job: Format, lint, types, tests, build
+    pattern: '\bTests\s+(\d+) passed'
+    sum: true
+    means: Tests that passed in the latest successful CI run, added up over every package (Vitest's "Tests N passed"), including a render check of every Storybook story.
+    maxAge: 90
+    format: { floor: 100, plus: true }
+  decisions:
+    from: github
+    get: fileCount
+    path: docs/decisions/[0-9][0-9][0-9][0-9]-*.md
+    means: Architecture decision records in docs/decisions/ (files named NNNN-*.md).
+    maxAge: 14
+  productQuestions:
+    from: manual
+    value: 125
+    checked: 2026-10-27
+    means: Product questions answered in the product book before the code, as counted by the owner (the book isn't in the repository).
+    maxAge: 90
+
+shots:
+  calendar:
+    url: https://business.yeral.app/login
+    device: desktop
+    theme: light
+    # Skipped for now (27 Oct 2026): the README and the page show the design mockups until the demo's way in is live.
+    # Then drop `skip` and point readme.image, readme.phoneImage, page.hero.image and page.hero.phoneImage here.
+    skip: &blocked "the demo's 69 numbers can't sign in by code, and “Try the business app” (F-242) isn't in the live app yet"
+    steps: &signIn
+      - fill: 'input[type="tel"]'
+        value: "69123456"
+      - click: 'role=button[name="Send code"]'
+      - copy: '[role="status"] b'
+        into: 'input[autocomplete="one-time-code"]'
+      - click: 'role=button[name="Try the business app"]'
+      - waitFor: text=Calendar
+  phone-calendar:
+    url: https://business.yeral.app/login
+    device: phone
+    theme: light
+    skip: *blocked
+    steps: *signIn

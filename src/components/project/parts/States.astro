@@ -1,0 +1,137 @@
+---
+// The answer's levels: a badge each (styled from the data: bg, fg, icon, border, its style and radius), what it means
+// and its evidence, with the screenshot of a page that shows them beside the list.
+
+import Media from "../Media.astro";
+import type { PartOf } from "../types";
+
+interface Props {
+  part: PartOf<"states">;
+}
+
+const { part } = Astro.props;
+---
+
+<div class="states">
+  <ol>
+    {part.items.map((s) => (
+      <li>
+        <span
+          class="badge"
+          style={`--badge-bg: ${s.bg}; --badge-fg: ${s.fg}; --badge-icon: ${s.icon}; --badge-border: 1px ${s.bs} ${s.border}; --badge-r: ${s.r}`}
+        >
+          <span class="icon" aria-hidden="true" />
+          {s.label}
+        </span>
+        <span class="text">
+          <span class="when">{s.when}</span>
+          <span class="evidence">evidence: {s.evidence}</span>
+        </span>
+      </li>
+    ))}
+  </ol>
+  <figure>
+    <Media
+      media={part.img}
+      alt={part.alt}
+      frame="plain"
+      sizes="(max-width: 800px) calc(100vw - 40px), (max-width: 1200px) 45vw, 460px"
+    />
+    <figcaption>{part.caption}</figcaption>
+  </figure>
+</div>
+
+<style>
+  .states {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 32px;
+  }
+
+  ol {
+    display: flex;
+    flex: 1 1 380px;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--line);
+    list-style: none;
+  }
+
+  li {
+    display: grid;
+    grid-template-columns: 168px minmax(0, 1fr);
+    align-items: start;
+    gap: 16px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    justify-self: start;
+    gap: 6px;
+    box-sizing: border-box;
+    height: 30px;
+    padding: 0 11px;
+    border: var(--badge-border);
+    border-radius: var(--badge-r);
+    background: var(--badge-bg);
+    color: var(--badge-fg);
+    font-size: 13px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .icon {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--badge-icon);
+  }
+
+  .text {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .when {
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--fg);
+  }
+
+  .evidence {
+    font-family: var(--font-space-mono), monospace;
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--muted);
+  }
+
+  figure {
+    display: flex;
+    flex: 1 1 420px;
+    flex-direction: column;
+    gap: 12px;
+    min-width: 0;
+    margin: 0;
+  }
+
+  figcaption {
+    font-family: var(--font-space-mono), monospace;
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--fg2);
+  }
+
+  @media (max-width: 800px) {
+    li {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 10px;
+    }
+  }
+</style>

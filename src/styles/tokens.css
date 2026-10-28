@@ -1,0 +1,146 @@
+/*
+ * Design tokens, from docs/design/tokens.css (the Chosen design, 27 Oct 2026).
+ *
+ * Theme: system by default. The visitor picks system / dark / light (the footer switch, or `theme …` in the ⌘K
+ * palette):
+ *   - "dark" or "light": data-theme on <html> (set before first paint by the inline script in BaseLayout).
+ *   - "system": no data-theme; prefers-color-scheme decides.
+ * .theme-dark pins a subtree to the dark tokens in every theme (the projects terminal and the command palette).
+ *
+ * Light differs from the export in four tokens, so every text colour stays at 4.5:1 or more on the --sel hover fill
+ * (#e6e6e4): --teal #127a74 → #11726d, --mint #0b7f5a → #0a7452, --muted #6b6b6b → #656565 (they were 4.0–4.3),
+ * and --hdr is opaque (was 85%): over the always-dark terminal a see-through light header turned grey and its teal
+ * verbs dropped to 3.4:1. The dark header passes at 80% even over white.
+ */
+
+:root,
+:root[data-theme="dark"],
+.theme-dark {
+  --bg: #010101; /* page */
+  --fg: #ffffff; /* text, headings */
+  --fg2: #a6a6a6; /* secondary text, the muted half of the headline */
+  --muted: rgba(255, 255, 255, 0.5); /* labels, notes, mono captions */
+  --line: rgba(255, 255, 255, 0.18); /* borders of chips, buttons, cards */
+  --line2: rgba(255, 255, 255, 0.08); /* hairlines between rows and sections */
+  --chip: rgba(255, 255, 255, 0.02); /* chip, card and secondary-button fill */
+  --sel: rgba(255, 255, 255, 0.08); /* hover and pressed fill */
+  --mint: #68edc0; /* prompt arrow, "live", success */
+  --teal: #5bc8c0; /* command verbs: ls, cat, mail, cd */
+  --amber: #f2c14e; /* "in development", the current milestone */
+  --logo: #f0f4f3;
+  --btn-bg: #ffffff; /* primary button */
+  --btn-fg: #010101;
+  --btn-hover: #d9d9d9;
+  --hdr: rgba(1, 1, 1, 0.8); /* sticky header, with backdrop-filter: blur(14px) */
+  --card: #070707;
+
+  /* hero wave (public/hero.svg), shown only behind the text */
+  --wave-filter: brightness(0.6) contrast(2) invert(0.2);
+  --wave-blend: luminosity;
+  --wave-opacity: 1;
+
+  /* hero backdrop photo */
+  --photo-filter: grayscale(1) contrast(1.08) brightness(0.88);
+  --scan: 0.6; /* opacity of the horizontal scan lines over the photo */
+
+  color-scheme: dark;
+}
+
+:root[data-theme="light"] {
+  --bg: #f7f7f5;
+  --fg: #0b0b0b;
+  --fg2: #545454;
+  --muted: #656565;
+  --line: rgba(0, 0, 0, 0.16);
+  --line2: rgba(0, 0, 0, 0.08);
+  --chip: rgba(255, 255, 255, 0.7);
+  --sel: rgba(0, 0, 0, 0.07);
+  --mint: #0a7452;
+  --teal: #11726d;
+  --amber: #8a5a00;
+  --logo: #0b0b0b;
+  --btn-bg: #0b0b0b;
+  --btn-fg: #ffffff;
+  --btn-hover: #333333;
+  --hdr: #f7f7f5;
+  --card: #ffffff;
+  --wave-filter: grayscale(1) contrast(0.9);
+  --wave-blend: multiply;
+  --wave-opacity: 0.32;
+  --photo-filter: grayscale(1) contrast(0.95) brightness(1.12);
+  --scan: 0.7;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme]) {
+    --bg: #f7f7f5;
+    --fg: #0b0b0b;
+    --fg2: #545454;
+    --muted: #656565;
+    --line: rgba(0, 0, 0, 0.16);
+    --line2: rgba(0, 0, 0, 0.08);
+    --chip: rgba(255, 255, 255, 0.7);
+    --sel: rgba(0, 0, 0, 0.07);
+    --mint: #0a7452;
+    --teal: #11726d;
+    --amber: #8a5a00;
+    --logo: #0b0b0b;
+    --btn-bg: #0b0b0b;
+    --btn-fg: #ffffff;
+    --btn-hover: #333333;
+    --hdr: #f7f7f5;
+    --card: #ffffff;
+    --wave-filter: grayscale(1) contrast(0.9);
+    --wave-blend: multiply;
+    --wave-opacity: 0.32;
+    --photo-filter: grayscale(1) contrast(0.95) brightness(1.12);
+    --scan: 0.7;
+    color-scheme: light;
+  }
+}
+
+/* Project accents: an element with data-project gets the project's colours inline, per theme (accentStyle in
+ * src/lib/projects, from the `accent` in its YAML), and this picks the theme's: --acc is the project colour, --acc2 the
+ * second one (Visaproof's "won't sponsor" orange), --on-acc text on --acc. */
+[data-project] {
+  --acc: var(--acc-dark);
+  --acc2: var(--acc2-dark);
+  --on-acc: var(--on-acc-dark);
+}
+
+:root[data-theme="light"] [data-project] {
+  --acc: var(--acc-light);
+  --acc2: var(--acc2-light);
+  --on-acc: var(--on-acc-light);
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme]) [data-project] {
+    --acc: var(--acc-light);
+    --acc2: var(--acc2-light);
+    --on-acc: var(--on-acc-light);
+  }
+}
+
+/* Layout */
+:root {
+  --g: 120px; /* side gutter, shared by the header, the sections and the footer */
+  --hdr-h: 84px;
+}
+
+@media (max-width: 1200px) {
+  :root {
+    --g: 80px;
+  }
+}
+
+/* The phone layout starts at 800px. */
+@media (max-width: 800px) {
+  :root {
+    --g: 20px;
+    --hdr-h: 64px;
+  }
+}
+
+/* Type: Geist 400/500 for text, Space Mono 400 for everything terminal-like (self-hosted, see astro.config.mjs). */

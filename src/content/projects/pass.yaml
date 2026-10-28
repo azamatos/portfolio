@@ -1,0 +1,373 @@
+order: 4
+name: pass
+status: live
+site: https://pass.azamatos.com
+repo: azamatos/password-generator
+palette: passwords that pass real rules
+accent: { dark: "#ff6b4d", light: "#c23a1d" }
+list:
+  dir: pass/
+  mode: drwxr-xr-x
+  commits: "{commits}"
+  stack: astro · typescript · web worker
+readme:
+  kind: password generator
+  host: pass.azamatos.com
+  image: { shot: sites }
+  phoneImage: { shot: sites }
+  alt: "pass.azamatos.com sliding from site to site, GitHub, Apple, Google, Microsoft and back: each brings its own colours, rules and a new password that meets them"
+  panImage: false
+  headline: Passwords that pass each site’s real rules.
+  description: Pick a site and get a password its sign-up form accepts, or a passphrase you can type. The strength and leak check runs in your browser, and the password never leaves it.
+  short: Pick a site and get a password its sign-up form accepts. It never leaves your browser.
+  tech:
+    - Astro {astro}
+    - TypeScript
+    - Web Worker
+    - zxcvbn-ts
+    - Web Crypto
+  stats:
+    - value: "{presets}"
+      label: site presets, each rule with its source
+      short: site presets
+    - value: "{hashSent} of {hashLength}"
+      label: hash characters the leak check sends
+      short: hash characters sent
+    - value: "{stored}"
+      label: passwords stored, ever
+      short: passwords stored
+  secondaryLink:
+    label: Open pass.azamatos.com
+    href: https://pass.azamatos.com
+page:
+  statusLabel: live · pass.azamatos.com
+  tagline:
+    strong: Passwords that pass a site’s real password rules,
+    rest: made and checked in your browser.
+  meta:
+    - label: role
+      text: "Solo build: a unique password for each site, made to that site’s rules. Done."
+    - label: stack
+      text: Astro · TypeScript · Web Worker
+    - label: links
+      links:
+        - label: pass.azamatos.com
+          href: https://pass.azamatos.com
+        - label: Source on GitHub
+          href: https://github.com/azamatos/password-generator
+  hero:
+    host: pass.azamatos.com/github
+    image: { shot: github }
+    alt: "pass.azamatos.com with the GitHub preset: a generated password that meets GitHub’s rules, its strength, and the rules"
+    phoneImage: { shot: phone }
+    phoneAlt: "pass on a phone: a GitHub password, Very strong, with Copy"
+  numbers:
+    - value: "{presets}"
+      label: site presets, every rule with the page it was read from
+    - text: "{hashSent} of {hashLength}"
+      label: characters of the password’s hash the leak check sends
+    - text: "{siteJs}"
+      label: of JavaScript on a site’s page, against a {siteBudget} budget
+    - value: "{stored}"
+      label: passwords stored, ever
+  numbersNote: Sizes from CI, which runs on every push and once a month; checked {checked}.
+  sections:
+    - title: what it does
+      lead: Pick a site, and get a password its sign-up form accepts.
+      text: The right length, the character types it requires, only the symbols it allows, no more repeats than it permits. Passphrases for things you type by hand, and a check of how long a password would take to guess and whether it has leaked.
+      parts:
+        - kind: chips
+          label: Sites with their own rules
+          items:
+            - Instagram
+            - Google
+            - Apple
+            - Microsoft
+            - GitHub
+            - Amazon
+            - X (Twitter)
+            - LinkedIn
+            - Spotify
+            - TikTok
+            - PayPal
+            - Facebook
+            - Netflix
+            - Shopify
+            - Steam
+            - Twitch
+            - Any site
+    - title: how it works
+      lead: Everything runs in the browser. There is no backend and no account, and nothing is stored.
+      parts:
+        - kind: cards
+          min: 260px
+          items:
+            - title: Random the right way
+              body: Characters come from crypto.getRandomValues with rejection sampling. Whole passwords are redrawn until they meet the rules, so no password is likelier than another.
+            - title: Rules with sources
+              body: Each site’s rules come with the pages they were read from and the month they were checked. CI fails when a site’s rules are more than six months old.
+            - title: The leak check sends {hashSent} characters
+              body: "Have I Been Pwned is asked with k-anonymity: only the first {hashSent} hex characters of the SHA-1 hash leave the browser, padded so the answer’s size gives nothing away."
+            - title: A strict Content Security Policy
+              body: Pages may connect only to the site, Have I Been Pwned and the analytics. The build fails on an inline script the policy would block.
+            - title: No UI framework
+              body: Astro renders static HTML and plain TypeScript makes it interactive. The rules logic is framework-free and unit-tested.
+    - title: the health check
+      lead: How long a password would take to guess, online and from a leaked database, and whether it has leaked.
+      parts:
+        - kind: figure
+          host: pass.azamatos.com/health
+          hasHost: true
+          maxw: 100%
+          img: { shot: health }
+          alt: "pass health page: a typed password rated Very strong, how long it would take to guess online and offline, and the leak check’s answer: not found in known leaks"
+          caption: The strength estimate runs zxcvbn-ts in a Web Worker. With the leak check off, nothing is sent at all.
+    - title: measured
+      lead: Small enough to feel instant on a phone.
+      parts:
+        - kind: table
+          label: Measured
+          head:
+            - what
+            - result
+          cols: minmax(220px, 1.2fr) minmax(200px, 1fr)
+          minw: 480px
+          note: gzip sizes, measured in CI; the word list and the strength worker load only when first needed.
+          rows:
+            - - JavaScript on a site’s page
+              - "{siteJs} of {siteBudget}"
+            - - JavaScript on /health
+              - "{healthJs} of {healthBudget}"
+            - - Lighthouse on a phone
+              - performance {lighthouse}, the rest 100
+            - - Layout shift while a page loads
+              - "{layoutShift}"
+            - - Switching pages, 200 ms network delay
+              - on screen {pageSwitch} after the click
+            - - Tests
+              - "{unitTests} unit, {e2eTests} Playwright checks in 3 browsers"
+  builtWith:
+    - group: site
+      items:
+        - { name: Astro, version: "{astro}" }
+        - { name: TypeScript }
+        - { name: Astro client router }
+        - { name: Astro sitemap }
+      note: Static HTML for every site’s page, with plain TypeScript for the generator and the check.
+    - group: security
+      items:
+        - { name: Web Crypto }
+        - { name: zxcvbn-ts }
+        - { name: Web Worker }
+        - { name: Have I Been Pwned }
+        - { name: strict CSP }
+      note: The password never leaves the browser; the strength worker loads on the first check.
+    - group: build
+      items:
+        - { name: Satori }
+        - { name: resvg }
+        - { name: Cloudflare }
+      note: A share image is made for every page at build time.
+    - group: quality
+      items:
+        - { name: Vitest }
+        - { name: Playwright }
+        - { name: axe }
+        - { name: Lighthouse CI }
+        - { name: GitHub Actions }
+      note: Tests make 1,000 passwords per site and check each against its rules; CI also runs once a month.
+  log:
+    title: what shipped
+    items:
+      - label: generator
+        note: a password each site’s form accepts
+        state: done
+      - label: passphrases
+        note: for things you type by hand
+        state: done
+      - label: health
+        note: time to guess, online and offline
+        state: done
+      - label: leak check
+        note: "{hashSent} characters of the hash, or nothing"
+        state: done
+      - label: themes
+        note: system, light and dark, axe in both
+        state: done
+  aside:
+    title: rules it keeps
+    items:
+      - "No backend and no account: the list of copied passwords lives in the open tab and is gone on reload."
+      - Every site rule has a source and the month it was checked.
+      - The leak check can be turned off, and then nothing is sent.
+  actions:
+    - label: Open pass.azamatos.com
+      href: https://pass.azamatos.com
+      primary: true
+    - label: Source on GitHub
+      href: https://github.com/azamatos/password-generator
+      primary: false
+
+values:
+  commits:
+    from: github
+    get: commits
+    means: Commits on the main branch of azamatos/password-generator.
+    maxAge: 14
+  astro:
+    from: github
+    get: version
+    package: astro
+    means: The major version of Astro in package.json.
+    maxAge: 14
+  presets:
+    from: json
+    url: https://raw.githubusercontent.com/azamatos/password-generator/main/src/data/platforms.json
+    count: .
+    means: Sites with their own preset in src/data/platforms.json ("Any site" not counted).
+    maxAge: 14
+  unitTests:
+    from: ci
+    workflow: ci.yml
+    job: Types, lint, unit tests, build, budgets
+    pattern: '\bTests\s+(\d+) passed'
+    means: Vitest unit tests that passed in the latest successful CI run.
+    maxAge: 45
+  e2eTests:
+    from: ci
+    workflow: ci.yml
+    job: Browser tests (Chromium, Firefox, WebKit)
+    pattern: '^\s*(\d+) passed \('
+    means: Playwright checks that passed in the latest successful CI run, over Chromium, Firefox and WebKit (skipped ones not counted).
+    maxAge: 45
+  siteJs:
+    from: ci
+    workflow: ci.yml
+    job: Types, lint, unit tests, build, budgets
+    pattern: "A site's page: JavaScript\\s+([\\d.]+) kB"
+    means: The gzipped JavaScript a site's page loads up front, as the CI budget check measures it.
+    maxAge: 45
+    format: { decimals: 1, suffix: " kB" }
+  siteBudget:
+    from: ci
+    workflow: ci.yml
+    job: Types, lint, unit tests, build, budgets
+    pattern: "A site's page: JavaScript\\s+[\\d.]+ kB\\s+of ([\\d.]+) kB"
+    means: The CI budget for the gzipped JavaScript a site's page loads up front; CI fails above it.
+    maxAge: 45
+    format: { decimals: 1, suffix: " kB" }
+  healthJs:
+    from: ci
+    workflow: ci.yml
+    job: Types, lint, unit tests, build, budgets
+    pattern: '/health: JavaScript\s+([\d.]+) kB'
+    means: The gzipped JavaScript /health loads up front, as the CI budget check measures it.
+    maxAge: 45
+    format: { decimals: 1, suffix: " kB" }
+  healthBudget:
+    from: ci
+    workflow: ci.yml
+    job: Types, lint, unit tests, build, budgets
+    pattern: '/health: JavaScript\s+[\d.]+ kB\s+of ([\d.]+) kB'
+    means: The CI budget for the gzipped JavaScript /health loads up front; CI fails above it.
+    maxAge: 45
+    format: { decimals: 1, suffix: " kB" }
+  hashSent:
+    from: manual
+    value: 5
+    checked: 2026-10-26
+    sourceUrl: https://github.com/azamatos/password-generator#how-it-works
+    means: Hex characters of the password's SHA-1 hash the leak check sends to Have I Been Pwned.
+  hashLength:
+    from: manual
+    value: 40
+    checked: 2026-10-26
+    sourceUrl: https://github.com/azamatos/password-generator#how-it-works
+    means: Hex characters in a whole SHA-1 hash.
+  stored:
+    from: manual
+    value: 0
+    checked: 2026-10-26
+    sourceUrl: https://github.com/azamatos/password-generator#how-it-works
+    means: Passwords the site stores anywhere; there is no backend, and the copied list lives only in the open tab.
+  lighthouse:
+    from: manual
+    value: 99–100
+    checked: 2026-10-26
+    sourceUrl: https://github.com/azamatos/password-generator#measured
+    means: Lighthouse performance on a phone, over local runs.
+    maxAge: 180
+  layoutShift:
+    from: manual
+    value: 0
+    checked: 2026-10-26
+    sourceUrl: https://github.com/azamatos/password-generator#measured
+    means: Cumulative layout shift while a page loads, at 360 px and 1280 px.
+    maxAge: 180
+  pageSwitch:
+    from: manual
+    value: 15–70
+    checked: 2026-10-26
+    sourceUrl: https://github.com/azamatos/password-generator#measured
+    means: Time from a click to the new page on screen, with 200 ms of network delay.
+    maxAge: 180
+    format: { suffix: " ms" }
+
+shots:
+  github:
+    url: https://pass.azamatos.com/github/
+    device: desktop
+    theme: dark
+  phone:
+    url: https://pass.azamatos.com/github/
+    device: phone
+    theme: dark
+  health:
+    url: https://pass.azamatos.com/health/
+    device: desktop
+    theme: dark
+    # The leak check is on by default; the shot waits for the strength (word lists) and the leak answer.
+    steps:
+      - fill: "#password"
+        value: Tuned-Lantern-Orbit-42
+      - waitFor: text=Very strong
+      - waitFor: text=Not found in known leaks
+  sites:
+    # The home README's loop: the GitHub, Apple, Google and Microsoft pages, about 2.3 s each, so the banner, the rule
+    # chips and the password change at each step. It ends on GitHub, where it starts (that page's time is split
+    # between the start and the end). The pages open as links, as "Change site" does, without its picker flashing up.
+    # The site switches pages at once; for the loop, the style below turns the router's view transition into a
+    # half-second slide, the next page pushing in from the right under a header that stays. It also keeps the
+    # header's cursor still: it blinks four times after each page change, so the end would catch it lit and the start
+    # dark. The steps before the loop arrive at GitHub the way its end does (the site's theme switch loses its
+    # highlight after a page change) and wait out the slide, so the end meets the start.
+    url: https://pass.azamatos.com/github/
+    device: desktop
+    theme: dark
+    steps:
+      - style: |
+          :root { view-transition-name: root !important; }
+          [data-header] { view-transition-name: header; }
+          [data-header] .cursor { animation: none !important; }
+          ::view-transition-old(root) { animation: 0.5s cubic-bezier(0.33, 1, 0.68, 1) both slide-out; }
+          ::view-transition-new(root) { animation: 0.5s cubic-bezier(0.33, 1, 0.68, 1) both slide-in; }
+          ::view-transition-group(header), ::view-transition-new(header) { animation: none; }
+          ::view-transition-old(header) { animation: none; opacity: 0; }
+          @keyframes slide-out { to { transform: translateX(-100%); } }
+          @keyframes slide-in { from { transform: translateX(100%); } }
+      - follow: /apple/
+      - restartRandom: true
+      - follow: /github/
+      - wait: 1
+    video:
+      seconds: 11.4
+      steps:
+        - wait: 1.2
+        - follow: /apple/
+        - wait: 2.75
+        - follow: /google/
+        - wait: 2.75
+        - follow: /microsoft/
+        - wait: 2.75
+        - restartRandom: true
+        - follow: /github/

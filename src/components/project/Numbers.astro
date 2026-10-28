@@ -1,0 +1,129 @@
+---
+// The big numbers between two rules, and the note on where they come from (with `{checked}` already filled in).
+// A number with `count` counts up from 0 over 1.1 s when it scrolls into view (reveal.ts): its text stays the final
+// value, and its empty aria-hidden `.shown` draws the count over it. Without JavaScript and with reduced motion the
+// text simply shows. Tabular figures and no wrapping keep the count from moving anything; the numbers aren't a live
+// region.
+
+import type { Figure } from "@/lib/projects";
+
+interface Props {
+  numbers: Figure[];
+  note: string;
+}
+
+const { numbers, note } = Astro.props;
+---
+
+<section class="numbers" aria-label="In numbers" data-reveal>
+  <dl>
+    {numbers.map((n) => (
+      <div class="number">
+        <dt>{n.label}</dt>
+        <dd
+          class:list={{ counts: n.count }}
+          data-count={n.count && JSON.stringify(n.count)}
+        >
+          {n.text}
+          {n.count && <span class="shown" aria-hidden="true" />}
+        </dd>
+      </div>
+    ))}
+  </dl>
+  <p class="note">{note}</p>
+</section>
+
+<style>
+  .numbers {
+    padding: 72px var(--g) 40px;
+  }
+
+  /* All in one row from 1140px, where four fit; two by two below, so none sits alone on a row. */
+  dl {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 32px;
+    margin: 0;
+    padding: 32px 0;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+
+  @media (min-width: 1140px) {
+    dl {
+      grid-template-columns: none;
+      grid-auto-columns: minmax(0, 1fr);
+      grid-auto-flow: column;
+    }
+  }
+
+  .number {
+    display: flex;
+    flex-direction: column-reverse;
+    justify-content: flex-end;
+    gap: 6px;
+  }
+
+  dt {
+    font-size: 14px;
+    line-height: 1.45;
+    color: var(--fg2);
+  }
+
+  dd {
+    margin: 0;
+    font-size: 48px;
+    font-weight: 500;
+    line-height: 1.05;
+    letter-spacing: -0.04em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .counts {
+    position: relative;
+    white-space: nowrap;
+  }
+
+  /* Counting (reveal.ts): the real text keeps its place, invisible, and the count shows over it. */
+  .counts[data-counting] {
+    color: transparent;
+  }
+
+  .shown {
+    display: none;
+  }
+
+  [data-counting] .shown {
+    display: block;
+    position: absolute;
+    inset: 0;
+    color: var(--fg);
+  }
+
+  .shown::after {
+    content: attr(data-n);
+  }
+
+  .note {
+    margin: 14px 0 0;
+    font-family: var(--font-space-mono), monospace;
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--muted);
+  }
+
+  @media (max-width: 800px) {
+    .numbers {
+      padding-top: 40px;
+    }
+
+    dl {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 24px 16px;
+    }
+
+    dd {
+      font-size: 30px;
+    }
+  }
+</style>

@@ -1,0 +1,162 @@
+---
+// The way back to the home page's Projects terminal (/#projects), at the end of a project page beside the next
+// project's card, in that card's language and mirrored: the round arrow on the left, "all projects", the command
+// `➜ ~ cd ..`, and a plain line that says what it does, for visitors who don't read shell. The border turns to this
+// page's accent on hover, and the arrow nudges back.
+//
+// Following it leaves the project's id in sessionStorage, so the home page selects this project's row (or opens its
+// item on a phone). Only this link does: the header's `ls projects`, the logo and the palette go to the home page as
+// it is. Without JavaScript the link still lands on #projects.
+
+interface Props {
+  /** The project whose page this is. */
+  project: string;
+}
+
+const { project } = Astro.props;
+---
+
+<a href="/#projects" class="all" data-back={project}>
+  <span class="go" aria-hidden="true">
+    <svg viewBox="0 0 24 24" width="20" height="20">
+      <path d="M19 12H5" />
+      <path d="M11 6l-6 6 6 6" />
+    </svg>
+  </span>
+  <span class="text">
+    <span class="kicker">all projects</span>
+    <span class="title">
+      <span class="arrow" aria-hidden="true">
+        ➜
+      </span>
+      <span class="tilde" aria-hidden="true">
+        ~
+      </span>
+      <span>cd ..</span>
+    </span>
+    <span class="plain">Back to the list on the home page.</span>
+  </span>
+</a>
+
+<script>
+  // Read once by ProjectsTerminal.astro on the home page. A click with a modifier opens a new tab or window, which
+  // starts at the top of the list, so the id isn't left for a later visit in this one.
+  for (const link of document.querySelectorAll<HTMLAnchorElement>(
+    "a[data-back]",
+  ))
+    link.addEventListener("click", (e) => {
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      try {
+        sessionStorage.setItem("projects:back", link.dataset.back!);
+      } catch {
+        // Storage blocked: the home page shows its first project.
+      }
+    });
+</script>
+
+<style>
+  .all {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    padding: 32px 36px;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background: var(--chip);
+    color: inherit;
+    text-decoration: none;
+    transition:
+      border-color 0.16s ease,
+      background 0.16s ease;
+  }
+
+  .all:hover {
+    border-color: var(--acc);
+  }
+
+  .text {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+  }
+
+  .kicker {
+    font-family: var(--font-space-mono), monospace;
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--muted);
+  }
+
+  .title {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    font-family: var(--font-space-mono), monospace;
+    font-size: 30px;
+    line-height: 1.5;
+    color: var(--logo);
+  }
+
+  .arrow {
+    color: var(--acc);
+  }
+
+  .tilde {
+    color: var(--teal);
+  }
+
+  .plain {
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--fg2);
+    text-wrap: balance;
+  }
+
+  .go {
+    display: flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 52px;
+    height: 52px;
+    border: 1px solid var(--line);
+    border-radius: 50%;
+    color: var(--fg);
+  }
+
+  .go svg {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: transform 0.16s ease;
+  }
+
+  .all:hover .go svg {
+    transform: translateX(-3px);
+  }
+
+  @media (max-width: 800px) {
+    .all {
+      padding: 24px;
+      gap: 20px;
+    }
+
+    .title {
+      font-size: 22px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .all,
+    .go svg {
+      transition: none;
+    }
+
+    .all:hover .go svg {
+      transform: none;
+    }
+  }
+</style>

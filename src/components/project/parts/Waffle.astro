@@ -1,0 +1,169 @@
+---
+// 100 squares in a 20 × 5 grid, one per 1% of the whole, coloured by share in legend order; the legend beside it.
+// The grid is one image (`role="img"`) named by the resolver's label, which says every share in words. The last
+// share is "the rest": its squares and swatch are drawn empty, with a hairline ring. Squares pop in 8ms apart when
+// the waffle scrolls into view (reveal.ts).
+
+import "@/styles/project.css";
+import type { PartOf } from "../types";
+
+interface Props {
+  part: PartOf<"waffle">;
+}
+
+const { part } = Astro.props;
+const last = part.legend.length - 1;
+const cells = part.legend.flatMap((l, i) =>
+  Array.from({ length: l.squares }, () => ({
+    swatch: l.swatch,
+    rest: i === last,
+  })),
+);
+---
+
+<figure class="waffle-fig" data-reveal>
+  <div class="waffle" role="img" aria-label={part.label}>
+    {cells.map((c, i) => (
+      <span
+        class:list={["cell", { rest: c.rest }]}
+        style={`--swatch: ${c.swatch}; --d: ${(0.15 + i * 0.008).toFixed(3)}s`}
+      />
+    ))}
+  </div>
+  <figcaption>
+    <ul>
+      {part.legend.map((l, i) => (
+        <li>
+          <span
+            class:list={["swatch", { rest: i === last }]}
+            style={`--swatch: ${l.swatch}`}
+            aria-hidden="true"
+          />
+          <span>
+            <span class="strong">{l.strong}</span> {l.text}
+          </span>
+        </li>
+      ))}
+    </ul>
+    <span class="note">{part.note}</span>
+  </figcaption>
+</figure>
+
+<style>
+  .waffle-fig {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 24px 40px;
+    margin: 0;
+    padding: 28px;
+    border: 1px solid var(--line2);
+    border-radius: 14px;
+    background: var(--chip);
+  }
+
+  .waffle {
+    display: grid;
+    grid-template-columns: repeat(20, 16px);
+    gap: 4px;
+  }
+
+  .cell {
+    width: 16px;
+    height: 16px;
+    border-radius: 3px;
+    background: var(--swatch);
+  }
+
+  .swatch {
+    flex: none;
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+    background: var(--swatch);
+  }
+
+  .cell.rest,
+  .swatch.rest {
+    box-shadow: var(--waffle-ring);
+  }
+
+  [data-reveal="wait"] .cell {
+    opacity: 0;
+  }
+
+  [data-reveal="in"] .cell {
+    animation: cell 0.3s ease-out var(--d) both;
+  }
+
+  @keyframes cell {
+    from {
+      opacity: 0;
+      transform: scale(0.6);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  figcaption {
+    display: flex;
+    flex: 1 1 240px;
+    flex-direction: column;
+    gap: 10px;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--fg2);
+  }
+
+  ul {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .strong {
+    color: var(--fg);
+  }
+
+  .note {
+    font-family: var(--font-space-mono), monospace;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  @media (max-width: 800px) {
+    .waffle-fig {
+      padding: 18px;
+    }
+
+    .waffle {
+      grid-template-columns: repeat(20, minmax(0, 1fr));
+      gap: 3px;
+      width: 100%;
+    }
+
+    .cell {
+      width: auto;
+      height: auto;
+      aspect-ratio: 1;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    [data-reveal] .cell {
+      opacity: 1;
+      animation: none;
+    }
+  }
+</style>
