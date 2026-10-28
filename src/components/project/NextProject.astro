@@ -1,7 +1,8 @@
 ---
-// The end of a project page: the way back to all projects (AllProjects), then the card that links to the next
-// project's page: "next project", `➜ ~ cd ../<id>` with the arrow in that project's accent, its headline, and a round
-// arrow. The border turns to this page's accent on hover, and the arrow nudges forward.
+// The end of a project page, side by side: the way back to all projects (AllProjects, two fifths) and the card that
+// links to the next project's page (three fifths): "next project", `➜ ~ cd ../<id>` with the arrow in that project's
+// accent, its headline, and a round arrow. The border turns to this page's accent on hover, and the arrow nudges
+// forward. Below 1140px, where the numbers go two by two too, the two stack, the way back first.
 
 import { accentStyle, type Project } from "@/lib/projects";
 import AllProjects from "./AllProjects.astro";
@@ -48,8 +49,8 @@ const { project, next } = Astro.props;
 
 <style>
   .next {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
     gap: 16px;
     padding: 56px var(--g) 120px;
   }
@@ -138,7 +139,18 @@ const { project, next } = Astro.props;
     transform: translateX(3px);
   }
 
+  @media (max-width: 1139px) {
+    .next {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
   @media (max-width: 800px) {
+    .card {
+      padding: 24px;
+      gap: 20px;
+    }
+
     .title {
       font-size: 22px;
     }

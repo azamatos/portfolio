@@ -220,8 +220,14 @@ const LS = "ls -la projects";
                     <path d="M13 6l6 6-6 6" />
                   </svg>
                 </a>
-                <a class="btn" href={p.readme.secondaryLink.href}>
+                <a
+                  class="btn"
+                  href={p.readme.secondaryLink.href}
+                  target="_blank"
+                  rel="noopener"
+                >
                   {p.readme.secondaryLink.label}
+                  <span class="sr-only"> (opens in a new tab)</span>
                   <svg
                     viewBox="0 0 24 24"
                     width="16"
