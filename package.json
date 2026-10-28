@@ -20,6 +20,7 @@
     "preview": "astro preview",
     "check": "astro check",
     "lint": "eslint .",
+    "test:layout": "node scripts/layout/index.ts",
     "format": "prettier --write .",
     "data:refresh": "node --env-file-if-exists=.env scripts/refresh/index.ts"
   },

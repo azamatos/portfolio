@@ -21,6 +21,12 @@ jobs:
       - run: pnpm lint
       - run: pnpm build
 
+      # Every page at every width from 320 to 1920px (scripts/layout/): fails on a page that scrolls sideways, boxes or
+      # text that stick out or are cut off, rows that wrap badly, overlaps and small tap targets on a phone. It runs
+      # headless, so Chromium's headless shell is all it needs.
+      - run: pnpm exec playwright install --with-deps --only-shell chromium
+      - run: pnpm test:layout
+
       # Fails the run if accessibility, best practices or SEO drop below 100 on any page (see lighthouserc.cjs).
       - name: Lighthouse
         run: pnpm dlx @lhci/cli@0.15.1 autorun

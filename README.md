@@ -30,7 +30,7 @@ CI fails if accessibility, best practices or SEO drop below 100 on any page (`li
 - [Astro](https://astro.build) 7, static output, no client framework
 - TypeScript (strict), ESLint, Prettier
 - Self-hosted Geist and Space Mono through the Astro Fonts API
-- GitHub Actions: type check, lint, build, Lighthouse CI; a weekly refresh of the project data (Playwright, sharp, ffmpeg, Cloudflare R2)
+- GitHub Actions: type check, lint, build, a layout sweep (Playwright), Lighthouse CI; a weekly refresh of the project data (Playwright, sharp, ffmpeg, Cloudflare R2)
 
 ---
 
@@ -44,7 +44,10 @@ pnpm preview   # serve dist/
 
 pnpm check     # type check (astro check)
 pnpm lint
+pnpm test:layout   # the layout sweep, on the build: see below
 ```
+
+`pnpm test:layout` opens every page of `dist/` (served on a free port) at every width from 320 to 1920px, 10px apart, plus both sides of each `@media` width in `src/`, and fails on a page that scrolls sideways, a box that scrolls its content, a box or text that sticks out of its container or is cut off, a row that wraps badly (an arrow at the end of a line, the last item stretched alone), overlapping boxes, or a phone tap target under 24×24px. What does one of those on purpose is listed, with the reason, in `scripts/layout/allowed.ts`. `--page /projects/<id>/` and `--width <px>` narrow it down; `--shots <dir>` also saves full-page screenshots at 390, 800, 1024, 1280 and 1440px in both themes. It needs Playwright's Chromium (`pnpm exec playwright install chromium`).
 
 ## Update content
 
@@ -104,6 +107,7 @@ src/
   lib/projects/              schema, values, media and sharing for the project pages
   lib/theme.ts, lib/palette.ts  the theme switch, the ⌘K palette's commands
 scripts/refresh/             pnpm data:refresh
+scripts/layout/              pnpm test:layout: the checks, and what they let pass
 public/                      resume PDF, icons, hero.svg, _redirects (old resume links)
 ```
 

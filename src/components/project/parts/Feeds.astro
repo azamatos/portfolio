@@ -1,5 +1,7 @@
 ---
-// What feeds the flow, and how often: dashed cards with a mono `when` in the accent, a title and a body.
+// What feeds the flow, and how often: dashed cards with a mono `when` in the accent, a title and a body. Side by side
+// from 1360px, where the flow above them goes into one row too; stacked below that. Never wrapped: a card alone on the
+// last row would stretch to the full width.
 
 import type { PartOf } from "../types";
 
@@ -25,7 +27,7 @@ const { part } = Astro.props;
 <style>
   .feeds {
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: column;
     gap: 12px;
     margin: 0;
     padding: 0;
@@ -34,7 +36,6 @@ const { part } = Astro.props;
 
   li {
     display: flex;
-    flex: 1 1 240px;
     gap: 14px;
     padding: 16px 18px;
     border: 1px dashed var(--line);
@@ -66,5 +67,15 @@ const { part } = Astro.props;
     font-size: 14px;
     line-height: 1.5;
     color: var(--fg2);
+  }
+
+  @media (min-width: 1360px) {
+    .feeds {
+      flex-direction: row;
+    }
+
+    li {
+      flex: 1 1 0;
+    }
   }
 </style>
