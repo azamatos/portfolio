@@ -1,5 +1,11 @@
 ---
-// A grid of cards, as many per row as fit at `min` wide: an optional mono tag in the accent, a title and a body.
+// A grid of cards: an optional mono tag in the accent, a title and a body. As many per row as fit at `min` wide, in
+// rows as even as that allows, and never one card alone on the last row (as the big numbers go two by two): six cards
+// go three and three where five would fit, and three go one per row where only two would.
+//
+// The grid's own width picks the columns, without media queries: `--track`, a column's least width, is the share of
+// the chosen number of columns, from one `clamp` per number of columns that switches at the width where that many
+// cards fit at `min` (`(fit × min + gaps − 100%) × 1000` is negative from there on, and huge below it).
 
 import type { PartOf } from "../types";
 
@@ -8,9 +14,32 @@ interface Props {
 }
 
 const { part } = Astro.props;
+const n = part.items.length;
+
+/** The columns when `fit` cards fit in a row: as few rows as that allows, as even as they can be, none alone. */
+function columns(fit: number) {
+  let c = Math.ceil(n / Math.ceil(n / fit));
+  while (c > 1 && n % c === 1) c--;
+  return c;
+}
+
+/** Each number of columns above one, with the fewest cards per row at which it's used; the most columns first. */
+const steps: { columns: number; fit: number }[] = [];
+for (let fit = n; fit > 1; fit--) {
+  const c = columns(fit);
+  const last = steps.at(-1);
+  if (c === 1) break;
+  if (last?.columns === c) last.fit = fit;
+  else steps.push({ columns: c, fit });
+}
+const track = steps.reduceRight(
+  (fewer, { columns: c, fit }) =>
+    `clamp((100% - ${c - 1} * var(--gap)) / ${c} - 0.01px, (${fit} * var(--min) + ${fit - 1} * var(--gap) - 100%) * 1000, ${fewer})`,
+  "100%",
+);
 ---
 
-<ul class="cards" style={`--min: ${part.min}`}>
+<ul class="cards" style={`--min: ${part.min}; --track: ${track}`}>
   {part.items.map((item) => (
     <li>
       {item.tag && <span class="tag">{item.tag}</span>}
@@ -22,9 +51,10 @@ const { part } = Astro.props;
 
 <style>
   .cards {
+    --gap: 12px;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(var(--min), 100%), 1fr));
-    gap: 12px;
+    grid-template-columns: repeat(auto-fit, minmax(var(--track), 1fr));
+    gap: var(--gap);
     margin: 0;
     padding: 0;
     list-style: none;
