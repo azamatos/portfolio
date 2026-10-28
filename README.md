@@ -30,7 +30,7 @@ CI fails if accessibility, best practices or SEO drop below 100 on any page (`li
 - [Astro](https://astro.build) 7, static output, no client framework
 - TypeScript (strict), ESLint, Prettier
 - Self-hosted Geist and Space Mono through the Astro Fonts API
-- GitHub Actions: type check, lint, build, Lighthouse CI; a weekly refresh of the project data (Playwright, sharp, ffmpeg, Cloudflare R2)
+- GitHub Actions: type check, lint, build, a layout sweep (Playwright), Lighthouse CI; a weekly refresh of the project data (Playwright, sharp, ffmpeg, Cloudflare R2)
 
 ---
 
