@@ -1,7 +1,8 @@
 ---
 // A table: mono column heads, the first column (a row header) in Geist, the rest in mono. Each row is a CSS grid on
 // `cols`, so the columns line up as in the design; the ARIA roles keep it a table for screen readers that drop table
-// semantics when rows change their display. On a phone it scrolls sideways inside its own region (`minw` wide).
+// semantics when rows change their display. On a phone it scrolls sideways inside its own region: `minw` wide, or as
+// wide as its columns need when that's wider, so the rules under the rows reach the last column.
 
 import type { PartOf } from "../types";
 
@@ -19,7 +20,7 @@ const id = `table-${part.label
 
 <div class="part">
   <div class="scroll" role="region" aria-labelledby={id} tabindex="0">
-    <table role="table" style={`--cols: ${part.cols}; min-width: ${part.minw}`}>
+    <table role="table" style={`--cols: ${part.cols}; --minw: ${part.minw}`}>
       <caption id={id}>{part.label}</caption>
       <thead role="rowgroup">
         <tr role="row">
@@ -60,9 +61,11 @@ const id = `table-${part.label
     border-radius: 2px;
   }
 
+  /* The rows are at least `minw` wide, and the table as wide as its widest row needs. */
   table {
     display: block;
     width: 100%;
+    min-width: min-content;
     border-collapse: collapse;
     font-size: 14px;
     line-height: 1.5;
@@ -85,6 +88,7 @@ const id = `table-${part.label
   tr {
     display: grid;
     grid-template-columns: var(--cols);
+    min-width: var(--minw);
     align-items: baseline;
     gap: 16px;
     padding: 12px 0;
