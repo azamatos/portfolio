@@ -4,7 +4,7 @@ import Header from "@/components/Header.astro";
 import Footer from "@/components/Footer.astro";
 import CommandPalette from "@/components/CommandPalette.astro";
 import heroPhoto from "@/assets/hero-photo.webp";
-import { accentStyle, getProjects, type Project } from "@/lib/projects";
+import { accentStyle, type Project } from "@/lib/projects";
 import { collectedSiteSchema } from "@/lib/projects/schema";
 import { imageType, PERSON_ID, type ShareImage } from "@/lib/projects/share";
 import { THEME_COLOR, themeInitScript } from "@/lib/theme";
@@ -53,7 +53,7 @@ const canonical = new URL(
   Astro.site,
 ).href;
 
-// The site's card (the projects in a terminal), which the refresh command makes: src/data/collected/_site.json.
+// The site's card (name, role and photo), which the refresh command makes: src/data/collected/_site.json.
 const siteFile = Object.values(
   import.meta.glob<unknown>("/src/data/collected/_site.json", {
     eager: true,
@@ -65,15 +65,12 @@ if (siteFile === undefined)
     "src/data/collected/_site.json is missing: run `pnpm data:refresh` for the site's share card.",
   );
 const siteOg = collectedSiteSchema.parse(siteFile).og;
-const names = new Intl.ListFormat("en").format(
-  (await getProjects()).map((p) => p.name),
-);
 const share: ShareImage = image ?? {
   url: siteOg.url,
   width: siteOg.width,
   height: siteOg.height,
   type: imageType(siteOg.url),
-  alt: `${SITE.name}, ${SITE.role}. A terminal lists his projects: ${names}.`,
+  alt: `${SITE.name}, ${SITE.role}, beside a portrait photo.`,
 };
 
 const person = {
