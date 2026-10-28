@@ -1,8 +1,8 @@
 ---
-// The way back to the home page's Projects terminal (/#projects), at the top of a project page and beside the next
-// project at the bottom: a small card in the NextProject card's language (border, radius, the accent on hover, a
-// round arrow that moves). The command stays the main line, `➜ ~/projects/<id> cd ..`, and a plain line under it
-// says what it does, for visitors who don't read shell. Its name reads "cd .., back to all projects".
+// The way back to the home page's Projects terminal (/#projects), at the end of a project page beside the next
+// project's card, in that card's language and mirrored: the round arrow on the left, "all projects", the command
+// `➜ ~ cd ..`, and a plain line that says what it does, for visitors who don't read shell. The border turns to this
+// page's accent on hover, and the arrow nudges back.
 //
 // Following it leaves the project's id in sessionStorage, so the home page selects this project's row (or opens its
 // item on a phone). Only this link does: the header's `ls projects`, the logo and the palette go to the home page as
@@ -11,31 +11,30 @@
 interface Props {
   /** The project whose page this is. */
   project: string;
-  class?: string;
 }
 
-const { project, class: className } = Astro.props;
+const { project } = Astro.props;
 ---
 
-<a href="/#projects" class:list={["all", className]} data-back={project}>
+<a href="/#projects" class="all" data-back={project}>
   <span class="go" aria-hidden="true">
-    <svg viewBox="0 0 24 24" width="16" height="16">
+    <svg viewBox="0 0 24 24" width="20" height="20">
       <path d="M19 12H5" />
       <path d="M11 6l-6 6 6 6" />
     </svg>
   </span>
   <span class="text">
-    <span class="cmd">
+    <span class="kicker">all projects</span>
+    <span class="title">
       <span class="arrow" aria-hidden="true">
         ➜
       </span>
-      <span class="path" aria-hidden="true">
-        ~/projects/{project}
+      <span class="tilde" aria-hidden="true">
+        ~
       </span>
       <span>cd ..</span>
     </span>
-    <span class="sr-only">, </span>
-    <span class="plain">back to all projects</span>
+    <span class="plain">Back to the list on the home page.</span>
   </span>
 </a>
 
@@ -57,14 +56,12 @@ const { project, class: className } = Astro.props;
 
 <style>
   .all {
-    display: inline-flex;
+    display: flex;
     align-items: center;
-    align-self: flex-start;
-    gap: 14px;
-    min-height: 56px;
-    padding: 9px 22px 9px 9px;
+    gap: 24px;
+    padding: 32px 36px;
     border: 1px solid var(--line);
-    border-radius: 14px;
+    border-radius: 16px;
     background: var(--chip);
     color: inherit;
     text-decoration: none;
@@ -77,13 +74,52 @@ const { project, class: className } = Astro.props;
     border-color: var(--acc);
   }
 
+  .text {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+  }
+
+  .kicker {
+    font-family: var(--font-space-mono), monospace;
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--muted);
+  }
+
+  .title {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    font-family: var(--font-space-mono), monospace;
+    font-size: 30px;
+    line-height: 1.5;
+    color: var(--logo);
+  }
+
+  .arrow {
+    color: var(--acc);
+  }
+
+  .tilde {
+    color: var(--teal);
+  }
+
+  .plain {
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--fg2);
+    text-wrap: balance;
+  }
+
   .go {
     display: flex;
     flex: none;
     align-items: center;
     justify-content: center;
-    width: 38px;
-    height: 38px;
+    width: 52px;
+    height: 52px;
     border: 1px solid var(--line);
     border-radius: 50%;
     color: var(--fg);
@@ -102,36 +138,15 @@ const { project, class: className } = Astro.props;
     transform: translateX(-3px);
   }
 
-  .text {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    min-width: 0;
-  }
+  @media (max-width: 800px) {
+    .all {
+      padding: 24px;
+      gap: 20px;
+    }
 
-  .cmd {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: 0 0.6em;
-    font-family: var(--font-space-mono), monospace;
-    font-size: 14px;
-    line-height: 1.5;
-    color: var(--logo);
-  }
-
-  .arrow {
-    color: var(--acc);
-  }
-
-  .path {
-    color: var(--teal);
-  }
-
-  .plain {
-    font-size: 13px;
-    line-height: 1.4;
-    color: var(--fg2);
+    .title {
+      font-size: 22px;
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {

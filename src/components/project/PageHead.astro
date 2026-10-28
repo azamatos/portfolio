@@ -1,13 +1,12 @@
 ---
-// The top of a project page: the way back to all projects (AllProjects), the status chip, the name (the page's h1, id
-// "project-title"), the tagline, the meta list (role, stack, links), then the hero: the framed desktop screenshot,
-// 700px tall, and the phone screenshot overlapping its bottom right. On a phone only the framed screenshot shows, at its
-// natural height. The head and the hero rise in on load. The desktop screenshot is the page's first image: it loads at
-// once, high priority.
+// The top of a project page: the status chip, the name (the page's h1, id "project-title"), the tagline, the meta list
+// (role, stack, links), then the hero: the framed desktop screenshot, 700px tall, and the
+// phone screenshot overlapping its bottom right. On a phone only the framed screenshot shows, at its natural height.
+// The head and the hero rise in on load. The desktop screenshot is the page's first image: it loads at once, high
+// priority. The way back to all projects is at the end of the page (NextProject) and in the header (`ls projects`).
 
 import "@/styles/project.css";
 import type { Project } from "@/lib/projects";
-import AllProjects from "./AllProjects.astro";
 import Media from "./Media.astro";
 
 interface Props {
@@ -20,8 +19,6 @@ const live = project.status === "live";
 ---
 
 <section class="head">
-  <AllProjects project={project.id} class="back pj-rise" />
-
   <div class="intro pj-rise">
     <div class="title">
       <p class:list={["status", { live }]}>
@@ -82,17 +79,13 @@ const live = project.status === "live";
     padding: 40px var(--g) 56px;
   }
 
-  .head > :global(.back) {
-    animation-delay: 0.05s;
-  }
-
   .intro {
     display: flex;
     flex-wrap: wrap;
     align-items: flex-end;
     justify-content: space-between;
     gap: 32px 64px;
-    animation-delay: 0.22s;
+    animation-delay: 0.05s;
   }
 
   .title {
