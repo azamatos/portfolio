@@ -558,18 +558,24 @@ const LS = "ls -la projects";
       select(next, true);
     });
 
-    // The entrance plays once, when most of the list is on screen.
+    // The entrance plays once, when most of the list is on screen. A visitor already past the list's top (a reload
+    // lower down, with the scroll restored before or after this runs) gets the README at once, as after a pick. The
+    // terminal is watched too: a jump past the list crosses none of the list's own thresholds.
     if (!reduce && "IntersectionObserver" in window) {
       term.dataset.play = "wait";
       const io = new IntersectionObserver(
-        (entries) => {
-          if (!entries.some((e) => e.isIntersecting)) return;
+        () => {
+          const r = list.getBoundingClientRect();
+          if (r.top < 0) term.dataset.picked = "";
+          else if (Math.min(r.bottom, innerHeight) - r.top < r.height / 2)
+            return;
           io.disconnect();
           term.dataset.play = "in";
         },
-        { threshold: 0.5 },
+        { threshold: [0, 0.5] },
       );
       io.observe(list);
+      io.observe(term);
     }
   }
 </script>
