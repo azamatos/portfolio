@@ -91,6 +91,20 @@ async function withContext<T>(
   }
 }
 
+/**
+ * CSS for the rest of the shot. A constructed sheet, since a page's CSP can block a <style> element; it belongs to
+ * the document, so it stays through a client-side router's page changes. CSS with no rule the browser accepts fails.
+ */
+async function addStyle(page: Page, css: string) {
+  await page.evaluate((css) => {
+    const sheet = new CSSStyleSheet();
+    sheet.replaceSync(css);
+    if (!sheet.cssRules.length)
+      throw new Error("the CSS has no rule the browser accepts");
+    document.adoptedStyleSheets = [...document.adoptedStyleSheets, sheet];
+  }, css);
+}
+
 async function runStep(page: Page, step: Step) {
   const timeout = 20_000;
   // Waiting for something can take longer: a loop may wait for a moment in a running video.
@@ -112,15 +126,10 @@ async function runStep(page: Page, step: Step) {
     await page.locator(step.into).first().fill(text, { timeout });
   } else if ("hide" in step) {
     // A style rule rather than the elements' own style: it also hides what the page adds later (a notice that shows
-    // once a check finishes). A constructed sheet, since a page's CSP can block a <style> element; querySelectorAll
-    // throws on a selector that isn't CSS.
-    await page.evaluate((selector) => {
-      document.querySelectorAll(selector);
-      const sheet = new CSSStyleSheet();
-      sheet.replaceSync(`${selector} { display: none !important; }`);
-      document.adoptedStyleSheets = [...document.adoptedStyleSheets, sheet];
-    }, step.hide);
-  } else if ("follow" in step) {
+    // once a check finishes). A selector that isn't CSS leaves the rule out, and the step fails.
+    await addStyle(page, `${step.hide} { display: none !important; }`);
+  } else if ("style" in step) await addStyle(page, step.style);
+  else if ("follow" in step) {
     // A click on a link that isn't on screen: the page's router, if it has one, takes it like any other.
     const href = new URL(step.follow, page.url()).href;
     await page.evaluate((href) => {
