@@ -1,69 +1,69 @@
 {
-  "refreshedAt": "2026-11-02T15:22:03.672Z",
+  "refreshedAt": "2026-11-09T15:49:12.108Z",
   "values": {
     "commits": {
-      "value": 304,
-      "asOf": "2026-11-02T15:22:04.240Z",
+      "value": 360,
+      "asOf": "2026-11-09T15:49:12.682Z",
       "source": "https://github.com/azamatos/yeral/commits/main"
     },
     "react": {
       "value": "19",
-      "asOf": "2026-11-02T15:22:04.240Z",
+      "asOf": "2026-11-09T15:49:12.682Z",
       "source": "https://github.com/azamatos/yeral/blob/main/pnpm-workspace.yaml"
     },
     "vite": {
       "value": "8",
-      "asOf": "2026-11-02T15:22:04.240Z",
+      "asOf": "2026-11-09T15:49:12.682Z",
       "source": "https://github.com/azamatos/yeral/blob/main/pnpm-workspace.yaml"
     },
     "tailwind": {
       "value": "4",
-      "asOf": "2026-11-02T15:22:04.240Z",
+      "asOf": "2026-11-09T15:49:12.682Z",
       "source": "https://github.com/azamatos/yeral/blob/main/pnpm-workspace.yaml"
     },
     "hono": {
       "value": "4",
-      "asOf": "2026-11-02T15:22:04.240Z",
+      "asOf": "2026-11-09T15:49:12.682Z",
       "source": "https://github.com/azamatos/yeral/blob/main/pnpm-workspace.yaml"
     },
     "zod": {
       "value": "4",
-      "asOf": "2026-11-02T15:22:04.240Z",
+      "asOf": "2026-11-09T15:49:12.682Z",
       "source": "https://github.com/azamatos/yeral/blob/main/pnpm-workspace.yaml"
     },
     "storybook": {
       "value": "10",
-      "asOf": "2026-11-02T15:22:04.240Z",
+      "asOf": "2026-11-09T15:49:12.682Z",
       "source": "https://github.com/azamatos/yeral/blob/main/pnpm-workspace.yaml"
     },
     "postgres": {
       "value": "18",
-      "asOf": "2026-11-02T15:22:04.240Z",
+      "asOf": "2026-11-09T15:49:12.682Z",
       "source": "https://github.com/azamatos/yeral/blob/main/infra/server/yeral/compose.yml"
     },
     "components": {
-      "value": 133,
-      "asOf": "2026-11-02T15:22:04.477Z",
+      "value": 150,
+      "asOf": "2026-11-09T15:49:12.872Z",
       "source": "https://storybook.yeral.app/index.json"
     },
     "tests": {
-      "value": 2292,
-      "asOf": "2026-11-01T20:11:28.000Z",
-      "source": "https://github.com/azamatos/yeral/actions/runs/41345228799/job/124963511605"
+      "value": 2707,
+      "asOf": "2026-11-09T08:44:51.000Z",
+      "source": "https://github.com/azamatos/yeral/actions/runs/42587687809/job/129061340138"
     },
     "decisions": {
-      "value": 28,
-      "asOf": "2026-11-02T15:22:04.240Z",
+      "value": 29,
+      "asOf": "2026-11-09T15:49:12.682Z",
       "source": "https://github.com/azamatos/yeral/tree/main/docs/decisions"
     }
   },
   "shots": {},
   "og": {
-    "url": "https://media.azamatos.com/portfolio/yeral/og.b649f1664d.jpg",
+    "url": "https://media.azamatos.com/portfolio/yeral/og.e2f8e1e100.jpg",
     "width": 1200,
     "height": 630,
     "from": "src/assets/projects/yeral-calendar.webp",
-    "asOf": "2026-11-02T15:22:06.306Z"
+    "asOf": "2026-11-09T15:49:14.611Z"
   },
   "skipped": [
     {
