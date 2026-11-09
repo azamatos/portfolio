@@ -1,19 +1,19 @@
 {
-  "refreshedAt": "2026-11-02T15:19:39.668Z",
+  "refreshedAt": "2026-11-09T09:40:34.579Z",
   "values": {
     "commits": {
       "value": 38,
-      "asOf": "2026-11-02T15:19:40.130Z",
+      "asOf": "2026-11-09T09:40:35.154Z",
       "source": "https://github.com/azamatos/password-generator/commits/main"
     },
     "astro": {
       "value": "7",
-      "asOf": "2026-11-02T15:19:40.130Z",
+      "asOf": "2026-11-09T09:40:35.154Z",
       "source": "https://github.com/azamatos/password-generator/blob/main/package.json"
     },
     "presets": {
       "value": 16,
-      "asOf": "2026-11-02T15:19:40.289Z",
+      "asOf": "2026-11-09T09:40:35.332Z",
       "source": "https://raw.githubusercontent.com/azamatos/password-generator/main/src/data/platforms.json"
     },
     "unitTests": {
