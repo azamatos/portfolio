@@ -19,12 +19,13 @@ export const SITE = {
     "software engineer.",
   ],
   availability:
-    "Open to senior frontend and full-stack roles · relocating to the EU",
+    "Open to senior frontend and full-stack roles · relocating to the EU · available now",
   summary:
-    "8+ years with React, TypeScript, and Node.js, owning features end to end, from the PostgreSQL data model and API to a polished UI. I led the frontend of Belet Video (100k+ active users) and was the sole developer of RocketPrep (10k+ users).",
+    "8+ years with React, TypeScript, and Node.js, owning features end to end, from the PostgreSQL data model and API to a polished UI. Most recently I built the bank payout workflows on Temporal for a wealth-management platform. Before that I led the frontend of Belet Video (100k+ daily users) and was the sole developer of RocketPrep (10k+ registered users).",
   email: "hi@azamatos.com",
   resume: {
-    // The full-stack, with-photo variant. Replace the file in public/ when the resume changes.
+    // The full-stack, no-photo variant (vacancies' out/site/fullstack.pdf). Replace the file in public/ when the
+    // resume changes.
     url: "/Azamat_Jorayev_Resume.pdf",
     pages: 2,
   },
