@@ -1,6 +1,8 @@
 order: 2
 name: Ýeral
 status: development
+# Off the site until it's ready (owner, 2026-11-13: no attention while it's in development).
+hidden: true
 site: https://business.yeral.app
 repo: azamatos/yeral
 palette: booking for any business

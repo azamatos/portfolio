@@ -83,6 +83,8 @@ A number that can't be read, is older than its `maxAge`, or drops to 0 (unless `
 
 The home page's terminal, the ⌘K palette, the project pages, the sitemap and the Lighthouse CI run (`lighthouserc.cjs`) pick it up from there.
 
+**Take a project off the site for a while:** set `hidden: true` in its YAML. It loses its row, page, palette entry and llms.txt line; its data stays and the refresh keeps collecting it, so removing the flag brings it back up to date.
+
 ## Structure
 
 ```text

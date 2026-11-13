@@ -570,6 +570,11 @@ const projectFields = z.strictObject({
   order: z.int().positive(),
   name: text,
   status: z.enum(["live", "development"]),
+  /**
+   * Off the site while true: no row, page, palette entry or llms.txt line. The refresh still collects it, so it comes
+   * back with fresh numbers when the flag goes.
+   */
+  hidden: z.boolean().default(false),
   /** The live site, for links and checks. */
   site: url,
   /** The public GitHub repository, `owner/name`. */
