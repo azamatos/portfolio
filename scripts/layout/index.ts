@@ -55,12 +55,14 @@ interface Target {
   status: number;
 }
 
-/** The home page, each project's page (one per src/content/projects/<id>.yaml) and the 404 page. */
+/** The home page, each project's page (a folder in dist/projects/; a hidden project has none) and the 404 page. */
 async function pages(): Promise<Target[]> {
-  const files = await readdir(new URL("src/content/projects/", ROOT));
-  const ids = files
-    .filter((f) => f.endsWith(".yaml"))
-    .map((f) => f.slice(0, -".yaml".length))
+  const entries = await readdir(new URL("dist/projects/", ROOT), {
+    withFileTypes: true,
+  });
+  const ids = entries
+    .filter((e) => e.isDirectory())
+    .map((e) => e.name)
     .sort();
   return [
     { path: "/", name: "home", status: 200 },

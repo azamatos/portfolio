@@ -349,8 +349,8 @@ function resolveProject(
 let resolved: Promise<Project[]> | undefined;
 
 /**
- * Every project, resolved and sorted by `order`. Fails the build on anything that doesn't resolve. A build resolves
- * them once for every page; the dev server, whose files change, every time.
+ * Every project but the hidden ones, resolved and sorted by `order`. Fails the build on anything that doesn't
+ * resolve. A build resolves them once for every page; the dev server, whose files change, every time.
  */
 export function getProjects(): Promise<Project[]> {
   if (import.meta.env.DEV) return loadProjects();
@@ -369,16 +369,18 @@ async function loadProjects(): Promise<Project[]> {
       throw new Error(
         `${c.id}: order ${c.data.order} is taken by ${sorted[i - 1].id}`,
       );
-  const projects = sorted.map((c, i) =>
+  const shown = sorted.filter((c) => !c.data.hidden);
+  const projects = shown.map((c, i) =>
     resolveProject(
       c.id,
       c.data,
       byId.get(c.id),
-      sorted[(i + 1) % sorted.length].id,
+      shown[(i + 1) % shown.length].id,
     ),
   );
 
-  const ids = new Set(projects.map((p) => p.id));
+  // A hidden project's collected data stays, ready for when it's shown again.
+  const ids = new Set(sorted.map((c) => c.id));
   for (const id of byId.keys())
     if (!ids.has(id))
       throw new Error(`src/data/collected/${id}.json belongs to no project`);
