@@ -1,69 +1,69 @@
 {
-  "refreshedAt": "2026-11-09T15:49:12.108Z",
+  "refreshedAt": "2026-11-16T15:24:45.792Z",
   "values": {
     "commits": {
-      "value": 360,
-      "asOf": "2026-11-09T15:49:12.682Z",
+      "value": 419,
+      "asOf": "2026-11-16T15:24:46.281Z",
       "source": "https://github.com/azamatos/yeral/commits/main"
     },
     "react": {
       "value": "19",
-      "asOf": "2026-11-09T15:49:12.682Z",
+      "asOf": "2026-11-16T15:24:46.281Z",
       "source": "https://github.com/azamatos/yeral/blob/main/pnpm-workspace.yaml"
     },
     "vite": {
       "value": "8",
-      "asOf": "2026-11-09T15:49:12.682Z",
+      "asOf": "2026-11-16T15:24:46.281Z",
       "source": "https://github.com/azamatos/yeral/blob/main/pnpm-workspace.yaml"
     },
     "tailwind": {
       "value": "4",
-      "asOf": "2026-11-09T15:49:12.682Z",
+      "asOf": "2026-11-16T15:24:46.281Z",
       "source": "https://github.com/azamatos/yeral/blob/main/pnpm-workspace.yaml"
     },
     "hono": {
       "value": "4",
-      "asOf": "2026-11-09T15:49:12.682Z",
+      "asOf": "2026-11-16T15:24:46.281Z",
       "source": "https://github.com/azamatos/yeral/blob/main/pnpm-workspace.yaml"
     },
     "zod": {
       "value": "4",
-      "asOf": "2026-11-09T15:49:12.682Z",
+      "asOf": "2026-11-16T15:24:46.281Z",
       "source": "https://github.com/azamatos/yeral/blob/main/pnpm-workspace.yaml"
     },
     "storybook": {
       "value": "10",
-      "asOf": "2026-11-09T15:49:12.682Z",
+      "asOf": "2026-11-16T15:24:46.281Z",
       "source": "https://github.com/azamatos/yeral/blob/main/pnpm-workspace.yaml"
     },
     "postgres": {
       "value": "18",
-      "asOf": "2026-11-09T15:49:12.682Z",
+      "asOf": "2026-11-16T15:24:46.281Z",
       "source": "https://github.com/azamatos/yeral/blob/main/infra/server/yeral/compose.yml"
     },
     "components": {
-      "value": 150,
-      "asOf": "2026-11-09T15:49:12.872Z",
+      "value": 204,
+      "asOf": "2026-11-16T15:24:46.733Z",
       "source": "https://storybook.yeral.app/index.json"
     },
     "tests": {
-      "value": 2707,
-      "asOf": "2026-11-09T08:44:51.000Z",
-      "source": "https://github.com/azamatos/yeral/actions/runs/42587687809/job/129061340138"
+      "value": 3999,
+      "asOf": "2026-11-15T19:49:12.000Z",
+      "source": "https://github.com/azamatos/yeral/actions/runs/43752675713/job/132929897037"
     },
     "decisions": {
-      "value": 29,
-      "asOf": "2026-11-09T15:49:12.682Z",
+      "value": 30,
+      "asOf": "2026-11-16T15:24:46.281Z",
       "source": "https://github.com/azamatos/yeral/tree/main/docs/decisions"
     }
   },
   "shots": {},
   "og": {
-    "url": "https://media.azamatos.com/portfolio/yeral/og.e2f8e1e100.jpg",
+    "url": "https://media.azamatos.com/portfolio/yeral/og.b34af5eedf.jpg",
     "width": 1200,
     "height": 630,
     "from": "src/assets/projects/yeral-calendar.webp",
-    "asOf": "2026-11-09T15:49:14.611Z"
+    "asOf": "2026-11-16T15:24:48.195Z"
   },
   "skipped": [
     {
@@ -75,5 +75,10 @@
       "reason": "the demo's 69 numbers can't sign in by code, and “Try the business app” (F-242) isn't in the live app yet"
     }
   ],
-  "problems": []
+  "problems": [
+    {
+      "name": "link",
+      "message": "https://github.com/azamatos/yeral answered 404"
+    }
+  ]
 }
