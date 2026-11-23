@@ -1,49 +1,49 @@
 {
-  "refreshedAt": "2026-11-16T15:22:59.129Z",
+  "refreshedAt": "2026-11-23T17:48:27.712Z",
   "values": {
     "commits": {
       "value": 140,
-      "asOf": "2026-11-16T15:22:59.618Z",
+      "asOf": "2026-11-23T17:48:28.045Z",
       "source": "https://github.com/azamatos/rebuffer/commits/main"
     },
     "react": {
       "value": "19",
-      "asOf": "2026-11-16T15:22:59.618Z",
+      "asOf": "2026-11-23T17:48:28.045Z",
       "source": "https://github.com/azamatos/rebuffer/blob/main/package.json"
     },
     "zustand": {
       "value": "5",
-      "asOf": "2026-11-16T15:22:59.618Z",
+      "asOf": "2026-11-23T17:48:28.045Z",
       "source": "https://github.com/azamatos/rebuffer/blob/main/package.json"
     },
     "zod": {
       "value": "4",
-      "asOf": "2026-11-16T15:22:59.618Z",
+      "asOf": "2026-11-23T17:48:28.045Z",
       "source": "https://github.com/azamatos/rebuffer/blob/main/package.json"
     },
     "tailwind": {
       "value": "4",
-      "asOf": "2026-11-16T15:22:59.618Z",
+      "asOf": "2026-11-23T17:48:28.045Z",
       "source": "https://github.com/azamatos/rebuffer/blob/main/package.json"
     },
     "vite": {
       "value": "8",
-      "asOf": "2026-11-16T15:22:59.618Z",
+      "asOf": "2026-11-23T17:48:28.045Z",
       "source": "https://github.com/azamatos/rebuffer/blob/main/package.json"
     },
     "typescript": {
       "value": "6",
-      "asOf": "2026-11-16T15:22:59.618Z",
+      "asOf": "2026-11-23T17:48:28.045Z",
       "source": "https://github.com/azamatos/rebuffer/blob/main/package.json"
     },
     "hlsjs": {
       "value": "1.7.3",
-      "asOf": "2026-11-16T15:22:59.618Z",
+      "asOf": "2026-11-23T17:48:28.045Z",
       "source": "https://github.com/azamatos/rebuffer/blob/main/package.json"
     },
     "hlsMinor": {
       "value": "1.7",
-      "asOf": "2026-11-16T15:22:59.618Z",
+      "asOf": "2026-11-23T17:48:28.045Z",
       "source": "https://github.com/azamatos/rebuffer/blob/main/package.json"
     },
     "unitTests": {
@@ -68,36 +68,36 @@
     },
     "repeat": {
       "value": [
-        ["Home fibre", "90–91", "0.47 s–0.51 s", "0", "1"],
-        ["Busy café Wi-Fi", "84", "3.39 s–3.41 s", "0", "0"],
-        ["4G commute", "100", "2.01 s–2.03 s", "0–1", "4"],
-        ["Train through a tunnel", "27–28", "2.54 s–2.55 s", "1", "4"],
-        ["Rural 3G", "0", "13.45 s–13.48 s", "0", "1"],
-        ["Lift", "78–87", "1.89 s–1.92 s", "0", "0–1"],
-        ["Evening congestion", "82", "1.39 s–1.41 s", "0", "2"]
+        ["Home fibre", "90", "0.49 s–0.54 s", "0", "1"],
+        ["Busy café Wi-Fi", "84", "3.41 s–3.44 s", "0", "0"],
+        ["4G commute", "100", "1.93 s–1.96 s", "0", "4"],
+        ["Train through a tunnel", "26–31", "2.55 s–2.56 s", "1", "3–4"],
+        ["Rural 3G", "0", "13.18 s–13.22 s", "0", "1"],
+        ["Lift", "78", "1.91 s–1.93 s", "0", "1"],
+        ["Evening congestion", "82", "1.32 s–1.42 s", "0", "2"]
       ],
-      "asOf": "2026-11-16T11:25:26.000Z",
-      "source": "https://github.com/azamatos/rebuffer/actions/runs/43849502378/job/133238083772"
+      "asOf": "2026-11-23T12:34:56.000Z",
+      "source": "https://github.com/azamatos/rebuffer/actions/runs/45167075623/job/137666680839"
     },
     "repeatRuns": {
       "value": 5,
-      "asOf": "2026-11-16T11:25:26.000Z",
-      "source": "https://github.com/azamatos/rebuffer/actions/runs/43849502378/job/133238083772"
+      "asOf": "2026-11-23T12:34:56.000Z",
+      "source": "https://github.com/azamatos/rebuffer/actions/runs/45167075623/job/137666680839"
     },
     "scoreSpread": {
-      "value": 9,
-      "asOf": "2026-11-16T11:25:26.000Z",
-      "source": "https://github.com/azamatos/rebuffer/actions/runs/43849502378/job/133238083772"
+      "value": 5,
+      "asOf": "2026-11-23T12:34:56.000Z",
+      "source": "https://github.com/azamatos/rebuffer/actions/runs/45167075623/job/137666680839"
     },
     "repeatSetup": {
       "value": "Chromium 156.0.8078.4, hls.js 1.7.3",
-      "asOf": "2026-11-16T11:25:26.000Z",
-      "source": "https://github.com/azamatos/rebuffer/actions/runs/43849502378/job/133238083772"
+      "asOf": "2026-11-23T12:34:56.000Z",
+      "source": "https://github.com/azamatos/rebuffer/actions/runs/45167075623/job/137666680839"
     },
     "repeatStream": {
       "value": "synthetic, 2:00, five qualities from 240p (0.47 Mbps) to 1080p (6 Mbps), 4 s segments",
-      "asOf": "2026-11-16T11:25:26.000Z",
-      "source": "https://github.com/azamatos/rebuffer/actions/runs/43849502378/job/133238083772"
+      "asOf": "2026-11-23T12:34:56.000Z",
+      "source": "https://github.com/azamatos/rebuffer/actions/runs/45167075623/job/137666680839"
     }
   },
   "shots": {
